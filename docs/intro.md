@@ -1,47 +1,133 @@
 ---
 sidebar_position: 1
+title: Introduzione
 ---
 
-# Tutorial Intro
+<div style={{textAlign: 'center', marginBottom: '2rem'}}>
+  <img src="/img/logo.svg" alt="IndieDesk Logo" width="200" />
+</div>
 
-Let's discover **Docusaurus in less than 5 minutes**.
+Template Laravel 12 per indie developers e freelancer che vogliono gestire clienti, progetti e profitti senza partire da zero.
 
-## Getting Started
+## 🎯 Cos'è IndieDesk?
 
-Get started by **creating a new site**.
+IndieDesk è un **template Laravel completo e pronto all'uso** che include tutto quello che serve per tracciare il tuo business: clienti, progetti, task, meeting, pagamenti e costi.
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+**Compri, installi, customizzi.**
 
-### What you'll need
+Invece di codare per settimane un gestionale da zero, parti da una base solida già funzionante e la adatti alle tue esigenze.
 
-- [Node.js](https://nodejs.org/en/download/) version 20.0 or above:
-  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
+**Risparmia ~40 ore di sviluppo.**
 
-## Generate a new site
+---
 
-Generate a new Docusaurus site using the **classic template**.
+## ✨ Cosa trovi nel codice
 
-The classic template will automatically be added to your project after you run the command:
+### Moduli inclusi
+- **Clienti** - CRUD completo con relazioni
+- **Progetti** - Gestione con tracking profitti (revenue vs costs)
+- **Task** - Sistema task con priorità e stati
+- **Meeting** - Calendario con note
+- **Pagamenti** - Entrate con upload fatture
+- **Costi** - Uscite con upload ricevute
+- **Documenti** - Sistema flessibile con labels riutilizzabili
 
+### Features già implementate
+- 🌓 Dark mode funzionante
+- 🌍 Multi-lingua (IT/EN)
+- 📱 Responsive
+- 🔐 Auth con Laravel Breeze
+- 🎨 UI con Tailwind + Alpine.js
+
+---
+
+## 🏗️ Stack
+
+- Laravel 12
+- Alpine.js
+- Tailwind CSS
+- Blade components
+- MySQL/PostgreSQL/SQLite
+
+---
+
+## 🎯 Per chi è pensato
+
+Questo template è perfetto se:
+
+- Sei un **indie dev/freelancer** e vuoi un gestionale personale
+- Vuoi **imparare** un'architettura Laravel pulita
+- Devi fare un **gestionale custom** per un cliente e vuoi partire veloce
+- Stai costruendo una **SaaS** e ti serve una base solida
+
+**Non è un prodotto finito.** È codice da cui partire.
+
+---
+
+## 🚀 Quick start
 ```bash
-npm init docusaurus@latest my-website classic
+git clone [repo] indiedesk
+cd indiedesk
+
+composer install
+npm install
+
+cp .env.example .env
+php artisan key:generate
+
+php artisan migrate --seed
+
+php artisan serve
+npm run dev
 ```
 
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
+Login: credenziali di default nel seeder.
 
-The command also installs all necessary dependencies you need to run Docusaurus.
+---
 
-## Start your site
+## 📚 Come leggere questa documentazione
 
-Run the development server:
+**NON è un tutorial Laravel.**
 
-```bash
-cd my-website
-npm run start
-```
+Ti dice:
+- ✅ **Dove stanno i file** (Controllers, Services, Views)
+- ✅ **Come è organizzato** il codice
+- ✅ **Come modificare** (aggiungere campi, nuovi moduli)
+- ✅ **Pattern usati** (Service layer, Query classes)
 
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
+### Struttura
 
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
+- **Guida Rapida** → Installazione e setup
+- **Architettura** → Come funziona il codice
+- **Moduli** → Ogni modulo spiegato (backend + frontend)
+- **Personalizzazione** → Guide pratiche per modifiche
+- **Deploy** → Messa online
 
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.
+---
+
+## 💡 Filosofia
+
+IndieDesk segue questi principi:
+
+✅ **Controllers snelli** - Logica nei Services  
+✅ **Pattern consistenti** - Ogni modulo funziona uguale  
+✅ **Codice pulito** - Facile da leggere e modificare  
+✅ **Laravel best practices** - Niente magie, solo convenzioni  
+
+**È un punto di partenza**, non un framework rigido.
+
+Prendi quello che ti serve, butta quello che non serve, modifica come vuoi.
+
+---
+
+## 🛠️ Prossimi step
+
+**Nuovo a IndieDesk?** → Vai a [Installazione](/docs/getting-started/installation)
+
+**Vuoi capire l'architettura?** → Leggi [Architettura](/docs/architecture/overview)
+
+**Vuoi modificare qualcosa?** → Vai a [Personalizzazione](/docs/customization/adding-fields)
+
+---
+
+**Let's build.** 🚀
