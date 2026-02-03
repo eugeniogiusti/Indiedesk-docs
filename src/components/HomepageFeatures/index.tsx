@@ -11,32 +11,32 @@ type FeatureItem = {
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Easy to Use',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    title: 'Project-first workflow',
+    Svg: require('@site/static/img/undraw_in-the-zone_07y7.svg').default,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        Everything in IndieDesk revolves around projects:
+        tasks, clients, expenses and notes in one place.
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    title: 'Built for indie developers',
+    Svg: require('@site/static/img/undraw_mobile-development_tjxm.svg').default,
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        A Laravel-based workspace designed for solo devs.
+        Clean structure, no bloat, easy to customize.
       </>
     ),
   },
   {
-    title: 'Powered by React',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    title: 'Self-hosted & yours',
+    Svg: require('@site/static/img/undraw_programming_j1zw.svg').default,
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        Run IndieDesk on your own server on locally.
+        Your data, your rules. No subscriptions, no lock-in.
       </>
     ),
   },

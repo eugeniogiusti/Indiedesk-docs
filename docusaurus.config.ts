@@ -3,8 +3,8 @@ import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
-  title: 'Laravel Business Template',
-  tagline: 'Template Laravel 12 per Indie Developers',
+  title: 'IndieDesk',
+  tagline: 'A self-hosted Laravel 12 workspace for indie developers',
   favicon: 'img/favicon.ico',
 
   future: {
@@ -45,7 +45,7 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: 'Laravel Business Template',
+      title: 'Home',
       logo: {
         alt: 'Laravel Business Template',
         src: 'img/logo.svg',
@@ -55,7 +55,7 @@ const config: Config = {
           type: 'docSidebar',
           sidebarId: 'docsSidebar',
           position: 'left',
-          label: 'Documentazione',
+          label: 'Docs',
         },
         {
           type: 'localeDropdown',
@@ -65,7 +65,7 @@ const config: Config = {
     },
     footer: {
       style: 'dark',
-      copyright: `Copyright © ${new Date().getFullYear()} Laravel Business Template`,
+      copyright: `© ${new Date().getFullYear()} IndieDesk. Built by an indie developer.`,
     },
     prism: {
       theme: prismThemes.github,
