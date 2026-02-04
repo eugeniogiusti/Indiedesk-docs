@@ -5,16 +5,14 @@ const sidebars: SidebarsConfig = {
     'intro',
     {
       type: 'category',
-      label: 'Guida Rapida',
+      label: 'Quick guide',
       items: [
-        'getting-started/installation',
         'getting-started/configuration',
-        'getting-started/seeding',
       ],
     },
     {
       type: 'category',
-      label: 'Architettura',
+      label: 'Architecture',
       items: [
         'architecture/overview',
         'architecture/backend-patterns',
@@ -24,7 +22,7 @@ const sidebars: SidebarsConfig = {
     
 {
   type: 'category',
-  label: 'Moduli',
+  label: 'Modules',
   items: [
     {
       type: 'category',
@@ -83,6 +81,46 @@ const sidebars: SidebarsConfig = {
         'modules/documents/frontend',
       ],
     },
+
+    {
+      type: 'category',
+      label: 'Calendar',
+      items: [
+        'modules/calendar/backend',
+        'modules/calendar/frontend',
+      ],
+    },
+
+    {
+      type: 'category',
+      label: 'Stats',
+      items: [
+        'modules/stats/backend',
+        'modules/stats/frontend',
+      ],
+    },
+
+
+    {
+      type: 'category',
+      label: 'Company',
+      items: [
+        'modules/company/backend',
+        'modules/company/frontend',
+      ],
+    },
+
+
+    {
+      type: 'category',
+      label: 'Labels',
+      items: [
+        'modules/labels/backend',
+        'modules/labels/frontend',
+      ],
+    },
+    
+
   ],
 },
 
@@ -93,14 +131,6 @@ const sidebars: SidebarsConfig = {
         'customization/adding-fields',
         'customization/creating-modules',
         'customization/styling',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'Deploy',
-      items: [
-        'deployment/production',
-        'deployment/optimization',
       ],
     },
   ],
