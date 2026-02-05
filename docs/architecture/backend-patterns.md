@@ -12,7 +12,6 @@ Questa sezione descrive i pattern backend usati nel progetto (Laravel).
 - Esempi:
 - `app/Http/Requests/Tasks/StoreTaskRequest.php`
 - `app/Http/Requests/Tasks/UpdateTaskRequest.php`
-- Le regole riflettono enumerazioni del model (es. `Task::STATUSES`).
 
 **3. Query object per lettura e filtri**
 - Le query sono separate e riusabili.

@@ -121,18 +121,31 @@ const sidebars: SidebarsConfig = {
     },
     
 
-  ],
-},
 
     {
       type: 'category',
-      label: 'Personalizzazione',
+      label: '2fa',
       items: [
-        'customization/adding-fields',
-        'customization/creating-modules',
-        'customization/styling',
+        'modules/2fa/backend',
+        'modules/2fa/frontend',
       ],
     },
+
+    {
+      type: 'category',
+      label: 'AI',
+      items: [
+        'modules/AI/backend',
+        'modules/AI/frontend',
+        'modules/AI/laravelboost',
+      ],
+    },
+    
+
+  ],
+},
+
+
   ],
 };
 

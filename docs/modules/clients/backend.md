@@ -66,12 +66,8 @@ Il model `Client` si trova in `app/Models/Client.php`.
 
 ### Campi
 
-Il model include campi per:
-- Dati base (nome, email, stato)
-- Contatti (telefono, PEC, P.IVA)
-- Fatturazione (indirizzo, città, CAP, codice SDI)
-- Web/Social (sito web, LinkedIn)
-- Note
+I campi includono dati anagrafici, contatti, fatturazione e informazioni web.
+La validazione è gestita tramite Form Request dedicate.
 
 ## Form Requests
 
@@ -105,13 +101,9 @@ Gestisce la lista clienti con:
 
 ### ClientShowQuery
 
-Carica i dati correlati per la pagina dettaglio:
-- Ultimi 5 progetti del cliente
-- Ultimi 5 task (attraverso i progetti)
-- Ultimi 5 meetings
-- Ultimi 5 pagamenti
-- Ultimi 5 costi
-- Ultimi 5 documenti
+ClientShowQuery carica i principali dati correlati del cliente
+(progetti, task, meeting, pagamenti, costi, documenti),
+utilizzando eager loading e limiti per evitare overfetching.
 
 ### ClientStatsQuery
 
@@ -121,24 +113,3 @@ Calcola le statistiche per le card nella pagina index:
 - Nuovi clienti questo mese
 - Clienti convertiti questo mese
 - Percentuali
-
-## Estendere il Modulo
-
-### Aggiungere un Campo
-
-1. Crea migration: `php artisan make:migration add_campo_to_clients_table`
-2. Aggiungi a `$fillable` nel Model
-3. Aggiungi regola di validazione nei Form Requests
-4. Aggiorna le views
-
-### Aggiungere una Relazione
-
-Aggiungi il metodo nel Model `Client.php` e usa eager loading nelle Query Classes se necessario.
-
-### Aggiungere uno Scope
-
-Aggiungi un metodo `scopeNome($query)` nel Model per creare filtri riutilizzabili.
-
-### Modificare i Filtri
-
-Modifica `ClientIndexQuery.php` per aggiungere nuovi parametri di filtro o ricerca.

@@ -62,12 +62,24 @@ IndieDesk è costruito utilizzando:
 - Tailwind CSS
 - MySQL / SQLite
 
-Niente magia, niente layer nascosti:  
-solo una struttura Laravel pulita e leggibile.
+<div
+  style={{
+    display: 'flex',
+    gap: '24px',
+    alignItems: 'center',
+    margin: '24px 0',
+    flexWrap: 'wrap'
+  }}
+>
+  <img src="/img/stack/laravel.png" alt="Laravel" height="60" />
+  <img src="/img/stack/alpine.svg" alt="Alpine.js" height="40" />
+  <img src="/img/stack/tailwind.png" alt="Tailwind CSS" height="60" />
+</div>
+
 
 ---
 
 ## Come iniziare
 
-Per iniziare, segui la guida di installazione e configura IndieDesk in locale.
+Per iniziare nel tuo ambiente di sviluppo locale, segui la sezione successiva.
 
