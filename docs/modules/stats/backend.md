@@ -1,6 +1,6 @@
 # Backend
 
-Il modulo Statistics (cartella docs `stats`) gestisce metriche finanziarie e operative per periodo, trend grafico e export PDF.
+Il modulo Statistics gestisce metriche finanziarie e operative per periodo, trend grafico e export PDF.
 
 ## Struttura File
 
