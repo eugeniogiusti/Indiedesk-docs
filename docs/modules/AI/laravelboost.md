@@ -1,5 +1,5 @@
 ---
-title: Laravel Boost
+title: laravel boost
 sidebar_position: 60
 ---
 
@@ -9,9 +9,6 @@ sidebar_position: 60
 Laravel Boost è un tool di sviluppo (dev-only) già incluso nel template come dipendenza di sviluppo (--dev) che permette a strumenti AI compatibili di accedere al contesto reale del progetto Laravel (rotte, schema database, configurazioni, log).
 
 Serve a evitare suggerimenti AI generici e ottenere risposte coerenti con la struttura reale del progetto.
-
-Boost non è una feature del template e non influisce sul runtime o sulla produzione.
-
 ---
 
 ## Quando usarlo
@@ -25,13 +22,12 @@ Usa Boost se:
 ## Quando NON serve
 Boost non è necessario se:
 - non utilizzi strumenti AI
-- usi solo GitHub Copilot (attualmente non supporta MCP)
 - stai lavorando in ambienti di staging o produzione
 
 ---
 
 ## Avvio del server Boost
-Per avviare il server MCP locale:
+Per runnare il server MCP locale avvia in un terminale dentro il progetto:
 
 php artisan boost:start
 
@@ -51,4 +47,3 @@ Laravel Boost funziona con strumenti che supportano il Model Context Protocol (M
 
 ## Risorse utili
 - [Documentazione ufficiale Laravel Boost](https://laravel.com/docs/12.x/boost)
-- [Video ufficiale Laravel su Boost](https://www.youtube.com/watch?v=sUtRcpma8iU)

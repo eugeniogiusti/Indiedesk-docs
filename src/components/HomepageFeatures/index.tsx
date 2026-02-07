@@ -35,7 +35,7 @@ const FeatureList: FeatureItem[] = [
     Svg: require('@site/static/img/undraw_programming_j1zw.svg').default,
     description: (
       <>
-        Run IndieDesk on your own server on locally.
+        Run IndieDesk on your own server or locally.
         Your data, your rules. No subscriptions, no lock-in.
       </>
     ),

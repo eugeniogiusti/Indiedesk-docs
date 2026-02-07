@@ -80,10 +80,24 @@ Il componente gestisce:
 - navigazione a tab
 - dati del form
 
-La comunicazione tra UI e modal segue un approccio **event-driven**:
-- `open-client-modal` per la creazione
-- `edit-client` per la modifica (con payload)
-- `_back` opzionale per gestire il redirect dopo update
+### Comunicazione UI → Modal
+
+I bottoni usano attributi `data-action` e `data-payload` invece di JS inline. Un listener globale in `app.js` intercetta i click e dispatcha eventi che il componente Alpine ascolta.
+
+- **Create**: il bottone ha `data-action="open-client-modal"`
+- **Edit**: il bottone ha `data-action="edit-client"` con `data-payload` contenente i dati del record (serializzati dal metodo `toFormPayload()` del model)
+
+Il componente riceve i dati direttamente nell'evento, senza dover cercare in array.
+
+### Delete con conferma
+
+I form di delete usano `data-confirm` con il messaggio di conferma. Il listener globale intercetta il submit e mostra la conferma nativa.
+
+### Vantaggi
+
+- Solo i campi necessari sono esposti nel DOM
+- Niente JS inline nelle view Blade
+- Logica centralizzata e facile da modificare
 
 ---
 

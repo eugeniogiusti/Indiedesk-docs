@@ -40,6 +40,20 @@ Questa sezione descrive i pattern frontend in Blade e Alpine.
 - Componenti Alpine registrati in `resources/js/app.js`.
 - Esempio: `taskToggle` per aggiornare lo stato task via fetch.
 
+**8. Global Listeners per azioni comuni**
+
+Il file `app.js` contiene listener globali che gestiscono pattern ricorrenti senza JS inline.
+
+- **data-action**: I bottoni usano `data-action="nome-evento"` e opzionalmente `data-payload` con dati JSON. Il listener intercetta il click e dispatcha un CustomEvent che il componente Alpine ascolta.
+
+- **data-confirm**: I form di delete usano `data-confirm="messaggio"`. Il listener intercetta il submit e mostra una conferma nativa prima di procedere.
+
+Questo approccio centralizza la logica, elimina JS inline dalle view e rende facile modificare il comportamento globalmente (es. sostituire `confirm()` con una modale custom).
+
+**9. Internazionalizzazione (i18n)**
+
+Tutte le stringhe usano il sistema di traduzione Laravel tramite `__('chiave')`. I file di traduzione sono in `lang/` organizzati per lingua e modulo (es. `lang/it/clients.php`, `lang/en/clients.php`). Nessuna stringa è hardcoded nelle view, rendendo l'app pronta per traduzioni future.
+
 **Naming e coerenza**
 - Prefix `_` per partial riusabili.
 - Cartelle `partials` per show, `index` per index.

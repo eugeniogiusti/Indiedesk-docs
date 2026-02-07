@@ -55,6 +55,7 @@ Il model `Client` si trova in `app/Models/Client.php`.
 - **SoftDeletes** - I clienti eliminati sono recuperabili
 - **Relazione projects** - Un cliente ha molti progetti
 - **Scopes** - `active()`, `leads()`, `archived()` per filtrare per stato
+- **toFormPayload()** - Metodo che ritorna solo `id` + campi `$fillable` per i form di edit, evitando di esporre dati sensibili nel frontend
 
 ### Stati Cliente
 

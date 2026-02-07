@@ -32,8 +32,19 @@ Questa sezione descrive i pattern backend usati nel progetto (Laravel).
 - Per toggle rapide (es. task done), si usano endpoint JSON.
 - Controller ritorna payload con stato aggiornato per Alpine.
 
+**7. Pattern toFormPayload() nei Model**
+
+I model espongono un metodo `toFormPayload()` che ritorna solo i campi sicuri per i form frontend: `id` + campi `$fillable`. Questo evita di esporre dati sensibili o relazioni non necessarie nel DOM.
+
+Per campi speciali (date, relazioni many-to-many) il metodo può formattare o aggiungere dati extra. Il metodo accetta un parametro opzionale per estendere il payload.
+
+**8. Services per logica di dominio**
+
+La business logic complessa è estratta in classi Service dentro `app/Services/`, organizzate per dominio (Invoices, Receipts, TwoFactor, etc.). I controller restano snelli delegando le operazioni ai service. Questo rende la logica testabile e riusabile.
+
 **Naming e organizzazione**
-- Controller per modulo in sottocartelle: `app/Http/Controllers/Tasks`.
+- Controller per modulo in sottocartelle: `app/Http/Controllers/<Modulo>`.
 - Query per modulo in `app/Queries/<Modulo>`.
 - Request per modulo in `app/Http/Requests/<Modulo>`.
+- Services per dominio in `app/Services/<Dominio>`.
 

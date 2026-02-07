@@ -22,3 +22,16 @@
 
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+.footer {
+  padding: 0.5rem 0;
+}
+
+.footer__links {
+  margin-bottom: 0.25rem;
+}
+
+.footer__copyright {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}

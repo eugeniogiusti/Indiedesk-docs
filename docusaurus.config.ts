@@ -4,7 +4,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
   title: 'IndieDesk',
-  tagline: 'A self-hosted Laravel 12 workspace for indie developers',
+  tagline:'A self-hosted workspace for indie developers, built on Laravel 12',
   favicon: 'img/favicon.ico',
 
   future: {
@@ -63,10 +63,26 @@ const config: Config = {
         },
       ],
     },
-    footer: {
-      style: 'dark',
-      copyright: `© ${new Date().getFullYear()} IndieDesk. Built by an indie developer.`,
+    
+footer: {
+  style: 'dark',
+  links: [
+    {
+      items: [
+        {
+          label: 'Website',
+          href: 'http://dark.test/index.php',
+        },
+        {
+          label: 'Buy IndieDesk',
+          href: 'https://gumroad.com/l/indiedesk',
+        },
+      ],
     },
+  ],
+  copyright: `© ${new Date().getFullYear()} IndieDesk. Built by an indie developer.`,
+},
+
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
