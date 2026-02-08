@@ -65,6 +65,20 @@ const sidebars: SidebarsConfig = {
       ],
     },
 
+
+
+    {
+      type: 'category',
+      label: 'Invoice',
+      items: [
+        'modules/invoice/backend',
+        'modules/invoice/frontend',
+      ],
+    },
+
+
+
+
     {
       type: 'category',
       label: 'Costs',
@@ -73,6 +87,18 @@ const sidebars: SidebarsConfig = {
         'modules/costs/frontend',
       ],
     },
+
+
+    {
+      type: 'category',
+      label: 'Receipts',
+      items: [
+        'modules/receipts/backend',
+        'modules/receipts/frontend',
+      ],
+    },
+
+    
     {
       type: 'category',
       label: 'Documents',
@@ -82,14 +108,6 @@ const sidebars: SidebarsConfig = {
       ],
     },
 
-    {
-      type: 'category',
-      label: 'Calendar',
-      items: [
-        'modules/calendar/backend',
-        'modules/calendar/frontend',
-      ],
-    },
 
     {
       type: 'category',
@@ -97,6 +115,26 @@ const sidebars: SidebarsConfig = {
       items: [
         'modules/stats/backend',
         'modules/stats/frontend',
+      ],
+    },
+
+    {
+      type: 'category',
+      label: 'Dashboard',
+      items: [
+        'modules/dashboard/backend',
+        'modules/dashboard/frontend',
+      ],
+    },
+
+
+
+    {
+      type: 'category',
+      label: 'Calendar',
+      items: [
+        'modules/calendar/backend',
+        'modules/calendar/frontend',
       ],
     },
 
@@ -146,6 +184,7 @@ const sidebars: SidebarsConfig = {
 },
 
 
+    'changelog',
   ],
 };
 

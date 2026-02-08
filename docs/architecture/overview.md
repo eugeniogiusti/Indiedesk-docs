@@ -1,4 +1,4 @@
-# Architettura - Overview
+# Architecture - Overview
 
 Questa documentazione descrive i pattern architetturali del progetto Laravel e come backend e frontend collaborano. Gli esempi si basano sul modulo Tasks e sulla pagina Project Show con tab.
 

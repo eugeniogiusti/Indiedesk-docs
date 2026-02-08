@@ -2,7 +2,7 @@
 sidebar_position: 2
 ---
 
-# Configurazione
+# Configuration
 
 IndieDesk è pensato per essere avviato rapidamente in ambiente locale.  
 Questa guida copre solo l’installazione con [Laravel Herd](https://herd.laravel.com/).
