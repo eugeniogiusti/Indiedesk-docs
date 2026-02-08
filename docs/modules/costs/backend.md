@@ -123,8 +123,8 @@ Gestisce lista costi globale con:
 
 ### CostStatsQuery
 
-Calcola statistiche per card index:
-- `total_all_time`
-- `total_this_month`
-- `total_this_year`
-- `recurring_monthly` (solo costi ricorrenti mensili)
+Calcola statistiche per card index filtrate per la valuta di default da `BusinessSettings::current()->default_currency`:
+- `total_all_time` - totale costi nella valuta di default
+- `total_this_month` - totale mese corrente
+- `total_this_year` - totale anno corrente
+- `recurring_monthly` - solo costi ricorrenti mensili

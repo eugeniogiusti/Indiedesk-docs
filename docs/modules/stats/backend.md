@@ -50,14 +50,13 @@ app/
 
 ### FinancialStatsQuery
 
-Calcola KPI economici nel periodo selezionato:
+Calcola KPI economici nel periodo selezionato, filtrati per la valuta di default da `BusinessSettings::current()->default_currency`:
 - `payments` (incassi pagati)
 - `costs`
 - `profit` (`payments - costs`)
 - `pending` (pagamenti non incassati)
 
 Note implementative:
-- filtra per valuta `EUR`
 - usa date su `paid_at` per incassi/costi
 - `pending` usa `project.created_at` nel range selezionato
 
@@ -84,13 +83,13 @@ Output:
 
 Note implementative:
 - aggregazioni SQL con `strftime` (SQLite-friendly)
-- filtra pagamenti pagati + valuta `EUR`
+- filtra pagamenti pagati + valuta di default da `BusinessSettings`
 
 ### MonthlyBreakdownQuery
 
-Costruisce tabella annuale mese-per-mese con:
-- `payments`, `costs`, `profit`
-- `projects`, `tasks`, `clients`
+Costruisce tabella annuale mese-per-mese, filtrando i dati finanziari per la valuta di default da `BusinessSettings`:
+- `payments`, `costs`, `profit` (filtrati per valuta)
+- `projects`, `tasks`, `clients` (conteggi assoluti)
 
 Restituisce una `Collection` con 12 righe normalizzate (mesi senza dati inclusi).
 
@@ -105,4 +104,5 @@ Restituisce una `Collection` con 12 righe normalizzate (mesi senza dati inclusi)
 ## Note tecniche
 
 - Le query statistiche sono centralizzate in classi dedicate (pattern Query Classes + orchestrator).
-- Alcune query finanziarie usano `EUR` hardcoded; il PDF invece espone simbolo da `BusinessSettings`.
+- Tutte le query finanziarie leggono la valuta da `BusinessSettings::current()->default_currency` (unica fonte di verita).
+- Il PDF espone il simbolo valuta tramite la costante `BusinessSettings::CURRENCIES`.

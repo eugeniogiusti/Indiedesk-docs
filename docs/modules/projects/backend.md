@@ -151,7 +151,7 @@ Calcola statistiche della index:
 
 ### ProjectProfitStatsQuery
 
-Calcola KPI economici del singolo progetto (EUR):
+Calcola KPI economici del singolo progetto, filtrati per la valuta di default da `BusinessSettings::current()->default_currency`:
 - totale pagamenti incassati
 - totale costi
 - profitto assoluto
