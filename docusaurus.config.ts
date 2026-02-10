@@ -11,17 +11,17 @@ const config: Config = {
     v4: true,
   },
 
-  url: 'https://your-docusaurus-site.example.com',
+  url: 'https://docs.indiedesk.link',
   baseUrl: '/',
 
-  organizationName: 'your-name',
-  projectName: 'laravel-business-template',
+  organizationName: 'eugeniogiusti',
+  projectName: 'documentazione-template',
 
   onBrokenLinks: 'throw',
 
   i18n: {
-    defaultLocale: 'it',
-    locales: ['it'],
+    defaultLocale: 'en',
+    locales: ['en'],
   },
 
   presets: [
@@ -47,7 +47,7 @@ const config: Config = {
     navbar: {
       title: 'Home',
       logo: {
-        alt: 'Laravel Business Template',
+        alt: 'Laravel Business Template for Indie developers',
         src: 'img/logo.svg',
       },
       items: [
@@ -71,11 +71,11 @@ footer: {
       items: [
         {
           label: 'Website',
-          href: 'http://dark.test/index.php',
+          href: 'http://indiedesk.link',
         },
         {
           label: 'Buy IndieDesk',
-          href: 'https://gumroad.com/l/indiedesk',
+          href: 'https://eugeniogiusti.gumroad.com/l/indiedesk',
         },
       ],
     },
