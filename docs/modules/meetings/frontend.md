@@ -1,8 +1,8 @@
 # Frontend
 
-Il modulo Meetings usa il pattern **Partial Views** per mantenere index globale e sezione meetings nella show progetto modulari e riusabili.
+The Meetings module uses the **Partial Views** pattern to keep the global index and meetings section in the project show modular and reusable.
 
-## Struttura File
+## File Structure
 
 ```
 resources/views/meetings/
@@ -43,54 +43,54 @@ resources/js/components/
 └── meetingModal.js
 ```
 
-## Pattern Frontend
+## Frontend Pattern
 
 ### Orchestrator Views
 
-La vista `meetings/index.blade.php` funziona da orchestrator:
-- include header, statistiche, filtri
-- sceglie table o empty-state in base ai risultati
+The `meetings/index.blade.php` view acts as an orchestrator:
+- includes header, statistics, filters
+- chooses table or empty-state based on results
 
-### Partial riusabili
+### Reusable Partials
 
-Il modulo separa i due contesti UI:
-- **Index globale meetings**: partial in `meetings/index/*`
-- **Tab meetings della show progetto**: partial in `meetings/partials/*`
+The module separates the two UI contexts:
+- **Global meetings index**: partials in `meetings/index/*`
+- **Meetings tab of the project show**: partials in `meetings/partials/*`
 
-`meetings/partials/_meeting-table.blade.php` è la tabella riusabile usata nella show progetto.
+`meetings/partials/_meeting-table.blade.php` is the reusable table used in the project show.
 
 ## Modal (Alpine.js)
 
-Il form create/edit meeting è gestito in:
+The create/edit meeting form is managed in:
 - view: `meetings/partials/_modal-form.blade.php`
-- componente: `resources/js/components/meetingModal.js`
+- component: `resources/js/components/meetingModal.js`
 
-Flusso:
-- apertura create con evento `open-meeting-modal`
-- apertura edit con evento `edit-meeting` (payload record)
-- submit su route `meetings.store` / `meetings.update`
+Flow:
+- open create with `open-meeting-modal` event
+- open edit with `edit-meeting` event (record payload)
+- submit to route `meetings.store` / `meetings.update`
 
-Il componente normalizza il datetime per `input[type=datetime-local]` tramite `formatDateTimeForInput()`.
+The component normalizes the datetime for `input[type=datetime-local]` via `formatDateTimeForInput()`.
 
-## Azioni in tabella show progetto
+## Actions in Project Show Table
 
-Nella tabella `meetings/partials/_meeting-table.blade.php` sono disponibili:
-- link Google Calendar (se presente)
-- edit meeting (dispatch evento con payload)
-- delete meeting con conferma
+In the `meetings/partials/_meeting-table.blade.php` table the following are available:
+- Google Calendar link (if present)
+- edit meeting (dispatches event with payload)
+- delete meeting with confirmation
 
-## Wiring JS globale
+## Global JS Wiring
 
-Registrazione componente in `resources/js/app.js`:
+Component registration in `resources/js/app.js`:
 - `window.meetingModal = meetingModal`
 
-Il listener globale `data-action` in `app.js` dispatcha gli eventi custom usati dal modal.
+The global `data-action` listener in `app.js` dispatches the custom events used by the modal.
 
-## Internazionalizzazione
+## Internationalization
 
-Le stringhe frontend meetings usano il file:
+Meetings frontend strings use the file:
 - `lang/*/meetings.php`
 
 ## Dark Mode
 
-Il modulo supporta dark mode tramite classi Tailwind `dark:*`, coerente con il layout applicativo.
+The module supports dark mode via Tailwind `dark:*` classes, consistent with the application layout.

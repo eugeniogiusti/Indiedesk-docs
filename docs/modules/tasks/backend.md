@@ -1,8 +1,8 @@
 # Backend
 
-Il modulo Tasks gestisce task operativi dei progetti con index globale (filtri + statistiche) e CRUD nel contesto progetto.
+The Tasks module manages project operational tasks with a global index (filters + statistics) and CRUD within the project context.
 
-## Struttura File
+## File Structure
 
 ```
 app/
@@ -21,106 +21,106 @@ app/
 
 ## Routes
 
-| Metodo | URI | Azione | Descrizione |
+| Method | URI | Action | Description |
 |--------|-----|--------|-------------|
-| GET | `/tasks` | index | Lista task globale paginata con filtri |
-| POST | `/projects/{project}/tasks` | store | Crea task nel progetto |
-| PUT | `/projects/{project}/tasks/{task}` | update | Aggiorna task del progetto |
-| POST | `/projects/{project}/tasks/{task}/toggle-done` | toggleDone | Toggle rapido stato `todo/done` (AJAX) |
-| DELETE | `/projects/{project}/tasks/{task}` | destroy | Elimina task |
+| GET | `/tasks` | index | Global paginated task list with filters |
+| POST | `/projects/{project}/tasks` | store | Create task in the project |
+| PUT | `/projects/{project}/tasks/{task}` | update | Update project task |
+| POST | `/projects/{project}/tasks/{task}/toggle-done` | toggleDone | Quick `todo/done` status toggle (AJAX) |
+| DELETE | `/projects/{project}/tasks/{task}` | destroy | Delete task |
 
 ## Controller
 
-Il `TaskController` usa il pattern **Query Classes** per separare query/filter logic dal controller.
+The `TaskController` uses the **Query Classes** pattern to separate query/filter logic from the controller.
 
-### Metodi
+### Methods
 
-- **index()** - Usa `TaskIndexQuery` per lista paginata e `TaskStatsQuery` per card statistiche
-- **store()** - Valida con `StoreTaskRequest`, crea task nel progetto e redirect su `projects.show?tab=tasks`
-- **update()** - Valida con `UpdateTaskRequest`, aggiorna task e redirect su tab tasks della show progetto
-- **toggleDone()** - Toggle stato rapido (`done` ↔ `todo`) e ritorna JSON (`status`, `isDone`)
-- **destroy()** - Elimina task e ritorna su tab tasks della show progetto
+- **index()** - Uses `TaskIndexQuery` for paginated list and `TaskStatsQuery` for statistics cards
+- **store()** - Validates with `StoreTaskRequest`, creates task in the project and redirects to `projects.show?tab=tasks`
+- **update()** - Validates with `UpdateTaskRequest`, updates task and redirects to the tasks tab of the project show
+- **toggleDone()** - Quick status toggle (`done` ↔ `todo`) and returns JSON (`status`, `isDone`)
+- **destroy()** - Deletes task and returns to the tasks tab of the project show
 
 ## Model
 
-Il model `Task` si trova in `app/Models/Task.php`.
+The `Task` model is located in `app/Models/Task.php`.
 
-### Caratteristiche
+### Features
 
-- **Relazione project** - ogni task appartiene a un progetto
-- **Costanti dominio** - `TYPES`, `STATUSES`, `PRIORITIES` usate anche in validazione
+- **project relationship** - each task belongs to a project
+- **Domain constants** - `TYPES`, `STATUSES`, `PRIORITIES` also used in validation
 - **Scopes** - `status()`, `type()`, `priority()`, `overdue()`, `open()`
-- **Helper stato** - `isDone()`, `isBlocked()`, `isOverdue()`
-- **CalendarEventable** - supporto evento calendario quando `due_date` è presente
-- **toFormPayload()** - payload edit con `due_date` normalizzata `Y-m-d`
+- **Status helpers** - `isDone()`, `isBlocked()`, `isOverdue()`
+- **CalendarEventable** - calendar event support when `due_date` is present
+- **toFormPayload()** - edit payload with `due_date` normalized to `Y-m-d`
 
-### Status Task
+### Task Statuses
 
-| Stato | Descrizione |
-|-------|-------------|
-| `todo` | Da fare |
-| `in_progress` | In lavorazione |
-| `blocked` | Bloccata |
-| `done` | Completata |
+| Status | Description |
+|--------|-------------|
+| `todo` | To do |
+| `in_progress` | In progress |
+| `blocked` | Blocked |
+| `done` | Done |
 
-### Tipi Task
+### Task Types
 
-| Tipo | Descrizione |
+| Type | Description |
 |------|-------------|
-| `feature` | Sviluppo funzionalità |
-| `bug` | Correzione bug |
-| `infra` | Infrastruttura |
+| `feature` | Feature development |
+| `bug` | Bug fix |
+| `infra` | Infrastructure |
 | `refactor` | Refactoring |
-| `research` | Ricerca/analisi |
-| `administrative` | Attività amministrativa |
+| `research` | Research/analysis |
+| `administrative` | Administrative task |
 
-### Priorità
+### Priorities
 
-| Priorità | Descrizione |
+| Priority | Description |
 |----------|-------------|
-| `low` | Bassa |
-| `medium` | Media |
-| `high` | Alta |
+| `low` | Low |
+| `medium` | Medium |
+| `high` | High |
 
 ## Form Requests
 
-Validazione gestita da:
+Validation handled by:
 
-- **StoreTaskRequest** - creazione task
-- **UpdateTaskRequest** - modifica task
+- **StoreTaskRequest** - task creation
+- **UpdateTaskRequest** - task update
 
-### Campi obbligatori
+### Required Fields
 
-- `title` - titolo task
-- `type` - tipo (da `Task::TYPES`)
-- `status` - stato (da `Task::STATUSES`)
+- `title` - task title
+- `type` - type (from `Task::TYPES`)
+- `status` - status (from `Task::STATUSES`)
 
-### Campi opzionali
+### Optional Fields
 
-- `description` - descrizione testo
-- `priority` - priorità (da `Task::PRIORITIES`)
-- `due_date` - data scadenza
-- `order` - ordinamento manuale
+- `description` - text description
+- `priority` - priority (from `Task::PRIORITIES`)
+- `due_date` - due date
+- `order` - manual ordering
 
-Nota differenza: in `StoreTaskRequest` la `due_date` richiede `after_or_equal:today`, mentre in `UpdateTaskRequest` è solo `date`.
+Note difference: in `StoreTaskRequest` `due_date` requires `after_or_equal:today`, while in `UpdateTaskRequest` it is only `date`.
 
 ## Query Classes
 
-Il modulo usa il pattern **Query Classes** per tenere la logica query fuori dal controller.
+The module uses the **Query Classes** pattern to keep query logic out of the controller.
 
 ### TaskIndexQuery
 
-Gestisce lista task globale con:
-- paginazione (20)
-- eager loading progetto
-- filtri `project_id`, `status`, `type`, `priority`
-- ricerca su titolo, descrizione, nome progetto
-- ordinamento per `order`, poi `created_at desc`
+Manages the global task list with:
+- pagination (20)
+- eager loading project
+- filters `project_id`, `status`, `type`, `priority`
+- search on title, description, project name
+- sorting by `order`, then `created_at desc`
 
 ### TaskStatsQuery
 
-Calcola statistiche per card index:
+Calculates statistics for index cards:
 - `todo`
 - `in_progress`
 - `blocked`
-- `bugs_open` (`type=bug` + scope `open()`)
+- `bugs_open` (`type=bug` + `open()` scope)

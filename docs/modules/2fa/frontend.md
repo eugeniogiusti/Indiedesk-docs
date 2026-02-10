@@ -1,8 +1,8 @@
 # Frontend
 
-Il modulo 2FA e distribuito tra pagina profilo (setup/gestione) e pagina challenge login.
+The 2FA module is distributed between the profile page (setup/management) and the login challenge page.
 
-## Struttura File
+## File Structure
 
 ```
 resources/views/
@@ -20,73 +20,73 @@ resources/views/
             └── _recovery-codes.blade.php
 ```
 
-## Pattern Frontend
+## Frontend Pattern
 
-### Entry points UI
+### UI Entry Points
 
-- `profile/edit.blade.php`: sezione `#two-factor` dentro pagina profilo
-- `auth/two-factor-challenge.blade.php`: challenge durante login
-- `profile/trusted-devices.blade.php`: gestione device fidati
+- `profile/edit.blade.php`: `#two-factor` section inside the profile page
+- `auth/two-factor-challenge.blade.php`: challenge during login
+- `profile/trusted-devices.blade.php`: trusted device management
 
-### Orchestrator profilo
+### Profile Orchestrator
 
-`profile/partials/two-factor-authentication-form.blade.php` decide quale stato visualizzare:
+`profile/partials/two-factor-authentication-form.blade.php` decides which state to display:
 
-- **2FA attivo** -> include `_enabled-status`
-- **setup in corso** (`session('2fa_secret')`) -> include `_setup-qr`
-- **2FA disattivo** -> include `_disabled-status`
+- **2FA active** -> includes `_enabled-status`
+- **setup in progress** (`session('2fa_secret')`) -> includes `_setup-qr`
+- **2FA disabled** -> includes `_disabled-status`
 
-Gestisce anche:
-- flash status (`two-factor-enabled`, `two-factor-disabled`, ecc.)
-- visualizzazione one-shot recovery codes (`session('recovery_codes')`)
+It also handles:
+- flash status (`two-factor-enabled`, `two-factor-disabled`, etc.)
+- one-shot display of recovery codes (`session('recovery_codes')`)
 
-## Viste principali
+## Main Views
 
 ### `auth/two-factor-challenge.blade.php`
 
-- form challenge verso `2fa.verify`
-- toggle Alpine locale (`x-data`) tra input OTP e recovery code
-- checkbox `remember_device` per salvare device trusted
+- challenge form targeting `2fa.verify`
+- local Alpine toggle (`x-data`) between OTP input and recovery code
+- `remember_device` checkbox to save device as trusted
 
 ### `_setup-qr.blade.php`
 
-- genera QR inline con `Google2FAQRCode`
-- mostra secret manuale fallback
-- form conferma OTP verso `two-factor.confirm`
-- pulsante annulla setup verso `two-factor.cancel`
+- generates inline QR with `Google2FAQRCode`
+- shows manual secret fallback
+- OTP confirmation form targeting `two-factor.confirm`
+- cancel setup button targeting `two-factor.cancel`
 
 ### `_enabled-status.blade.php`
 
-- mostra data attivazione 2FA
-- form disattivazione con password verso `two-factor.disable`
-- link gestione trusted devices
+- shows 2FA activation date
+- deactivation form with password targeting `two-factor.disable`
+- trusted devices management link
 
 ### `_disabled-status.blade.php`
 
-- CTA abilita 2FA verso `two-factor.enable`
+- CTA to enable 2FA targeting `two-factor.enable`
 
 ### `profile/trusted-devices.blade.php`
 
-- lista paginata device trusted
-- badge device corrente
-- azioni revoke singolo / revoke all
-- supporto `data-confirm` su revoke all
+- paginated list of trusted devices
+- current device badge
+- revoke single / revoke all actions
+- `data-confirm` support on revoke all
 
-## Interazioni UX
+## UX Interactions
 
-- challenge login supporta fallback recovery code senza cambiare pagina
-- setup profilo mostra QR e codice manuale nello stesso step
-- recovery codes sono mostrati una volta sola dopo enable
-- trusted devices mostrano metadati utili (nome device, IP, data aggiunta)
+- login challenge supports recovery code fallback without changing page
+- profile setup shows QR and manual code in the same step
+- recovery codes are shown only once after enabling
+- trusted devices show useful metadata (device name, IP, date added)
 
-## Internazionalizzazione
+## Internationalization
 
-Le stringhe 2FA usano due namespace:
+2FA strings use two namespaces:
 - `twofactor.*`
 - `two_factor.*`
 
-Entrambi sono presenti nei file lingua del progetto.
+Both are present in the project's language files.
 
 ## Dark Mode
 
-Le view del modulo sono compatibili con classi Tailwind `dark:*`.
+The module views are compatible with Tailwind `dark:*` classes.

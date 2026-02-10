@@ -1,18 +1,18 @@
 # Frontend
 
-Il modulo Clients utilizza il pattern **Partial Views** per mantenere le viste modulari,
-leggibili e facilmente manutenibili.
+The Clients module uses the **Partial Views** pattern to keep views modular,
+readable, and easily maintainable.
 
-Le viste principali non contengono markup diretto ma orchestrano l’inclusione delle partial.
+The main views do not contain direct markup but orchestrate the inclusion of partials.
 
 ---
 
-## Struttura File
+## File Structure
 
 ```
 resources/views/clients/
-├── index.blade.php              # Vista lista (orchestrator)
-├── show.blade.php               # Vista dettaglio (orchestrator)
+├── index.blade.php              # List view (orchestrator)
+├── show.blade.php               # Detail view (orchestrator)
 ├── index/
 │   ├── _header.blade.php
 │   ├── _stats-cards.blade.php
@@ -42,12 +42,12 @@ resources/views/clients/
 
 ---
 
-## Pattern Frontend
+## Frontend Pattern
 
 ### Orchestrator Views
 
-Le viste `index.blade.php` e `show.blade.php` fungono da orchestrator:
-includono le partial senza contenere markup diretto.
+The `index.blade.php` and `show.blade.php` views act as orchestrators:
+they include partials without containing direct markup.
 
 ```php
 <x-app-layout>
@@ -63,59 +63,59 @@ includono le partial senza contenere markup diretto.
 
 ### Partial Views
 
-- Le partial usano il prefisso `_`
-- Le sezioni complesse sono organizzate in sottocartelle
-- Le partial possono includere altre partial (nested partials)
+- Partials use the `_` prefix
+- Complex sections are organized in subfolders
+- Partials can include other partials (nested partials)
 
 ---
 
 ## Modal (Alpine.js)
 
-Il form di creazione/modifica è gestito da un componente Alpine.js dedicato
-in `resources/js/components/clientModal.js`, registrato globalmente in `resources/js/app.js`.
+The create/edit form is managed by a dedicated Alpine.js component
+in `resources/js/components/clientModal.js`, registered globally in `resources/js/app.js`.
 
-Il componente gestisce:
-- stato create/edit
-- apertura/chiusura modal
-- navigazione a tab
-- dati del form
+The component handles:
+- create/edit state
+- modal open/close
+- tab navigation
+- form data
 
-### Comunicazione UI → Modal
+### UI → Modal Communication
 
-I bottoni usano attributi `data-action` e `data-payload` invece di JS inline. Un listener globale in `app.js` intercetta i click e dispatcha eventi che il componente Alpine ascolta.
+Buttons use `data-action` and `data-payload` attributes instead of inline JS. A global listener in `app.js` intercepts clicks and dispatches events that the Alpine component listens to.
 
-- **Create**: il bottone ha `data-action="open-client-modal"`
-- **Edit**: il bottone ha `data-action="edit-client"` con `data-payload` contenente i dati del record (serializzati dal metodo `toFormPayload()` del model)
+- **Create**: the button has `data-action="open-client-modal"`
+- **Edit**: the button has `data-action="edit-client"` with `data-payload` containing the record data (serialized by the model's `toFormPayload()` method)
 
-Il componente riceve i dati direttamente nell'evento, senza dover cercare in array.
+The component receives data directly in the event, without needing to search through arrays.
 
-### Delete con conferma
+### Delete with Confirmation
 
-I form di delete usano `data-confirm` con il messaggio di conferma. Il listener globale intercetta il submit e mostra la conferma nativa.
+Delete forms use `data-confirm` with the confirmation message. The global listener intercepts the submit and shows the native confirmation dialog.
 
-### Vantaggi
+### Advantages
 
-- Solo i campi necessari sono esposti nel DOM
-- Niente JS inline nelle view Blade
-- Logica centralizzata e facile da modificare
+- Only necessary fields are exposed in the DOM
+- No inline JS in Blade views
+- Centralized and easy-to-modify logic
 
 ---
 
-## Layout Show Page
+## Show Page Layout
 
-La pagina di dettaglio utilizza un layout **sidebar + main content**.
+The detail page uses a **sidebar + main content** layout.
 
-Grid responsive:
+Responsive grid:
 - sidebar: `lg:col-span-1`
-- contenuto principale: `lg:col-span-3`
+- main content: `lg:col-span-3`
 
 ---
 
-## Internazionalizzazione
+## Internationalization
 
-Tutte le stringhe utilizzano il sistema i18n di Laravel.
+All strings use Laravel's i18n system.
 
-I file di traduzione sono separati per modulo:
+Translation files are separated by module:
 - `lang/it/clients.php`
 - `lang/en/clients.php`
 
@@ -123,5 +123,5 @@ I file di traduzione sono separati per modulo:
 
 ## Dark Mode
 
-Il frontend supporta dark mode tramite classi Tailwind (`dark:*`).
-La gestione del tema è centralizzata a livello di layout.
+The frontend supports dark mode via Tailwind classes (`dark:*`).
+Theme management is centralized at the layout level.

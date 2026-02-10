@@ -4,57 +4,57 @@ sidebar_position: 1
 
 # Introduction
 
-IndieDesk è un workspace self-hosted costruito con Laravel 12, pensato per indie developer, freelance e solo founder che vogliono gestire il proprio lavoro in modo ordinato, senza dipendere da strumenti SaaS di terze parti.
+IndieDesk is a self-hosted workspace built with Laravel 12, designed for indie developers, freelancers and solo founders who want to manage their work in an organized way, without relying on third-party SaaS tools.
 
-Il progetto nasce da un’esigenza semplice: avere un unico posto dove tenere sotto controllo progetti, task, clienti e costi, usando tecnologie che conosciamo e controlliamo.
-
----
-
-## Cos’è IndieDesk
-
-IndieDesk è:
-
-- un sistema basato su Laravel, non un SaaS chiuso
-- self-hosted, gira sul tuo server
-- project-centric, tutto ruota attorno ai progetti
-- pensato per essere semplice, estendibile e comprensibile
-
-Il codice è tuo.  
-I dati sono tuoi.  
-Decidi tu fin dove spingerti con le personalizzazioni.
+The project was born from a simple need: having a single place to keep track of projects, tasks, clients and costs, using technologies we know and control.
 
 ---
 
-## Cosa NON è IndieDesk
+## What is IndieDesk
 
-IndieDesk non è:
+IndieDesk is:
 
-- un gestionale SaaS generico
-- un sostituto di Notion
-- una piattaforma enterprise all-in-one
-- uno strumento no-code o low-code
+- a Laravel-based system, not a closed SaaS
+- self-hosted, runs on your server
+- project-centric, everything revolves around projects
+- designed to be simple, extensible and understandable
 
-È un progetto costruito da uno sviluppatore, per sviluppatori.
-
----
-
-## Per chi è IndieDesk
-
-IndieDesk fa per te se:
-
-- sei un indie developer o freelance
-- lavori su più progetti contemporaneamente
-- vuoi tenere insieme task, costi e clienti
-- preferisci Laravel + Blade a tool esterni
-- vuoi avere pieno controllo su flussi e dati
-
-Se ti piace possedere il tuo stack, IndieDesk ti risulterà naturale.
+The code is yours.
+The data is yours.
+You decide how far to go with customizations.
 
 ---
 
-## Stack tecnologico
+## What IndieDesk is NOT
 
-IndieDesk è costruito utilizzando:
+IndieDesk is not:
+
+- a generic SaaS management tool
+- a Notion replacement
+- an enterprise all-in-one platform
+- a no-code or low-code tool
+
+It's a project built by a developer, for developers.
+
+---
+
+## Who is IndieDesk for
+
+IndieDesk is for you if:
+
+- you're an indie developer or freelancer
+- you work on multiple projects at the same time
+- you want to keep tasks, costs and clients together
+- you prefer Laravel + Blade over external tools
+- you want full control over workflows and data
+
+If you like owning your stack, IndieDesk will feel natural.
+
+---
+
+## Tech stack
+
+IndieDesk is built using:
 
 - Laravel 12
 - Blade
@@ -79,7 +79,6 @@ IndieDesk è costruito utilizzando:
 
 ---
 
-## Come iniziare
+## Getting started
 
-Per iniziare nel tuo ambiente di sviluppo locale, segui la sezione successiva.
-
+To get started in your local development environment, follow the next section.

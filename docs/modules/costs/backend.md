@@ -1,8 +1,8 @@
 # Backend
 
-Il modulo Costs gestisce i costi dei progetti con index globale (filtri + statistiche), CRUD nel contesto progetto e integrazione ricevute.
+The Costs module manages project costs with a global index (filters + statistics), CRUD within the project context, and receipt integration.
 
-## Struttura File
+## File Structure
 
 ```
 app/
@@ -21,110 +21,110 @@ app/
 
 ## Routes
 
-| Metodo | URI | Azione | Descrizione |
+| Method | URI | Action | Description |
 |--------|-----|--------|-------------|
-| GET | `/costs` | index | Lista costi globale paginata con filtri |
-| POST | `/projects/{project}/costs` | store | Crea costo nel progetto |
-| PUT | `/projects/{project}/costs/{cost}` | update | Aggiorna costo del progetto |
-| DELETE | `/projects/{project}/costs/{cost}` | destroy | Elimina costo |
+| GET | `/costs` | index | Global paginated cost list with filters |
+| POST | `/projects/{project}/costs` | store | Create cost in the project |
+| PUT | `/projects/{project}/costs/{cost}` | update | Update project cost |
+| DELETE | `/projects/{project}/costs/{cost}` | destroy | Delete cost |
 
-### Integrazione Ricevute
+### Receipt Integration
 
-Le ricevute dei costi passano da route dedicate modulo Receipts:
+Cost receipts go through dedicated Receipt module routes:
 
-| Metodo | URI | Azione | Descrizione |
+| Method | URI | Action | Description |
 |--------|-----|--------|-------------|
-| POST | `/projects/{project}/costs/{cost}/receipt` | receipts.upload | Upload ricevuta |
-| GET | `/projects/{project}/costs/{cost}/receipt/download` | receipts.download | Download ricevuta |
-| GET | `/projects/{project}/costs/{cost}/receipt/preview` | receipts.preview | Anteprima ricevuta |
-| DELETE | `/projects/{project}/costs/{cost}/receipt` | receipts.destroy | Elimina ricevuta |
+| POST | `/projects/{project}/costs/{cost}/receipt` | receipts.upload | Upload receipt |
+| GET | `/projects/{project}/costs/{cost}/receipt/download` | receipts.download | Download receipt |
+| GET | `/projects/{project}/costs/{cost}/receipt/preview` | receipts.preview | Receipt preview |
+| DELETE | `/projects/{project}/costs/{cost}/receipt` | receipts.destroy | Delete receipt |
 
 ## Controller
 
-Il `CostController` usa il pattern **Query Classes** per separare query/filter logic dal controller.
+The `CostController` uses the **Query Classes** pattern to separate query/filter logic from the controller.
 
-### Metodi
+### Methods
 
-- **index()** - Usa `CostIndexQuery` per lista paginata e `CostStatsQuery` per card statistiche
-- **store()** - Valida con `StoreCostRequest`, crea costo nel progetto e redirect su `projects.show?tab=costs`
-- **update()** - Valida con `UpdateCostRequest`, aggiorna costo e redirect su tab costs della show progetto
-- **destroy()** - Elimina costo e ritorna su tab costs della show progetto
+- **index()** - Uses `CostIndexQuery` for paginated list and `CostStatsQuery` for statistics cards
+- **store()** - Validates with `StoreCostRequest`, creates cost in the project and redirects to `projects.show?tab=costs`
+- **update()** - Validates with `UpdateCostRequest`, updates cost and redirects to the costs tab of the project show
+- **destroy()** - Deletes cost and returns to the costs tab of the project show
 
 ## Model
 
-Il model `Cost` si trova in `app/Models/Cost.php`.
+The `Cost` model is located in `app/Models/Cost.php`.
 
-### Caratteristiche
+### Features
 
-- **Relazione project** - ogni costo appartiene a un progetto
-- **Costanti dominio** - `TYPES`, `CURRENCIES`, `RECURRING_PERIODS`
+- **project relationship** - each cost belongs to a project
+- **Domain constants** - `TYPES`, `CURRENCIES`, `RECURRING_PERIODS`
 - **Scopes** - `type()`, `currency()`, `recurring()`, `forProject()`, `thisMonth()`, `thisYear()`, `dateRange()`
-- **Helper stato/formato** - `isRecent()`, `getCurrencySymbol()`, `getFormattedAmount()`
-- **Receipt helpers** - `hasReceipt()`, URL upload/download/preview/delete
-- **toFormPayload()** - payload edit sicuro (`id` + campi editabili)
-- **Delete hook** - rimuove file ricevuta locale quando il costo viene eliminato
+- **Status/format helpers** - `isRecent()`, `getCurrencySymbol()`, `getFormattedAmount()`
+- **Receipt helpers** - `hasReceipt()`, upload/download/preview/delete URLs
+- **toFormPayload()** - safe edit payload (`id` + editable fields)
+- **Delete hook** - removes local receipt file when cost is deleted
 
-### Tipi Costo
+### Cost Types
 
-| Tipo | Descrizione |
+| Type | Description |
 |------|-------------|
-| `hosting` | Spese hosting |
-| `api` | Costi API |
-| `tool` | Tool/servizi SaaS |
-| `license` | Licenze |
+| `hosting` | Hosting expenses |
+| `api` | API costs |
+| `tool` | SaaS tools/services |
+| `license` | Licenses |
 | `ads` | Advertising |
-| `service` | Servizi esterni |
-| `travel` | Trasferte |
+| `service` | External services |
+| `travel` | Travel expenses |
 
-### Periodi ricorrenza
+### Recurrence Periods
 
-| Valore | Descrizione |
-|--------|-------------|
-| `monthly` | Mensile |
-| `quarterly` | Trimestrale |
-| `yearly` | Annuale |
+| Value | Description |
+|-------|-------------|
+| `monthly` | Monthly |
+| `quarterly` | Quarterly |
+| `yearly` | Yearly |
 
 ## Form Requests
 
-Validazione gestita da:
+Validation handled by:
 
-- **StoreCostRequest** - creazione costo
-- **UpdateCostRequest** - modifica costo
+- **StoreCostRequest** - cost creation
+- **UpdateCostRequest** - cost update
 
-### Campi obbligatori
+### Required Fields
 
-- `amount` - importo (`min:0.01`)
-- `type` - tipo costo (`Rule::in(Cost::TYPES)`)
-- `paid_at` - data pagamento
-- `currency` - valuta (auto-merge da `BusinessSettings::default_currency`)
+- `amount` - amount (`min:0.01`)
+- `type` - cost type (`Rule::in(Cost::TYPES)`)
+- `paid_at` - payment date
+- `currency` - currency (auto-merged from `BusinessSettings::default_currency`)
 
-### Campi condizionali
+### Conditional Fields
 
-- `recurring_period` richiesto quando `recurring=1` (`required_if:recurring,1`)
+- `recurring_period` required when `recurring=1` (`required_if:recurring,1`)
 
-### Campi opzionali
+### Optional Fields
 
-- `recurring` - flag costo ricorrente
-- `receipt_path` - path ricevuta
-- `notes` - note
+- `recurring` - recurring cost flag
+- `receipt_path` - receipt path
+- `notes` - notes
 
 ## Query Classes
 
-Il modulo usa il pattern **Query Classes** per tenere la logica query fuori dal controller.
+The module uses the **Query Classes** pattern to keep query logic out of the controller.
 
 ### CostIndexQuery
 
-Gestisce lista costi globale con:
-- paginazione (15)
+Manages the global cost list with:
+- pagination (15)
 - eager loading `project.client`
-- filtri `project_id`, `type`, `currency`, `recurring`, `date_from`, `date_to`
-- ricerca su `notes` e nome progetto
-- ordinamento per `paid_at desc`
+- filters `project_id`, `type`, `currency`, `recurring`, `date_from`, `date_to`
+- search on `notes` and project name
+- sorting by `paid_at desc`
 
 ### CostStatsQuery
 
-Calcola statistiche per card index filtrate per la valuta di default da `BusinessSettings::current()->default_currency`:
-- `total_all_time` - totale costi nella valuta di default
-- `total_this_month` - totale mese corrente
-- `total_this_year` - totale anno corrente
-- `recurring_monthly` - solo costi ricorrenti mensili
+Calculates statistics for index cards filtered by the default currency from `BusinessSettings::current()->default_currency`:
+- `total_all_time` - total costs in the default currency
+- `total_this_month` - current month total
+- `total_this_year` - current year total
+- `recurring_monthly` - monthly recurring costs only

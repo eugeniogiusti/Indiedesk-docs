@@ -5,9 +5,9 @@ title: Changelog
 ## [v1.0.0] - 2026-02-07
 
 ### Added
-- Struttura documentazione iniziale
-- Architettura
-- Moduli rilasciati (backend/frontend)
+- Initial documentation structure
+- Architecture
+- Released modules (backend/frontend)
 - 2FA
 - AI
 - Calendar

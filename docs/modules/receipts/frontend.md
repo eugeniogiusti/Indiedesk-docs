@@ -1,8 +1,8 @@
 # Frontend
 
-Il modulo Receipts non ha view proprie: le azioni ricevuta sono integrate nelle view del modulo costi tramite componenti, partial e un modal di upload.
+The Receipts module does not have its own views: receipt actions are integrated into the cost module views via components, partials, and an upload modal.
 
-## Struttura File
+## File Structure
 
 ```
 resources/views/
@@ -18,58 +18,58 @@ resources/views/
     └── receipt-actions-readonly.blade.php
 ```
 
-## Modal Upload Ricevuta
+## Receipt Upload Modal
 
 `costs/partials/_upload-receipt-modal.blade.php`
 
-- Componente Alpine.js: `receiptUploadModal(projectId)`
-- Evento apertura: `@upload-receipt.window`
-- Supporto **drag-and-drop** per il file input
-- Input file: accetta PDF, JPG, JPEG, PNG
-- Mostra nome file selezionato
-- Bottone submit disabilitato finche non si seleziona un file
-- Form action dinamica basata sul cost ID
+- Alpine.js component: `receiptUploadModal(projectId)`
+- Open event: `@upload-receipt.window`
+- **Drag-and-drop** support for file input
+- File input: accepts PDF, JPG, JPEG, PNG
+- Shows selected filename
+- Submit button disabled until a file is selected
+- Dynamic form action based on cost ID
 
-## Colonne tabella costi
+## Cost Table Columns
 
-Due partial per mostrare lo stato ricevuta nelle tabelle costi:
+Two partials for showing receipt status in cost tables:
 
-### Show progetto (`costs/partials/cost-table/_row-receipt.blade.php`)
-- Se ricevuta esiste: link preview + download, bottone elimina
-- Se ricevuta non esiste: badge "Not set"
-- Bottone upload sempre visibile
-- CRUD completo (preview, download, elimina, upload)
+### Project show (`costs/partials/cost-table/_row-receipt.blade.php`)
+- If receipt exists: preview + download link, delete button
+- If receipt does not exist: "Not set" badge
+- Upload button always visible
+- Full CRUD (preview, download, delete, upload)
 
-### Index costi (`costs/index/cost-table/_row-receipt.blade.php`)
-- Se ricevuta esiste: link preview + download
-- Se ricevuta non esiste: badge "Not set"
-- Stesse azioni della show progetto
+### Costs index (`costs/index/cost-table/_row-receipt.blade.php`)
+- If receipt exists: preview + download link
+- If receipt does not exist: "Not set" badge
+- Same actions as the project show
 
-## Componente Receipt Actions Readonly
+## Receipt Actions Readonly Component
 
 `components/costs/receipt-actions-readonly.blade.php`
 
-Versione read-only delle azioni ricevuta, usata nella pagina index:
+Read-only version of receipt actions, used on the index page:
 
-- Se ricevuta esiste:
-  - Bottone **Preview** (icona occhio, viola)
-  - Bottone **Download** (icona freccia giu, verde)
-- Se ricevuta non esiste:
-  - Badge "Not set"
-- Nessun bottone elimina (modalita sola lettura)
+- If receipt exists:
+  - **Preview** button (eye icon, purple)
+  - **Download** button (down arrow icon, green)
+- If receipt does not exist:
+  - "Not set" badge
+- No delete button (read-only mode)
 
-## Differenze con il frontend Invoice
+## Differences from the Invoice Frontend
 
-| Aspetto | Invoice | Receipt |
-|---------|---------|---------|
-| Drag-and-drop | No | Si |
-| Bottone genera | Si (genera PDF) | No (solo upload) |
-| Componente readonly | No | Si (`receipt-actions-readonly`) |
-| Colori azioni | Blu | Viola (preview), verde (download) |
+| Aspect | Invoice | Receipt |
+|--------|---------|---------|
+| Drag-and-drop | No | Yes |
+| Generate button | Yes (generates PDF) | No (upload only) |
+| Readonly component | No | Yes (`receipt-actions-readonly`) |
+| Action colors | Blue | Purple (preview), green (download) |
 
-## Note tecniche
+## Technical Notes
 
-- Il drag-and-drop e implementato con Alpine.js, nessuna libreria esterna.
-- Il modal riceve il `projectId` come parametro per costruire le URL delle route nested.
-- Le azioni sono contestuali: nella show progetto si ha CRUD completo, nell'index si ha solo lettura.
-- Preview e download aprono/scaricano il file direttamente dal server.
+- Drag-and-drop is implemented with Alpine.js, no external libraries.
+- The modal receives the `projectId` as a parameter to build nested route URLs.
+- Actions are contextual: in the project show there is full CRUD, in the index there is read-only access.
+- Preview and download open/download the file directly from the server.

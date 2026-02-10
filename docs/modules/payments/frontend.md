@@ -1,8 +1,8 @@
 # Frontend
 
-Il modulo Payments usa il pattern **Partial Views** per mantenere index globale e sezione pagamenti nella show progetto modulari e riusabili.
+The Payments module uses the **Partial Views** pattern to keep the global index and payments section in the project show modular and reusable.
 
-## Struttura File
+## File Structure
 
 ```
 resources/views/payments/
@@ -54,75 +54,75 @@ resources/js/components/
 └── uploadInvoiceModal.js
 ```
 
-## Pattern Frontend
+## Frontend Pattern
 
 ### Orchestrator Views
 
-La vista `payments/index.blade.php` funziona da orchestrator:
-- include header, statistiche, filtri
-- sceglie table o empty-state in base ai risultati
+The `payments/index.blade.php` view acts as an orchestrator:
+- includes header, statistics, filters
+- chooses table or empty-state based on results
 
-### Partial riusabili
+### Reusable Partials
 
-Il modulo separa i due contesti UI:
-- **Index globale pagamenti**: partial in `payments/index/*`
-- **Tab pagamenti della show progetto**: partial in `payments/partials/*`
+The module separates the two UI contexts:
+- **Global payments index**: partials in `payments/index/*`
+- **Payments tab of the project show**: partials in `payments/partials/*`
 
-`payments/partials/_payment-table.blade.php` è la tabella riusabile usata nella show progetto.
+`payments/partials/_payment-table.blade.php` is the reusable table used in the project show.
 
 ## Modal (Alpine.js)
 
 ### Payment Modal
 
-Gestito in:
+Managed in:
 - view: `payments/partials/_modal-form.blade.php`
-- componente: `resources/js/components/paymentModal.js`
+- component: `resources/js/components/paymentModal.js`
 
-Flusso:
-- apertura create con evento `open-payment-modal`
-- apertura edit con evento `edit-payment` (payload record)
-- submit su route `payments.store` / `payments.update`
+Flow:
+- open create with `open-payment-modal` event
+- open edit with `edit-payment` event (record payload)
+- submit to route `payments.store` / `payments.update`
 
-Il form è condizionale su stato incassato/non incassato (`is_paid`):
-- se incassato richiede `paid_at` + `method`
-- se non incassato richiede `due_date`
+The form is conditional on paid/unpaid state (`is_paid`):
+- if paid, requires `paid_at` + `method`
+- if not paid, requires `due_date`
 
 ### Upload Invoice Modal
 
-Gestito in:
+Managed in:
 - view: `payments/partials/_upload-invoice-modal.blade.php`
-- componente: `resources/js/components/uploadInvoiceModal.js`
+- component: `resources/js/components/uploadInvoiceModal.js`
 
-Flusso:
-- apertura con evento `open-upload-modal` (passa payment id)
-- costruzione dinamica `uploadUrl` (`/invoices/payments/{id}/upload`)
-- upload file PDF
+Flow:
+- open with `open-upload-modal` event (passes payment id)
+- dynamic `uploadUrl` construction (`/invoices/payments/{id}/upload`)
+- PDF file upload
 
-## Azioni tabella pagamenti (show progetto)
+## Payment Table Actions (project show)
 
-In `payments/partials/payment-table/_row-invoice.blade.php` sono disponibili:
-- preview fattura
-- download fattura
-- delete fattura
-- generate fattura PDF
-- upload fattura manuale
+In `payments/partials/payment-table/_row-invoice.blade.php` the following are available:
+- invoice preview
+- invoice download
+- invoice delete
+- generate invoice PDF
+- manual invoice upload
 
-Le azioni usano route `invoices.*` e, per upload, aprono il modal dedicato.
+Actions use `invoices.*` routes and, for upload, open the dedicated modal.
 
-## Wiring JS globale
+## Global JS Wiring
 
-Registrazione componenti in `resources/js/app.js`:
+Component registration in `resources/js/app.js`:
 - `window.paymentModal = paymentModal`
 - `window.uploadInvoiceModal = uploadInvoiceModal`
 
-Il listener globale `data-action` in `app.js` dispatcha gli eventi custom usati dai modal.
+The global `data-action` listener in `app.js` dispatches the custom events used by the modals.
 
-## Internazionalizzazione
+## Internationalization
 
-Le stringhe frontend payments usano:
+Payments frontend strings use:
 - `lang/*/payments.php`
 - `lang/*/invoices.php`
 
 ## Dark Mode
 
-Il modulo supporta dark mode tramite classi Tailwind `dark:*`, coerente con il layout applicativo.
+The module supports dark mode via Tailwind `dark:*` classes, consistent with the application layout.

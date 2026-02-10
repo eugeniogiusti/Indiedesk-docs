@@ -1,8 +1,8 @@
 # Backend
 
-Il modulo Company corrisponde a **Business Settings**: profilo aziendale, dati fiscali/contatto, valuta di default e logo.
+The Company module corresponds to **Business Settings**: company profile, tax/contact data, default currency, and logo.
 
-## Struttura File
+## File Structure
 
 ```
 app/
@@ -19,82 +19,82 @@ app/
 
 ## Routes
 
-| Metodo | URI | Azione | Descrizione |
+| Method | URI | Action | Description |
 |--------|-----|--------|-------------|
-| GET | `/settings/business` | settings.business.edit | Form impostazioni aziendali |
-| PUT | `/settings/business` | settings.business.update | Salva aggiornamenti |
-| DELETE | `/settings/business/logo` | settings.business.delete-logo | Elimina logo |
+| GET | `/settings/business` | settings.business.edit | Business settings form |
+| PUT | `/settings/business` | settings.business.update | Save updates |
+| DELETE | `/settings/business/logo` | settings.business.delete-logo | Delete logo |
 
 ## Controller
 
-`BusinessSettingsController` orchestra il modulo e delega la logica applicativa al service.
+`BusinessSettingsController` orchestrates the module and delegates application logic to the service.
 
-### Metodi
+### Methods
 
-- **edit()** - carica impostazioni con `BusinessSettings::current()` e renderizza `settings.business`
-- **update()** - valida con `UpdateBusinessSettingsRequest`, delega update al service e mantiene il tab attivo con `_active_tab`
-- **deleteLogo()** - delega cancellazione logo al service e redirect su tab `business`
+- **edit()** - loads settings with `BusinessSettings::current()` and renders `settings.business`
+- **update()** - validates with `UpdateBusinessSettingsRequest`, delegates update to the service, and maintains the active tab with `_active_tab`
+- **deleteLogo()** - delegates logo deletion to the service and redirects to the `business` tab
 
 ## Service
 
-`BusinessSettingsService` incapsula update e gestione file logo.
+`BusinessSettingsService` encapsulates update and logo file management.
 
-### Responsabilita principali
+### Main Responsibilities
 
 - **update()**
-  - recupera singleton `BusinessSettings::current()`
-  - gestisce upload logo separatamente
-  - aggiorna record con i dati validati
+  - retrieves the `BusinessSettings::current()` singleton
+  - handles logo upload separately
+  - updates the record with validated data
 
-- **handleLogoUpload()** (privato)
-  - elimina vecchio logo se presente
-  - salva nuovo file su disco `local` in cartella `business/`
+- **handleLogoUpload()** (private)
+  - deletes old logo if present
+  - saves new file to `local` disk in the `business/` folder
 
 - **deleteLogo()**
-  - elimina file logo da storage
-  - azzera `logo_path` nel record
+  - deletes logo file from storage
+  - resets `logo_path` in the record
 
 ## Model
 
-Il model `BusinessSettings` rappresenta una configurazione singleton applicativa.
+The `BusinessSettings` model represents a singleton application configuration.
 
-### Caratteristiche
+### Features
 
-- **Tabella**: `business_settings`
-- **Singleton**: `current()` usa cache statica per evitare query ripetute e crea record `id=1` se mancante
-- **Costante `CURRENCIES`**: mappa codici valuta -> simbolo
+- **Table**: `business_settings`
+- **Singleton**: `current()` uses static cache to avoid repeated queries and creates a record with `id=1` if missing
+- **`CURRENCIES` constant**: maps currency codes -> symbol
 - **Accessors**:
-  - `logo_url` (temporary URL storage locale)
+  - `logo_url` (temporary URL local storage)
   - `owner_full_name`
   - `formatted_address`
 
-### Campi principali
+### Main Fields
 
-- dati owner: `owner_first_name`, `owner_last_name`
-- sede legale: `legal_*`
-- fiscale: `tax_id`, `vat_number`, `iban`, `default_currency`
-- contatti: `email`, `certified_email`, `phone_*`
+- owner data: `owner_first_name`, `owner_last_name`
+- legal address: `legal_*`
+- tax: `tax_id`, `vat_number`, `iban`, `default_currency`
+- contacts: `email`, `certified_email`, `phone_*`
 - business: `business_name`, `business_description`, `website`, `logo_path`
 
 ## Form Request
 
-`UpdateBusinessSettingsRequest` centralizza validazione aggiornamento.
+`UpdateBusinessSettingsRequest` centralizes update validation.
 
-### Regole principali
+### Main Rules
 
-- campi testuali con limiti `max`
-- `legal_province` e `legal_country` a lunghezza fissa (`size:2`)
+- text fields with `max` limits
+- `legal_province` and `legal_country` with fixed length (`size:2`)
 - `default_currency` `size:3`
-- `email` / `certified_email` in formato email
-- `website` URL valida
-- `iban` con regex dedicata
-- `logo` immagine, max 2MB, formati `jpeg,jpg,png,svg`
+- `email` / `certified_email` in email format
+- `website` valid URL
+- `iban` with dedicated regex
+- `logo` image, max 2MB, formats `jpeg,jpg,png,svg`
 
-### Messaggi custom
+### Custom Messages
 
-Gestiti per errori specifici su `logo` e formato `iban` tramite chiavi `business_settings.*`.
+Managed for specific errors on `logo` and `iban` format via `business_settings.*` keys.
 
-## Note architetturali
+## Architectural Notes
 
-- Il modulo e usato trasversalmente da altri contesti (es. simbolo valuta in PDF/statistiche, default currency nei form).
-- La logica di persistenza file e tenuta nel service; il controller resta orchestratore.
+- The module is used across other contexts (e.g., currency symbol in PDF/statistics, default currency in forms).
+- File persistence logic is kept in the service; the controller remains an orchestrator.

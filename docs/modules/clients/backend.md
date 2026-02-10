@@ -1,8 +1,8 @@
 # Backend
 
-Il modulo Clients gestisce l'anagrafica clienti con supporto per soft delete, filtri, ricerca e statistiche.
+The Clients module manages the client registry with support for soft delete, filters, search, and statistics.
 
-## Struttura File
+## File Structure
 
 ```
 app/
@@ -22,95 +22,95 @@ app/
 
 ## Routes
 
-| Metodo | URI | Azione | Descrizione |
+| Method | URI | Action | Description |
 |--------|-----|--------|-------------|
-| GET | `/clients` | index | Lista clienti paginata |
-| POST | `/clients` | store | Crea nuovo cliente |
-| GET | `/clients/{client}` | show | Dettaglio cliente |
-| PUT | `/clients/{client}` | update | Aggiorna cliente |
+| GET | `/clients` | index | Paginated client list |
+| POST | `/clients` | store | Create new client |
+| GET | `/clients/{client}` | show | Client detail |
+| PUT | `/clients/{client}` | update | Update client |
 | DELETE | `/clients/{client}` | destroy | Soft delete |
-| POST | `/clients/{id}/restore` | restore | Ripristina cliente |
-| DELETE | `/clients/{id}/force-delete` | forceDelete | Elimina definitivamente |
+| POST | `/clients/{id}/restore` | restore | Restore client |
+| DELETE | `/clients/{id}/force-delete` | forceDelete | Permanently delete |
 
 ## Controller
 
-Il `ClientController` utilizza il pattern **Query Classes** per mantenere il controller snello. La logica di query è delegata a classi dedicate in `app/Queries/Clients/`.
+The `ClientController` uses the **Query Classes** pattern to keep the controller lean. Query logic is delegated to dedicated classes in `app/Queries/Clients/`.
 
-### Metodi
+### Methods
 
-- **index()** - Usa `ClientIndexQuery` per la lista paginata e `ClientStatsQuery` per le statistiche
-- **store()** - Validazione tramite `StoreClientRequest`
-- **show()** - Usa `ClientShowQuery` per caricare i dati correlati (progetti, task, meetings, etc.)
-- **update()** - Supporta redirect condizionale (torna alla show se modificato da lì)
+- **index()** - Uses `ClientIndexQuery` for the paginated list and `ClientStatsQuery` for statistics
+- **store()** - Validation via `StoreClientRequest`
+- **show()** - Uses `ClientShowQuery` to load related data (projects, tasks, meetings, etc.)
+- **update()** - Supports conditional redirect (returns to show if edited from there)
 - **destroy()** - Soft delete
-- **restore()** - Ripristina un cliente eliminato
-- **forceDelete()** - Eliminazione definitiva
+- **restore()** - Restores a deleted client
+- **forceDelete()** - Permanent deletion
 
 ## Model
 
-Il model `Client` si trova in `app/Models/Client.php`.
+The `Client` model is located in `app/Models/Client.php`.
 
-### Caratteristiche
+### Features
 
-- **SoftDeletes** - I clienti eliminati sono recuperabili
-- **Relazione projects** - Un cliente ha molti progetti
-- **Scopes** - `active()`, `leads()`, `archived()` per filtrare per stato
-- **toFormPayload()** - Metodo che ritorna solo `id` + campi `$fillable` per i form di edit, evitando di esporre dati sensibili nel frontend
+- **SoftDeletes** - Deleted clients are recoverable
+- **projects relationship** - A client has many projects
+- **Scopes** - `active()`, `leads()`, `archived()` to filter by status
+- **toFormPayload()** - Method that returns only `id` + `$fillable` fields for edit forms, avoiding exposure of sensitive data on the frontend
 
-### Stati Cliente
+### Client Statuses
 
-| Stato | Descrizione |
-|-------|-------------|
-| `lead` | Potenziale cliente |
-| `active` | Cliente attivo |
-| `archived` | Cliente archiviato |
+| Status | Description |
+|--------|-------------|
+| `lead` | Potential client |
+| `active` | Active client |
+| `archived` | Archived client |
 
-### Campi
+### Fields
 
-I campi includono dati anagrafici, contatti, fatturazione e informazioni web.
-La validazione è gestita tramite Form Request dedicate.
+Fields include personal data, contacts, billing, and web information.
+Validation is handled via dedicated Form Requests.
 
 ## Form Requests
 
-La validazione è gestita da Form Request dedicate:
+Validation is handled by dedicated Form Requests:
 
-- **StoreClientRequest** - Validazione creazione (email unique)
-- **UpdateClientRequest** - Validazione modifica (email unique ignorando il record corrente)
+- **StoreClientRequest** - Creation validation (unique email)
+- **UpdateClientRequest** - Update validation (unique email ignoring current record)
 
-### Campi Obbligatori
+### Required Fields
 
-- `name` - Nome cliente
-- `email` - Email (unica)
-- `status` - Stato (lead/active/archived)
+- `name` - Client name
+- `email` - Email (unique)
+- `status` - Status (lead/active/archived)
 
-### Campi Opzionali
+### Optional Fields
 
-Tutti gli altri campi (contatti, fatturazione, web) sono opzionali con validazione specifica (es. `billing_country` deve essere un codice ISO a 2 caratteri).
+All other fields (contacts, billing, web) are optional with specific validation (e.g., `billing_country` must be a 2-character ISO code).
 
 ## Query Classes
 
-Il template utilizza il pattern **Query Classes** per separare la logica di query dal controller.
+The template uses the **Query Classes** pattern to separate query logic from the controller.
 
 ### ClientIndexQuery
 
-Gestisce la lista clienti con:
-- **Paginazione** (15 elementi per pagina)
-- **Filtro per stato** - `?status=active`
-- **Ricerca testuale** - `?search=mario` (cerca in nome, email, P.IVA)
-- **Ordinamento** - `?sort_by=name&sort_direction=asc`
-- **Whitelist colonne** - Solo colonne permesse per prevenire SQL injection
+Manages the client list with:
+- **Pagination** (15 items per page)
+- **Status filter** - `?status=active`
+- **Text search** - `?search=mario` (searches in name, email, VAT number)
+- **Sorting** - `?sort_by=name&sort_direction=asc`
+- **Column whitelist** - Only allowed columns to prevent SQL injection
 
 ### ClientShowQuery
 
-ClientShowQuery carica i principali dati correlati del cliente
-(progetti, task, meeting, pagamenti, costi, documenti),
-utilizzando eager loading e limiti per evitare overfetching.
+ClientShowQuery loads the client's main related data
+(projects, tasks, meetings, payments, costs, documents),
+using eager loading and limits to avoid overfetching.
 
 ### ClientStatsQuery
 
-Calcola le statistiche per le card nella pagina index:
-- Totale clienti
-- Conteggio per stato
-- Nuovi clienti questo mese
-- Clienti convertiti questo mese
-- Percentuali
+Calculates statistics for the index page cards:
+- Total clients
+- Count by status
+- New clients this month
+- Converted clients this month
+- Percentages

@@ -1,36 +1,35 @@
 # Architecture - Overview
 
-Questa documentazione descrive i pattern architetturali del progetto Laravel e come backend e frontend collaborano. Gli esempi si basano sul modulo Tasks e sulla pagina Project Show con tab.
+This documentation describes the architectural patterns of the Laravel project and how backend and frontend collaborate. Examples are based on the Tasks module and the Project Show page with tabs.
 
-**Obiettivi**
-- Separare responsabilita tra controller, request, query e view.
-- Favorire riuso di componenti UI e partial Blade.
-- Ridurre logica in Blade e mantenere componenti piccoli e leggibili.
+**Goals**
+- Separate responsibilities between controllers, requests, queries and views.
+- Encourage reuse of UI components and Blade partials.
+- Reduce logic in Blade and keep components small and readable.
 
-**Struttura alto livello**
-- `app/Http/Controllers`: orchestrazione delle richieste HTTP.
-- `app/Http/Requests`: validazione e autorizzazione.
-- `app/Queries`: query di lettura e filtri per index/statistiche.
-- `resources/views`: UI in Blade, organizzata per modulo.
-- `resources/js`: componenti Alpine e interazioni (es. toggle task).
+**High-level structure**
+- `app/Http/Controllers`: HTTP request orchestration.
+- `app/Http/Requests`: validation and authorization.
+- `app/Queries`: read queries and filters for index/statistics.
+- `resources/views`: UI in Blade, organized by module.
+- `resources/js`: Alpine components and interactions (e.g. task toggle).
 
-**Flusso dati tipico (index)**
-1. Controller chiama una `Query` per lista e una per statistiche.
-2. Controller passa i dati alla view index.
-3. La view index include partial per header, filtri, tabella, cards.
+**Typical data flow (index)**
+1. Controller calls a `Query` for the list and one for statistics.
+2. Controller passes data to the index view.
+3. The index view includes partials for header, filters, table, cards.
 
-**Flusso dati tipico (project show)**
-1. Project show include tab container in `resources/views/projects/show/_content-tabs.blade.php`.
-2. Ogni tab include una partial dedicata (tasks, payments, costs, ecc.).
-3. Le partial riusano componenti e tabelle specifiche del modulo.
+**Typical data flow (project show)**
+1. Project show includes the tab container in `resources/views/projects/show/_content-tabs.blade.php`.
+2. Each tab includes a dedicated partial (tasks, payments, costs, etc.).
+3. Partials reuse module-specific components and tables.
 
-**Frontend pattern**
-- Tab controllati da Alpine (`x-data`, `x-show`, `x-cloak`).
-- Modali aperte via `$dispatch` e partial dedicate.
-- UI riusabile con componenti Blade (`x-...`) e partial.
+**Frontend patterns**
+- Tabs controlled by Alpine (`x-data`, `x-show`, `x-cloak`).
+- Modals opened via `$dispatch` and dedicated partials.
+- Reusable UI with Blade components (`x-...`) and partials.
 
-**Backend pattern**
-- Controller sottili, logica business delegata a query o model.
-- FormRequest per validazione (Store/Update).
-- Endpoints JSON per interazioni UI (es. toggle done).
-
+**Backend patterns**
+- Thin controllers, business logic delegated to queries or models.
+- FormRequest for validation (Store/Update).
+- JSON endpoints for UI interactions (e.g. toggle done).

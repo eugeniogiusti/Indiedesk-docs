@@ -4,39 +4,52 @@ sidebar_position: 2
 
 # Configuration
 
-IndieDesk è pensato per essere avviato rapidamente in ambiente locale.  
-Questa guida copre solo l’installazione con [Laravel Herd](https://herd.laravel.com/).
+This guide covers local installation with [Laravel Herd](https://herd.laravel.com/) only.
 
-Il deploy in produzione non è trattato:  
-chi usa IndieDesk sa già come gestirlo.
+Production deployment is not covered:
+if you're using IndieDesk, you already know how to handle it.
 
 ---
 
-## Requisiti
+## Requirements
 
-- macOS o Windows
-- Laravel Herd installato
-- PHP 8.3 o superiore
+- macOS or Windows
+- [Laravel Herd](https://herd.laravel.com/) installed
+- PHP 8.3 or higher
 - Composer
 
 ---
 
-## Setup del progetto
+## 1. Create a new site in Herd
 
-Clona il repository o posiziona il progetto nella cartella che preferisci:
+Open Herd and create a new site with at least **PHP 8.3+** selected.
 
-```bash
-git clone <repo-url> indiedesk
-cd indiedesk
-```
+![Herd - Create new site](/img/getting-started/create.png)
 
-Installa le dipendenze:
+---
+
+## 2. Link the project
+
+Select **Link existing project** and point it to the folder where you extracted IndieDesk.
+
+![Herd - Link existing project](/img/getting-started/link.png)
+
+---
+
+## 3. Install dependencies
+
+Open a terminal, navigate to the project folder and run:
 
 ```bash
 composer install
+npm install && npm run build
 ```
 
-Crea il file di configurazione:
+---
+
+## 4. Environment setup
+
+Copy the configuration file and generate the application key:
 
 ```bash
 cp .env.example .env
@@ -45,45 +58,74 @@ php artisan key:generate
 
 ---
 
-## Database
+## 5. Configure `.env`
 
-Configura il database nel file `.env`.
+Open the `.env` file and set the following values.
 
-Per lo sviluppo locale puoi usare SQLite:
+### Database
+
+Set the absolute path to the SQLite database:
 
 ```env
-DB_CONNECTION=sqlite
+DB_DATABASE=/your_project_path/database/database.sqlite
 ```
 
-Crea il file del database:
+:::warning
+Replace `/your_project_path` with the actual absolute path to your IndieDesk project folder.
+:::
+
+### Language and timezone
+
+Set your preferred language and timezone:
+
+```env
+APP_LOCALE=en
+APP_FALLBACK_LOCALE=en
+APP_FAKER_LOCALE=en_US
+APP_TIMEZONE=Europe/Rome
+```
+
+Available languages: `da`, `de`, `en`, `es`, `fr`, `it`, `nl`, `pl`, `pt`, `ro`, `ru`, `uk`, `zh`.
+
+---
+
+## 6. Database setup
+
+Create the SQLite file and run the migrations:
 
 ```bash
 touch database/database.sqlite
-```
-
-Esegui le migration:
-
-```bash
 php artisan migrate
 ```
 
 ---
 
-## Avvio con Herd
+## 7. Open the application
 
-Apri Herd e:
-
-1. seleziona Create new site
-2. scegli Link existing project
-3. seleziona la cartella di IndieDesk
-
-Herd configurerà automaticamente dominio locale e HTTPS.
-
-Apri il sito dal browser per iniziare a usare IndieDesk.
+Open the URL provided by Herd in your browser.
 
 ---
 
-## Fine
+## Post-installation settings
 
-IndieDesk ora è in esecuzione in locale.  
-Da qui puoi esplorare il codice e adattarlo alle tue esigenze.
+Once logged in, configure IndieDesk:
+
+### Set your preferred language
+
+Go to the **Profile** section and select your preferred language.
+
+![Language selector](/img/getting-started/languages.png)
+
+### Set your preferred currency
+
+Go to the **Company** section and select your preferred currency.
+
+![Currency selector](/img/getting-started/valute.png)
+
+### AI Project Assistant (optional)
+
+Go to the **AI** section and enter your OpenAI API key.
+
+You can get an API key here: [https://platform.openai.com/api-keys](https://platform.openai.com/api-keys)
+
+![AI settings](/img/getting-started/api.png)

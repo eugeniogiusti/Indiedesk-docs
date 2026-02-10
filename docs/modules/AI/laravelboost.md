@@ -5,45 +5,45 @@ sidebar_position: 60
 
 # AI Development – Laravel Boost
 
-## Cos’è
-Laravel Boost è un tool di sviluppo (dev-only) già incluso nel template come dipendenza di sviluppo (--dev) che permette a strumenti AI compatibili di accedere al contesto reale del progetto Laravel (rotte, schema database, configurazioni, log).
+## What It Is
+Laravel Boost is a development tool (dev-only) already included in the template as a development dependency (--dev) that allows compatible AI tools to access the real context of the Laravel project (routes, database schema, configurations, logs).
 
-Serve a evitare suggerimenti AI generici e ottenere risposte coerenti con la struttura reale del progetto.
+It is designed to avoid generic AI suggestions and obtain responses consistent with the actual project structure.
 ---
 
-## Quando usarlo
-Usa Boost se:
-- utilizzi AI durante lo sviluppo
-- lavori con Cursor, Claude Desktop o Gemini CLI
-- vuoi che l’AI abbia visibilità reale su modelli, tabelle, rotte e configurazioni
-
----
-
-## Quando NON serve
-Boost non è necessario se:
-- non utilizzi strumenti AI
-- stai lavorando in ambienti di staging o produzione
+## When to Use It
+Use Boost if:
+- you use AI during development
+- you work with Cursor, Claude Desktop, or Gemini CLI
+- you want the AI to have real visibility into models, tables, routes, and configurations
 
 ---
 
-## Avvio del server Boost
-Per runnare il server MCP locale avvia in un terminale dentro il progetto:
+## When It Is NOT Needed
+Boost is not necessary if:
+- you do not use AI tools
+- you are working in staging or production environments
+
+---
+
+## Starting the Boost Server
+To run the local MCP server, start a terminal inside the project:
 
 php artisan boost:start
 
-Il server rimane attivo finché il comando è in esecuzione.
+The server remains active as long as the command is running.
 
 
 
 ---
 
-## Tool AI compatibili
-Laravel Boost funziona con strumenti che supportano il Model Context Protocol (MCP), tra cui:
+## Compatible AI Tools
+Laravel Boost works with tools that support the Model Context Protocol (MCP), including:
 - Claude Desktop
 - Cursor
 - Gemini CLI
 
 ---
 
-## Risorse utili
-- [Documentazione ufficiale Laravel Boost](https://laravel.com/docs/12.x/boost)
+## Useful Resources
+- [Official Laravel Boost Documentation](https://laravel.com/docs/12.x/boost)

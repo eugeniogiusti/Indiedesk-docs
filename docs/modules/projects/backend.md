@@ -1,8 +1,8 @@
 # Backend
 
-Il modulo Projects gestisce ciclo di vita progetto, dettaglio con dati aggregati e statistiche per la index.
+The Projects module manages the project lifecycle, detail with aggregated data, and statistics for the index.
 
-## Struttura File
+## File Structure
 
 ```
 app/
@@ -26,133 +26,133 @@ app/
 
 ## Routes
 
-| Metodo | URI | Azione | Descrizione |
+| Method | URI | Action | Description |
 |--------|-----|--------|-------------|
-| GET | `/projects` | index | Lista progetti paginata |
-| POST | `/projects` | store | Crea nuovo progetto |
-| GET | `/projects/{project}` | show | Dettaglio progetto |
-| PUT | `/projects/{project}` | update | Aggiorna progetto |
+| GET | `/projects` | index | Paginated project list |
+| POST | `/projects` | store | Create new project |
+| GET | `/projects/{project}` | show | Project detail |
+| PUT | `/projects/{project}` | update | Update project |
 | DELETE | `/projects/{project}` | destroy | Soft delete |
-| POST | `/projects/{id}/restore` | restore | Ripristina progetto |
-| DELETE | `/projects/{id}/force-delete` | forceDelete | Elimina definitivamente |
-| GET | `/api/search/projects` | __invoke | Ricerca progetti per navbar |
+| POST | `/projects/{id}/restore` | restore | Restore project |
+| DELETE | `/projects/{id}/force-delete` | forceDelete | Permanently delete |
+| GET | `/api/search/projects` | __invoke | Project search for navbar |
 
-Nota: le route `/projects/{project}/chat*` sono parte del modulo AI e sono documentate in `docs/modules/AI/backend.md`.
+Note: the `/projects/{project}/chat*` routes are part of the AI module and are documented in `docs/modules/AI/backend.md`.
 
 ## Controller
 
-Il `ProjectController` usa il pattern **Query Classes** per tenere il controller snello.
-Le query applicative sono delegate a classi dedicate in `app/Queries/Projects/`.
+The `ProjectController` uses the **Query Classes** pattern to keep the controller lean.
+Application queries are delegated to dedicated classes in `app/Queries/Projects/`.
 
-### Metodi
+### Methods
 
-- **index()** - Usa `ProjectIndexQuery` per lista/filtri/paginazione e `ProjectStatsQuery` per le card statistiche
-- **store()** - Validazione tramite `StoreProjectRequest`, poi creazione record
-- **show()** - Usa `ProjectShowQuery` per i blocchi tab (tasks, meetings, payments, costs, documents) e `ProjectProfitStatsQuery` per profitto/margine
-- **update()** - Validazione tramite `UpdateProjectRequest`, con redirect condizionale (`show` o `index`)
+- **index()** - Uses `ProjectIndexQuery` for list/filters/pagination and `ProjectStatsQuery` for statistics cards
+- **store()** - Validation via `StoreProjectRequest`, then record creation
+- **show()** - Uses `ProjectShowQuery` for tab blocks (tasks, meetings, payments, costs, documents) and `ProjectProfitStatsQuery` for profit/margin
+- **update()** - Validation via `UpdateProjectRequest`, with conditional redirect (`show` or `index`)
 - **destroy()** - Soft delete
-- **restore()** - Ripristino record cancellato
-- **forceDelete()** - Eliminazione definitiva
+- **restore()** - Restore deleted record
+- **forceDelete()** - Permanent deletion
 
 ### API Controller
 
-`ProjectSearchController` espone un endpoint di ricerca per la navbar:
-- input `q` (minimo 2 caratteri)
-- match su nome progetto, nome cliente o P.IVA cliente
-- limite 10 risultati
+`ProjectSearchController` exposes a search endpoint for the navbar:
+- input `q` (minimum 2 characters)
+- matches on project name, client name, or client VAT number
+- limit 10 results
 
 ## Model
 
-Il model `Project` si trova in `app/Models/Project.php`.
+The `Project` model is located in `app/Models/Project.php`.
 
-### Caratteristiche
+### Features
 
-- **SoftDeletes** - i progetti eliminati sono recuperabili
-- **Slug automatico** - generazione slug univoco in `creating`
-- **Relazioni** - `client`, `tasks`, `meetings`, `payments`, `costs`, `documents`
-- **CalendarEventable** - integrazione calendario con link Google Calendar
-- **toFormPayload()** - payload edit sicuro (`id` + campi editabili)
+- **SoftDeletes** - deleted projects are recoverable
+- **Automatic slug** - unique slug generation in `creating`
+- **Relationships** - `client`, `tasks`, `meetings`, `payments`, `costs`, `documents`
+- **CalendarEventable** - calendar integration with Google Calendar link
+- **toFormPayload()** - safe edit payload (`id` + editable fields)
 
-### Stati Progetto
+### Project Statuses
 
-| Stato | Descrizione |
-|-------|-------------|
-| `draft` | Bozza |
-| `in_progress` | In lavorazione |
-| `completed` | Completato |
-| `archived` | Archiviato |
+| Status | Description |
+|--------|-------------|
+| `draft` | Draft |
+| `in_progress` | In progress |
+| `completed` | Completed |
+| `archived` | Archived |
 
-### Priorità
+### Priorities
 
-| Priorità | Descrizione |
+| Priority | Description |
 |----------|-------------|
-| `low` | Bassa |
-| `medium` | Media |
-| `high` | Alta |
+| `low` | Low |
+| `medium` | Medium |
+| `high` | High |
 
-### Tipi Progetto
+### Project Types
 
-| Tipo | Descrizione |
+| Type | Description |
 |------|-------------|
-| `client_work` | Commessa cliente |
-| `product` | Prodotto interno |
-| `content` | Contenuti |
-| `asset` | Asset interni |
+| `client_work` | Client work |
+| `product` | Internal product |
+| `content` | Content |
+| `asset` | Internal assets |
 
 ## Form Requests
 
-Validazione gestita da:
+Validation handled by:
 
-- **StoreProjectRequest** - creazione progetto
-- **UpdateProjectRequest** - modifica progetto
+- **StoreProjectRequest** - project creation
+- **UpdateProjectRequest** - project update
 
-### Campi obbligatori
+### Required Fields
 
-- `name` - nome progetto
-- `status` - stato (`draft`, `in_progress`, `completed`, `archived`)
-- `type` - tipo (`client_work`, `product`, `content`, `asset`)
+- `name` - project name
+- `status` - status (`draft`, `in_progress`, `completed`, `archived`)
+- `type` - type (`client_work`, `product`, `content`, `asset`)
 
-### Campi opzionali
+### Optional Fields
 
-- date: `start_date`, `due_date` (`due_date >= start_date`)
-- collegamento cliente: `client_id`
-- priorità: `priority`
-- URL progetto: `repo_url`, `staging_url`, `production_url`, `figma_url`, `docs_url`
-- testo: `description`, `notes`
+- dates: `start_date`, `due_date` (`due_date >= start_date`)
+- client link: `client_id`
+- priority: `priority`
+- project URLs: `repo_url`, `staging_url`, `production_url`, `figma_url`, `docs_url`
+- text: `description`, `notes`
 
 ## Query Classes
 
-Il modulo usa il pattern **Query Classes** per separare logica di query e controller.
+The module uses the **Query Classes** pattern to separate query logic from the controller.
 
 ### ProjectIndexQuery
 
-Gestisce lista progetti con:
-- paginazione (15)
-- filtro `status`
-- filtro `priority`
-- ricerca per nome progetto o dati cliente
-- ordinamento con whitelist colonne/direzioni
+Manages the project list with:
+- pagination (15)
+- `status` filter
+- `priority` filter
+- search by project name or client data
+- sorting with column/direction whitelist
 
 ### ProjectShowQuery
 
-Compone il payload della pagina show:
-- ultimi record per tab (`tasks`, `meetings`, `payments`, `costs`, `documents`)
-- conteggi totali per tab (`tasksCount`, `meetingsCount`, ecc.)
-- limite configurabile (default `10`)
+Composes the show page payload:
+- latest records per tab (`tasks`, `meetings`, `payments`, `costs`, `documents`)
+- total counts per tab (`tasksCount`, `meetingsCount`, etc.)
+- configurable limit (default `10`)
 
 ### ProjectStatsQuery
 
-Calcola statistiche della index:
-- totale progetti
-- conteggio per stato
-- nuovi progetti mese corrente
-- completati nella settimana corrente
-- percentuali utili per card
+Calculates index statistics:
+- total projects
+- count by status
+- new projects this month
+- completed in the current week
+- useful percentages for cards
 
 ### ProjectProfitStatsQuery
 
-Calcola KPI economici del singolo progetto, filtrati per la valuta di default da `BusinessSettings::current()->default_currency`:
-- totale pagamenti incassati
-- totale costi
-- profitto assoluto
-- margine percentuale
+Calculates financial KPIs for a single project, filtered by the default currency from `BusinessSettings::current()->default_currency`:
+- total collected payments
+- total costs
+- absolute profit
+- percentage margin

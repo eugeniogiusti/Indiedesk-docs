@@ -1,8 +1,8 @@
 # Backend
 
-Il modulo Invoice gestisce la generazione PDF, upload manuale, preview, download e cancellazione di fatture associate ai pagamenti. Usa un layer di servizi con responsabilita separate: generazione PDF, gestione storage, costruzione filename e numerazione.
+The Invoice module handles PDF generation, manual upload, preview, download, and deletion of invoices associated with payments. It uses a service layer with separate responsibilities: PDF generation, storage management, filename construction, and numbering.
 
-## Struttura File
+## File Structure
 
 ```
 app/
@@ -23,100 +23,100 @@ app/
 
 ## Routes
 
-Tutte sotto middleware `auth`, `verified`, `2fa`:
+All under `auth`, `verified`, `2fa` middleware:
 
-| Metodo | URI | Azione | Descrizione |
+| Method | URI | Action | Description |
 |--------|-----|--------|-------------|
-| POST | `/invoices/payments/{payment}/generate` | `generate` | Genera PDF e scarica |
-| POST | `/invoices/payments/{payment}/upload` | `upload` | Upload fattura manuale |
-| GET | `/invoices/payments/{payment}/preview` | `preview` | Anteprima inline |
-| GET | `/invoices/payments/{payment}/download` | `download` | Download file |
-| DELETE | `/invoices/payments/{payment}` | `destroy` | Cancella fattura |
+| POST | `/invoices/payments/{payment}/generate` | `generate` | Generate PDF and download |
+| POST | `/invoices/payments/{payment}/upload` | `upload` | Upload manual invoice |
+| GET | `/invoices/payments/{payment}/preview` | `preview` | Inline preview |
+| GET | `/invoices/payments/{payment}/download` | `download` | File download |
+| DELETE | `/invoices/payments/{payment}` | `destroy` | Delete invoice |
 
 ## Controller
 
-`InvoiceController` delega tutte le operazioni a `InvoiceService`:
+`InvoiceController` delegates all operations to `InvoiceService`:
 
-- `generate(Payment $payment)` - Genera PDF e lo scarica direttamente (StreamedResponse, non salva su disco)
-- `upload(UploadInvoiceRequest $request, Payment $payment)` - Salva file caricato, aggiorna `invoice_path` sul Payment
-- `preview(Payment $payment)` - Apre il file inline nel browser
-- `download(Payment $payment)` - Scarica il file salvato
-- `destroy(Payment $payment)` - Cancella file dallo storage e azzera `invoice_path`
+- `generate(Payment $payment)` - Generates PDF and downloads it directly (StreamedResponse, not saved to disk)
+- `upload(UploadInvoiceRequest $request, Payment $payment)` - Saves uploaded file, updates `invoice_path` on the Payment
+- `preview(Payment $payment)` - Opens the file inline in the browser
+- `download(Payment $payment)` - Downloads the saved file
+- `destroy(Payment $payment)` - Deletes file from storage and resets `invoice_path`
 
 ## InvoiceService
 
-Orchestratore principale. Coordina i sotto-servizi:
+Main orchestrator. Coordinates the sub-services:
 
-- `generateAndDownload(Payment $payment)` - Delega a `InvoicePdfGenerator`
-- `upload(Payment $payment, UploadedFile $file)` - Salva tramite `InvoiceStorageManager`, aggiorna il model
-- `download(Payment $payment)` - Recupera e scarica tramite `InvoiceStorageManager`
-- `preview(Payment $payment)` - Renderizza inline tramite `InvoiceStorageManager`
-- `delete(Payment $payment)` - Rimuove file e azzera `invoice_path`
+- `generateAndDownload(Payment $payment)` - Delegates to `InvoicePdfGenerator`
+- `upload(Payment $payment, UploadedFile $file)` - Saves via `InvoiceStorageManager`, updates the model
+- `download(Payment $payment)` - Retrieves and downloads via `InvoiceStorageManager`
+- `preview(Payment $payment)` - Renders inline via `InvoiceStorageManager`
+- `delete(Payment $payment)` - Removes file and resets `invoice_path`
 
 ## InvoicePdfGenerator
 
-Genera PDF usando **Barryvdh/DomPDF**.
+Generates PDF using **Barryvdh/DomPDF**.
 
-### Dati preparati per il template
+### Data Prepared for the Template
 
-| Dato | Fonte |
-|------|-------|
-| `payment` | Model Payment |
-| `project` | Relazione `payment->project` |
-| `client` | Relazione `project->client` |
+| Data | Source |
+|------|--------|
+| `payment` | Payment model |
+| `project` | `payment->project` relationship |
+| `client` | `project->client` relationship |
 | `business` | `BusinessSettings::current()` |
-| `invoice_number` | Da `InvoiceNumberGenerator` |
-| `invoice_date` | `paid_at` o data corrente |
-| `due_date` | Dal Payment |
+| `invoice_number` | From `InvoiceNumberGenerator` |
+| `invoice_date` | `paid_at` or current date |
+| `due_date` | From the Payment |
 
-### Template PDF
+### PDF Template
 
-Il template `invoices/pdf.blade.php` include 5 partial:
+The `invoices/pdf.blade.php` template includes 5 partials:
 
-| Partial | Contenuto |
-|---------|-----------|
-| `partials/styles` | CSS (font DejaVu Sans, layout table-based, colori professionali) |
-| `partials/header` | Logo business, nome, numero fattura, data |
-| `partials/parties` | Colonna sx: dati business (nome, indirizzo, CF, P.IVA). Colonna dx: dati cliente (nome, indirizzo, P.IVA) o fallback nome progetto |
-| `partials/amount` | Importo formattato e data scadenza |
-| `partials/description` | Note pagamento, importo, istruzioni pagamento con IBAN (se configurato) |
-| `partials/footer` | Informazioni valuta |
+| Partial | Content |
+|---------|---------|
+| `partials/styles` | CSS (DejaVu Sans font, table-based layout, professional colors) |
+| `partials/header` | Business logo, name, invoice number, date |
+| `partials/parties` | Left column: business data (name, address, tax ID, VAT number). Right column: client data (name, address, VAT number) or project name fallback |
+| `partials/amount` | Formatted amount and due date |
+| `partials/description` | Payment notes, amount, payment instructions with IBAN (if configured) |
+| `partials/footer` | Currency information |
 
-Formato carta: A4.
+Paper format: A4.
 
 ## InvoiceNumberGenerator
 
-Genera numeri fattura univoci.
+Generates unique invoice numbers.
 
-- **Formato**: `{payment_id}/{anno}` (es. `5/2025`)
-- Garantisce unicita: il payment_id e univoco, l'anno aggiunge contesto temporale
+- **Format**: `{payment_id}/{year}` (e.g., `5/2025`)
+- Guarantees uniqueness: payment_id is unique, the year adds temporal context
 
 ## InvoiceFilenameBuilder
 
-Costruisce nomi file leggibili per download.
+Builds readable filenames for download.
 
-- **Formato**: `invoice-{id_zero_padded}-{anno}.{estensione}`
-- **Esempio**: `invoice-005-2025.pdf`
-- Supporta estensioni: pdf, jpg, png
+- **Format**: `invoice-{id_zero_padded}-{year}.{extension}`
+- **Example**: `invoice-005-2025.pdf`
+- Supported extensions: pdf, jpg, png
 
 ## InvoiceStorageManager
 
-Gestisce lo storage fisico dei file fattura.
+Manages the physical storage of invoice files.
 
-- **Percorso storage**: `storage/app/invoices/`
-- **Disco**: Laravel `local`
+- **Storage path**: `storage/app/invoices/`
+- **Disk**: Laravel `local`
 
-### Metodi
+### Methods
 
-- `saveUploadedFile(UploadedFile $file)` - Salva con prefisso timestamp, ritorna path
-- `download(string $path, string $downloadName)` - Response HTTP download (attachment)
-- `preview(string $path, string $displayName)` - Response HTTP inline con MIME type corretto
-- `delete(?string $path)` - Rimuove file
-- `exists(?string $path)` - Verifica esistenza
-- `getMimeType(string $path)` - Ritorna MIME type (`application/pdf`, `image/jpeg`, `image/png`, fallback `application/octet-stream`)
-- `ensureDirectoryExists()` - Crea directory se non esiste
+- `saveUploadedFile(UploadedFile $file)` - Saves with timestamp prefix, returns path
+- `download(string $path, string $downloadName)` - HTTP download response (attachment)
+- `preview(string $path, string $displayName)` - HTTP inline response with correct MIME type
+- `delete(?string $path)` - Removes file
+- `exists(?string $path)` - Checks existence
+- `getMimeType(string $path)` - Returns MIME type (`application/pdf`, `image/jpeg`, `image/png`, fallback `application/octet-stream`)
+- `ensureDirectoryExists()` - Creates directory if it does not exist
 
-### Header response
+### Response Headers
 
 **Preview (inline)**:
 - `Content-Disposition: inline`
@@ -126,41 +126,41 @@ Gestisce lo storage fisico dei file fattura.
 **Download (attachment)**:
 - `Content-Disposition: attachment`
 
-## Validazione Upload
+## Upload Validation
 
 `UploadInvoiceRequest`:
-- File obbligatorio
-- Formati: pdf, jpg, jpeg, png
-- Dimensione massima: 10MB
-- Messaggi errore localizzati (`__('invoices.*')`)
+- File required
+- Formats: pdf, jpg, jpeg, png
+- Maximum size: 10MB
+- Localized error messages (`__('invoices.*')`)
 
-## Model Payment
+## Payment Model
 
-Campi rilevanti per le fatture:
-- `invoice_path` - Path al file salvato (nullable)
-- `hasInvoice()` - Verifica se `invoice_path` e valorizzato
-- `getInvoiceDownloadUrl()` - Ritorna URL route download
-- `getInvoicePreviewUrl()` - Ritorna URL route preview
+Invoice-related fields:
+- `invoice_path` - Path to saved file (nullable)
+- `hasInvoice()` - Checks if `invoice_path` has a value
+- `getInvoiceDownloadUrl()` - Returns download route URL
+- `getInvoicePreviewUrl()` - Returns preview route URL
 
-La cancellazione del file avviene automaticamente alla cancellazione del Payment (via model boot).
+File deletion happens automatically when the Payment is deleted (via model boot).
 
-## Flusso generazione vs upload
+## Generation vs Upload Flow
 
-### Generazione PDF
-1. Utente clicca "Genera"
-2. `InvoicePdfGenerator` crea PDF con DomPDF
-3. StreamedResponse scarica il file direttamente
-4. Il file NON viene salvato su disco
+### PDF Generation
+1. User clicks "Generate"
+2. `InvoicePdfGenerator` creates PDF with DomPDF
+3. StreamedResponse downloads the file directly
+4. The file is NOT saved to disk
 
-### Upload manuale
-1. Utente carica file tramite modal
-2. File validato da `UploadInvoiceRequest`
-3. `InvoiceStorageManager` salva in `storage/app/invoices/`
-4. `Payment.invoice_path` aggiornato
-5. Redirect alla tab pagamenti del progetto
+### Manual Upload
+1. User uploads file via modal
+2. File validated by `UploadInvoiceRequest`
+3. `InvoiceStorageManager` saves to `storage/app/invoices/`
+4. `Payment.invoice_path` updated
+5. Redirect to the project's payments tab
 
-## Note tecniche
+## Technical Notes
 
-- La generazione PDF e on-demand: non salva nulla su disco, genera e streama.
-- L'upload manuale e l'unico modo per avere un file persistente associato al pagamento.
-- Il modulo non ha view proprie per la lista fatture: le azioni sono integrate nelle view del modulo pagamenti.
+- PDF generation is on-demand: nothing is saved to disk, it generates and streams.
+- Manual upload is the only way to have a persistent file associated with the payment.
+- The module does not have its own views for the invoice list: actions are integrated into the payment module views.

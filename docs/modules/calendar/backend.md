@@ -1,8 +1,8 @@
 # Backend
 
-Il modulo Calendar gestisce la generazione di link Google Calendar per eventi dell'applicazione. Non usa API Google: costruisce URL `calendar.google.com/calendar/render` con parametri query che aprono il form "Crea evento" pre-compilato.
+The Calendar module handles the generation of Google Calendar links for application events. It does not use the Google API: it builds `calendar.google.com/calendar/render` URLs with query parameters that open the pre-filled "Create event" form.
 
-## Struttura File
+## File Structure
 
 ```
 app/
@@ -15,15 +15,15 @@ app/
 
 ## Routes
 
-| Metodo | URI | Azione | Descrizione |
+| Method | URI | Action | Description |
 |--------|-----|--------|-------------|
-| GET | `/calendar` | closure | Pagina con iframe Google Calendar embed |
+| GET | `/calendar` | closure | Page with embedded Google Calendar iframe |
 
-La route e una closure in `routes/web.php` che renderizza `calendar.index`.
+The route is a closure in `routes/web.php` that renders `calendar.index`.
 
 ## Contract CalendarEventable
 
-Interfaccia che i model implementano per esporre dati calendario:
+Interface that models implement to expose calendar data:
 
 ```php
 interface CalendarEventable
@@ -33,97 +33,97 @@ interface CalendarEventable
 }
 ```
 
-- `hasCalendarDate()` - ritorna `true` se il model ha una data valida per il calendario
-- `toCalendarEvent()` - converte il model in un DTO `CalendarEvent`
+- `hasCalendarDate()` - returns `true` if the model has a valid calendar date
+- `toCalendarEvent()` - converts the model into a `CalendarEvent` DTO
 
 ## DTO CalendarEvent
 
-Value object che rappresenta un evento:
+Value object representing an event:
 
-| Campo | Tipo | Descrizione |
+| Field | Type | Description |
 |-------|------|-------------|
-| `title` | `string` | Titolo evento |
-| `description` | `string` | Descrizione multiriga |
-| `startDate` | `Carbon` | Data/ora inizio |
-| `endDate` | `?Carbon` | Data/ora fine (opzionale) |
-| `location` | `?string` | Luogo o URL meeting |
-| `isAllDay` | `bool` | Evento giornata intera (default `true`) |
+| `title` | `string` | Event title |
+| `description` | `string` | Multi-line description |
+| `startDate` | `Carbon` | Start date/time |
+| `endDate` | `?Carbon` | End date/time (optional) |
+| `location` | `?string` | Venue or meeting URL |
+| `isAllDay` | `bool` | All-day event (default `true`) |
 
 ## GoogleCalendarLinkBuilder
 
-Service che costruisce l'URL Google Calendar da un `CalendarEvent`.
+Service that builds the Google Calendar URL from a `CalendarEvent`.
 
-### Costruzione
+### Construction
 
-Due entry point statici:
-- `fromEvent(CalendarEvent $event)` - da DTO diretto
-- `fromModel(CalendarEventable $model)` - da model (chiama `toCalendarEvent()` internamente)
+Two static entry points:
+- `fromEvent(CalendarEvent $event)` - from a direct DTO
+- `fromModel(CalendarEventable $model)` - from a model (calls `toCalendarEvent()` internally)
 
-### Parametri URL generati
+### Generated URL Parameters
 
-| Parametro | Valore |
+| Parameter | Value |
 |-----------|--------|
-| `action` | `TEMPLATE` (apre form creazione) |
-| `text` | titolo evento |
-| `details` | descrizione evento |
-| `dates` | intervallo date formattato |
-| `location` | luogo (solo se presente) |
+| `action` | `TEMPLATE` (opens creation form) |
+| `text` | event title |
+| `details` | event description |
+| `dates` | formatted date range |
+| `location` | venue (only if present) |
 
-### Formati date
+### Date Formats
 
-- **All-day**: `YYYYMMDD/YYYYMMDD` (end date esclusiva, aggiunge +1 giorno)
-- **Con orario**: `YYYYMMDDTHHmmss/YYYYMMDDTHHmmss` (ora locale)
-- Se `endDate` e null: singolo giorno (all-day) o durata default 1 ora (con orario)
+- **All-day**: `YYYYMMDD/YYYYMMDD` (exclusive end date, adds +1 day)
+- **With time**: `YYYYMMDDTHHmmss/YYYYMMDDTHHmmss` (local time)
+- If `endDate` is null: single day (all-day) or default 1-hour duration (with time)
 
-## Model che implementano CalendarEventable
+## Models Implementing CalendarEventable
 
-4 model implementano l'interfaccia. Ognuno espone un metodo `googleCalendarUrl()` che ritorna l'URL o `null` se non ha data.
+4 models implement the interface. Each exposes a `googleCalendarUrl()` method that returns the URL or `null` if it has no date.
 
 ### Project
 
-- **Condizione**: `due_date !== null`
-- **Data**: `due_date`
-- **All-day**: si
-- **Titolo**: `📋 {cliente/Progetto Interno}: {nome} - Scadenza`
-- **Descrizione**: sezione progetto (tipo, stato, priorita, date) + sezione cliente (se presente) + note/descrizione (se presenti)
+- **Condition**: `due_date !== null`
+- **Date**: `due_date`
+- **All-day**: yes
+- **Title**: `📋 {client/Internal Project}: {name} - Deadline`
+- **Description**: project section (type, status, priority, dates) + client section (if present) + notes/description (if present)
 
 ### Task
 
-- **Condizione**: `due_date !== null`
-- **Data**: `due_date`
-- **All-day**: si (default)
-- **Titolo**: `📋 Task: [{progetto}] {titolo}`
-- **Descrizione**: sezione progetto + sezione dettagli (status, priorita) + descrizione task (se presente)
+- **Condition**: `due_date !== null`
+- **Date**: `due_date`
+- **All-day**: yes (default)
+- **Title**: `📋 Task: [{project}] {title}`
+- **Description**: project section + details section (status, priority) + task description (if present)
 
 ### Payment
 
-- **Condizione**: `paid_at !== null`
-- **Data**: `paid_at`
-- **All-day**: si (default)
-- **Titolo**: `💰 Fattura: [{progetto}] {importo formattato}`
-- **Descrizione**: sezione progetto + sezione dettagli (importo, valuta, stato) + note (se presenti)
+- **Condition**: `paid_at !== null`
+- **Date**: `paid_at`
+- **All-day**: yes (default)
+- **Title**: `💰 Invoice: [{project}] {formatted amount}`
+- **Description**: project section + details section (amount, currency, status) + notes (if present)
 
 ### Meeting
 
-- **Condizione**: `scheduled_at !== null`
-- **Data inizio**: `scheduled_at`
-- **Data fine**: `getEndTime()` (calcolata da durata)
-- **All-day**: no (unico model con orario)
-- **Location**: `meeting_url` o `location` (fallback)
-- **Titolo**: `🗓️ Meeting: [{progetto}] {titolo}`
-- **Descrizione**: sezione progetto + sezione dettagli (data, durata, tipo, partecipanti) + note/descrizione (se presenti)
+- **Condition**: `scheduled_at !== null`
+- **Start date**: `scheduled_at`
+- **End date**: `getEndTime()` (calculated from duration)
+- **All-day**: no (only model with time)
+- **Location**: `meeting_url` or `location` (fallback)
+- **Title**: `🗓️ Meeting: [{project}] {title}`
+- **Description**: project section + details section (date, duration, type, participants) + notes/description (if present)
 
-## Pattern descrizione
+## Description Pattern
 
-Tutti i model costruiscono la descrizione con lo stesso pattern:
-- Metodi privati `buildProjectSection()`, `buildDetailsSection()`, `buildNotesSection()`
-- Ogni sezione e una stringa multiriga con header e campi
-- Le sezioni sono unite con `implode("\n\n", $sections)`
-- Le sezioni opzionali (note, descrizione, cliente) sono incluse solo se hanno contenuto
+All models build the description with the same pattern:
+- Private methods `buildProjectSection()`, `buildDetailsSection()`, `buildNotesSection()`
+- Each section is a multi-line string with header and fields
+- Sections are joined with `implode("\n\n", $sections)`
+- Optional sections (notes, description, client) are included only if they have content
 
-## Note tecniche
+## Technical Notes
 
-- Il sistema e **stateless**: non salva eventi, genera solo link per creare eventi nel Google Calendar dell'utente.
-- `GoogleCalendarLinkBuilder` e un service puro senza dipendenze esterne.
-- L'interfaccia `CalendarEventable` permette di aggiungere nuovi model calendario implementando i 2 metodi.
-- La pagina `/calendar` e un semplice iframe embed del Google Calendar e non e collegata al sistema di link builder.
+- The system is **stateless**: it does not save events, it only generates links to create events in the user's Google Calendar.
+- `GoogleCalendarLinkBuilder` is a pure service with no external dependencies.
+- The `CalendarEventable` interface allows adding new calendar models by implementing the 2 methods.
+- The `/calendar` page is a simple embedded Google Calendar iframe and is not connected to the link builder system.

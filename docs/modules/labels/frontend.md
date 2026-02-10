@@ -1,8 +1,8 @@
 # Frontend
 
-Il modulo Labels usa una singola pagina di gestione con partial Blade e modal Alpine per create/edit.
+The Labels module uses a single management page with Blade partials and an Alpine modal for create/edit.
 
-## Struttura File
+## File Structure
 
 ```
 resources/views/labels/
@@ -30,60 +30,60 @@ resources/js/components/
 └── labelModal.js
 ```
 
-## Pattern Frontend
+## Frontend Pattern
 
 ### Orchestrator View
 
-`labels/index.blade.php` e l'orchestratore:
-- inizializza Alpine con `x-data="labelModal()"`
-- include header
-- renderizza tabella o empty-state
-- include modal form
+`labels/index.blade.php` is the orchestrator:
+- initializes Alpine with `x-data="labelModal()"`
+- includes header
+- renders table or empty-state
+- includes modal form
 
 ### Table + Empty State
 
-- `_table.blade.php` contiene la tabella con partial per header e righe
-- `_empty-state.blade.php` mostra CTA per creare la prima etichetta
+- `_table.blade.php` contains the table with partials for header and rows
+- `_empty-state.blade.php` shows a CTA to create the first label
 
 ## Modal (Alpine.js)
 
 ### Label Modal
 
-Gestito in:
+Managed in:
 - view: `labels/partials/_modal-form.blade.php`
-- componente: `resources/js/components/labelModal.js`
+- component: `resources/js/components/labelModal.js`
 
-Flusso:
-- apertura create con evento `open-label-modal`
-- apertura edit con evento `edit-label` (payload record)
-- submit su route `labels.store` / `labels.update`
+Flow:
+- open create with `open-label-modal` event
+- open edit with `edit-label` event (record payload)
+- submit to route `labels.store` / `labels.update`
 
-Stato componente:
+Component state:
 - `open`, `isEdit`, `labelId`, `formData`
 
-Comportamenti:
-- reset form su chiusura
-- chiusura con `Esc`, backdrop e click fuori modal
+Behaviors:
+- form reset on close
+- close with `Esc`, backdrop, and click outside modal
 
-## Azioni tabella
+## Table Actions
 
 In `labels/partials/label-table/_row-actions.blade.php`:
-- **edit**: bottone con `data-action="edit-label"` e payload da `toFormPayload()`
-- **delete**: form `labels.destroy` con `data-confirm`
+- **edit**: button with `data-action="edit-label"` and payload from `toFormPayload()`
+- **delete**: `labels.destroy` form with `data-confirm`
 
-## Wiring JS globale
+## Global JS Wiring
 
-Registrazione componente in `resources/js/app.js`:
+Component registration in `resources/js/app.js`:
 - `Alpine.data('labelModal', labelModal)`
 
-Il listener globale `data-action` in `app.js` dispatcha l'evento custom `edit-label` consumato dal modal.
+The global `data-action` listener in `app.js` dispatches the `edit-label` custom event consumed by the modal.
 
-## Internazionalizzazione
+## Internationalization
 
-Le stringhe frontend labels usano:
+Labels frontend strings use:
 - `lang/*/labels.php`
 - `lang/*/ui.php`
 
 ## Dark Mode
 
-Il modulo supporta dark mode tramite classi Tailwind `dark:*` nelle partial.
+The module supports dark mode via Tailwind `dark:*` classes in the partials.

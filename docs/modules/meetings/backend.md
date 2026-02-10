@@ -1,8 +1,8 @@
 # Backend
 
-Il modulo Meetings gestisce riunioni operative dei progetti con index globale (filtri + statistiche) e CRUD nel contesto progetto.
+The Meetings module manages project operational meetings with a global index (filters + statistics) and CRUD within the project context.
 
-## Struttura File
+## File Structure
 
 ```
 app/
@@ -21,88 +21,88 @@ app/
 
 ## Routes
 
-| Metodo | URI | Azione | Descrizione |
+| Method | URI | Action | Description |
 |--------|-----|--------|-------------|
-| GET | `/meetings` | index | Lista meeting globale paginata con filtri |
-| POST | `/projects/{project}/meetings` | store | Crea meeting nel progetto |
-| PUT | `/projects/{project}/meetings/{meeting}` | update | Aggiorna meeting del progetto |
-| DELETE | `/projects/{project}/meetings/{meeting}` | destroy | Elimina meeting |
-| POST | `/projects/{project}/meetings/{meeting}/complete` | markCompleted | Marca meeting come completato |
-| POST | `/projects/{project}/meetings/{meeting}/cancel` | markCancelled | Marca meeting come cancellato |
+| GET | `/meetings` | index | Global paginated meeting list with filters |
+| POST | `/projects/{project}/meetings` | store | Create meeting in the project |
+| PUT | `/projects/{project}/meetings/{meeting}` | update | Update project meeting |
+| DELETE | `/projects/{project}/meetings/{meeting}` | destroy | Delete meeting |
+| POST | `/projects/{project}/meetings/{meeting}/complete` | markCompleted | Mark meeting as completed |
+| POST | `/projects/{project}/meetings/{meeting}/cancel` | markCancelled | Mark meeting as cancelled |
 
 ## Controller
 
-Il `MeetingController` usa il pattern **Query Classes** per separare query/filter logic dal controller.
+The `MeetingController` uses the **Query Classes** pattern to separate query/filter logic from the controller.
 
-### Metodi
+### Methods
 
-- **index()** - Usa `MeetingIndexQuery` per lista paginata e `MeetingStatsQuery` per card statistiche
-- **store()** - Valida con `StoreMeetingRequest`, crea meeting nel progetto e redirect su `projects.show?tab=meetings`
-- **update()** - Valida con `UpdateMeetingRequest`, aggiorna meeting e redirect su tab meetings della show progetto
-- **destroy()** - Elimina meeting e ritorna su tab meetings della show progetto
-- **markCompleted()** - Aggiorna stato a `completed`
-- **markCancelled()** - Aggiorna stato a `cancelled`
+- **index()** - Uses `MeetingIndexQuery` for paginated list and `MeetingStatsQuery` for statistics cards
+- **store()** - Validates with `StoreMeetingRequest`, creates meeting in the project and redirects to `projects.show?tab=meetings`
+- **update()** - Validates with `UpdateMeetingRequest`, updates meeting and redirects to the meetings tab of the project show
+- **destroy()** - Deletes meeting and returns to the meetings tab of the project show
+- **markCompleted()** - Updates status to `completed`
+- **markCancelled()** - Updates status to `cancelled`
 
 ## Model
 
-Il model `Meeting` si trova in `app/Models/Meeting.php`.
+The `Meeting` model is located in `app/Models/Meeting.php`.
 
-### Caratteristiche
+### Features
 
-- **Relazione project** - ogni meeting appartiene a un progetto
-- **Costanti dominio** - `STATUSES` usato in validazione e UI
+- **project relationship** - each meeting belongs to a project
+- **Domain constants** - `STATUSES` used in validation and UI
 - **Scopes** - `status()`, `scheduled()`, `upcoming()`, `today()`, `thisWeek()`, `past()`, `forProject()`
-- **Helper stato** - `isUpcoming()`, `isPast()`, `isCompleted()`, `isCancelled()`
-- **CalendarEventable** - supporto evento calendario con start/end e link Google Calendar
-- **toFormPayload()** - payload edit sicuro (`id` + campi editabili)
+- **Status helpers** - `isUpcoming()`, `isPast()`, `isCompleted()`, `isCancelled()`
+- **CalendarEventable** - calendar event support with start/end and Google Calendar link
+- **toFormPayload()** - safe edit payload (`id` + editable fields)
 
-### Stati Meeting
+### Meeting Statuses
 
-| Stato | Descrizione |
-|-------|-------------|
-| `scheduled` | Pianificato |
-| `completed` | Completato |
-| `cancelled` | Cancellato |
+| Status | Description |
+|--------|-------------|
+| `scheduled` | Scheduled |
+| `completed` | Completed |
+| `cancelled` | Cancelled |
 
 ## Form Requests
 
-Validazione gestita da:
+Validation handled by:
 
-- **StoreMeetingRequest** - creazione meeting
-- **UpdateMeetingRequest** - modifica meeting
+- **StoreMeetingRequest** - meeting creation
+- **UpdateMeetingRequest** - meeting update
 
-### Campi obbligatori
+### Required Fields
 
-- `title` - titolo meeting
-- `scheduled_at` - data/ora meeting
+- `title` - meeting title
+- `scheduled_at` - meeting date/time
 
-### Campi opzionali
+### Optional Fields
 
-- `description` - descrizione
-- `duration_minutes` - durata (15-480)
-- `location` - luogo
-- `meeting_url` - link meeting online
-- `status` - stato meeting
-- `notes` - note
+- `description` - description
+- `duration_minutes` - duration (15-480)
+- `location` - venue
+- `meeting_url` - online meeting link
+- `status` - meeting status
+- `notes` - notes
 
-Nota differenza: in `StoreMeetingRequest` `scheduled_at` richiede `after:now`, mentre in `UpdateMeetingRequest` è solo `date`.
+Note difference: in `StoreMeetingRequest` `scheduled_at` requires `after:now`, while in `UpdateMeetingRequest` it is only `date`.
 
 ## Query Classes
 
-Il modulo usa il pattern **Query Classes** per tenere la logica query fuori dal controller.
+The module uses the **Query Classes** pattern to keep query logic out of the controller.
 
 ### MeetingIndexQuery
 
-Gestisce lista meeting globale con:
-- paginazione (15)
+Manages the global meeting list with:
+- pagination (15)
 - eager loading `project.client`
-- filtri `status`, `project_id`, `date_from`, `date_to`
-- ricerca su titolo, descrizione, nome progetto
-- ordinamento per `scheduled_at desc`
+- filters `status`, `project_id`, `date_from`, `date_to`
+- search on title, description, project name
+- sorting by `scheduled_at desc`
 
 ### MeetingStatsQuery
 
-Calcola statistiche per card index:
+Calculates statistics for index cards:
 - `upcoming`
 - `today`
 - `this_week`

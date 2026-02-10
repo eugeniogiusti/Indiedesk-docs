@@ -1,11 +1,11 @@
 # Frontend
 
-Il modulo AI segue il pattern **partial views + componente Alpine orchestratore** usato negli altri moduli.
-L’obiettivo è avere una chat contestuale al progetto, con codice front-end separato per responsabilità.
+The AI module follows the **partial views + Alpine orchestrator component** pattern used in other modules.
+The goal is to have a project-contextual chat, with front-end code separated by responsibility.
 
 ---
 
-## Struttura File
+## File Structure
 
 ```
 resources/views/
@@ -35,21 +35,21 @@ resources/js/
 
 ---
 
-## Pattern Frontend
+## Frontend Pattern
 
-### Panel modulare
+### Modular Panel
 
-La UI della chat è divisa in partials:
+The chat UI is divided into partials:
 
-- `_panel.blade.php` contiene layout + binding dataset
-- `_messages.blade.php` gestisce rendering messaggi/stato loading/error
-- `_input.blade.php` gestisce input e submit
+- `_panel.blade.php` contains layout + dataset bindings
+- `_messages.blade.php` handles message rendering/loading state/error
+- `_input.blade.php` handles input and submit
 
 ---
 
-### Orchestrazione nella show progetto
+### Orchestration in the Project Show
 
-La chat viene iniettata nella show del progetto, solo se AI è attiva e la key è presente.
+The chat is injected into the project show page, only if AI is enabled and the key is present.
 
 ```php
 @include('ai._panel', ['project' => $project])
@@ -57,67 +57,67 @@ La chat viene iniettata nella show del progetto, solo se AI è attiva e la key �
 
 ---
 
-## Architettura JS (feature-based)
+## JS Architecture (feature-based)
 
-### `index.js` (orchestratore Alpine)
+### `index.js` (Alpine orchestrator)
 
-Responsabilità:
-- legge i dataset della view
-- espone i metodi UI (`init`, `toggle`, `send`, `retry`, `reset`)
-- delega il flusso a `chatFlow.js`
+Responsibilities:
+- reads the view's datasets
+- exposes UI methods (`init`, `toggle`, `send`, `retry`, `reset`)
+- delegates the flow to `chatFlow.js`
 
 ### `chatFlow.js` (use-case flow)
 
-Responsabilità:
+Responsibilities:
 - load history
 - reset chat
 - send message
-- stream con fallback classico
-- mapping errori UI
+- stream with classic fallback
+- UI error mapping
 
-### `state.js` (mutazioni stato)
+### `state.js` (state mutations)
 
-Responsabilità:
-- stato iniziale
+Responsibilities:
+- initial state
 - start request / finish request
-- append delta assistant
+- append assistant delta
 - reset conversation state
 
 ### `services/*`
 
-- `api.js`: chiamate HTTP al backend
-- `sse.js`: parsing/consumo stream SSE
+- `api.js`: HTTP calls to the backend
+- `sse.js`: SSE stream parsing/consumption
 
 ### `utils/*`
 
-- `scroll.js`: autoscroll messaggi
-- `storage.js`: persistenza open/close in localStorage
+- `scroll.js`: message autoscroll
+- `storage.js`: open/close persistence in localStorage
 
 ---
 
-## UX e comportamenti
+## UX and Behaviors
 
-- risposta progressiva via stream (SSE) quando disponibile
-- fallback automatico al path JSON classico se stream non disponibile
-- auto-scroll stabile durante generazione risposta
-- retry su errori noti (rate limit/provider overloaded)
-- stato open/close persistito per progetto (localStorage)
-
----
-
-## Settings AI (UI)
-
-La view `settings/ai.blade.php` espone:
-- switch globale AI
-- campo API key
-
-La validazione resta lato backend.
+- progressive response via stream (SSE) when available
+- automatic fallback to classic JSON path if stream is not available
+- stable auto-scroll during response generation
+- retry on known errors (rate limit/provider overloaded)
+- open/close state persisted per project (localStorage)
 
 ---
 
-## Internazionalizzazione
+## AI Settings (UI)
 
-Tutte le stringhe UI usano:
+The `settings/ai.blade.php` view exposes:
+- global AI switch
+- API key field
+
+Validation remains on the backend side.
+
+---
+
+## Internationalization
+
+All UI strings use:
 - `lang/*/ai.php`
 - `lang/*/ai_settings.php`
 
@@ -125,4 +125,4 @@ Tutte le stringhe UI usano:
 
 ## Dark Mode
 
-Il pannello supporta dark mode tramite classi Tailwind `dark:*`, coerente col layout generale.
+The panel supports dark mode via Tailwind `dark:*` classes, consistent with the overall layout.

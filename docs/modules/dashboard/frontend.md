@@ -1,8 +1,8 @@
 # Frontend
 
-La dashboard e composta da una view principale che include 4 sezioni tramite partial: stat card, grafico annuale, welcome card e liste rapide.
+The dashboard is composed of a main view that includes 4 sections via partials: stat cards, annual chart, welcome card, and quick lists.
 
-## Struttura File
+## File Structure
 
 ```
 resources/views/dashboard/
@@ -26,69 +26,69 @@ resources/js/components/
 └── annualTrendChart.js
 ```
 
-## Layout pagina (`index.blade.php`)
+## Page Layout (`index.blade.php`)
 
-Usa `<x-app-layout>`. Struttura a griglia:
+Uses `<x-app-layout>`. Grid structure:
 
-1. **Header** - Titolo pagina e data corrente
-2. **Stats cards** - Riga di 4 card KPI (`_stats-cards.blade.php`)
-3. **Griglia 2 colonne** - Grafico (2/3 larghezza) + Welcome card (1/3 larghezza)
-4. **Liste rapide** - Griglia 2x2 con 4 liste (`_lists.blade.php`)
+1. **Header** - Page title and current date
+2. **Stats cards** - Row of 4 KPI cards (`_stats-cards.blade.php`)
+3. **2-column grid** - Chart (2/3 width) + Welcome card (1/3 width)
+4. **Quick lists** - 2x2 grid with 4 lists (`_lists.blade.php`)
 
 ## Stat Cards
 
-`_stats-cards.blade.php` include 4 card dalla sottocartella `stats-cards/`:
+`_stats-cards.blade.php` includes 4 cards from the `stats-cards/` subfolder:
 
 ### Profit This Month (`_profit.blade.php`)
-- **Dato**: `$stats['profit_this_month']['amount']`
-- Colore dinamico: verde (emerald) se positivo, rosso se negativo
-- Breakdown: `+pagamenti`, `-costi`
+- **Data**: `$stats['profit_this_month']['amount']`
+- Dynamic color: green (emerald) if positive, red if negative
+- Breakdown: `+payments`, `-costs`
 
 ### Pending Payments (`_pending-payments.blade.php`)
-- **Dato**: `$stats['pending_payments']['total']` (importo in valuta)
-- Mostra conteggio e importo totale da incassare
-- Warning arancione se ci sono pagamenti scaduti (overdue)
+- **Data**: `$stats['pending_payments']['total']` (amount in currency)
+- Shows count and total amount to collect
+- Orange warning if there are overdue payments
 
 ### Active Projects (`_active-projects.blade.php`)
-- **Dato**: `$stats['active_projects']` (conteggio)
-- Numero di progetti in corso
-- Colore blu
+- **Data**: `$stats['active_projects']` (count)
+- Number of projects in progress
+- Blue color
 
 ### Open Tasks (`_open-tasks.blade.php`)
-- **Dato**: `$stats['open_tasks']` (array con breakdown)
-- Totale + breakdown per status: todo (grigio), in_progress (blu), blocked (rosso)
-- Colore viola
+- **Data**: `$stats['open_tasks']` (array with breakdown)
+- Total + breakdown by status: todo (gray), in_progress (blue), blocked (red)
+- Purple color
 
-## Grafico Annuale (`_chart.blade.php`)
+## Annual Chart (`_chart.blade.php`)
 
-Grafico misto bar+line che mostra l'andamento finanziario annuale.
+Mixed bar+line chart showing the annual financial trend.
 
-### Dati passati al componente Alpine.js
+### Data Passed to Alpine.js Component
 
 ```html
 <div x-data="annualTrendChart(@js([...]))">
 ```
 
-| Dato | Descrizione |
+| Data | Description |
 |------|-------------|
-| `labels` | Abbreviazioni mesi |
-| `payments` | Array 12 totali mensili pagamenti |
-| `costs` | Array 12 totali mensili costi |
-| `profit` | Array 12 profitto calcolato |
-| `currencySymbol` | Simbolo valuta da BusinessSettings |
-| `translations` | Label tradotte per legenda |
+| `labels` | Month abbreviations |
+| `payments` | Array of 12 monthly payment totals |
+| `costs` | Array of 12 monthly cost totals |
+| `profit` | Array of 12 calculated profit |
+| `currencySymbol` | Currency symbol from BusinessSettings |
+| `translations` | Translated labels for legend |
 
-### Componente JS (`annualTrendChart.js`)
+### JS Component (`annualTrendChart.js`)
 
-Componente Alpine.js registrato in `app.js` che usa Chart.js:
+Alpine.js component registered in `app.js` that uses Chart.js:
 
-- **Tipo**: Misto - barre (pagamenti/costi) + linea (profitto)
-- **Colori**: Pagamenti emerald, costi rosso, profitto indigo
-- **Dark mode**: Rileva automaticamente tramite `MutationObserver` sulla classe `dark` del `<html>`, rigenera il grafico quando cambia
-- **Tooltip**: Formattazione valuta con locale `it-IT`
-- **Asse Y**: Parte da zero, prefisso simbolo valuta sui tick
+- **Type**: Mixed - bars (payments/costs) + line (profit)
+- **Colors**: Payments emerald, costs red, profit indigo
+- **Dark mode**: Automatically detects via `MutationObserver` on the `dark` class of `<html>`, regenerates the chart when it changes
+- **Tooltip**: Currency formatting with `it-IT` locale
+- **Y axis**: Starts at zero, currency symbol prefix on ticks
 
-Registrazione in `app.js`:
+Registration in `app.js`:
 ```javascript
 import annualTrendChart from './components/annualTrendChart';
 Alpine.data('annualTrendChart', annualTrendChart);
@@ -96,49 +96,49 @@ Alpine.data('annualTrendChart', annualTrendChart);
 
 ## Welcome Card (`_welcome-card.blade.php`)
 
-Card informativa statica con:
-- Logo applicazione
-- Titolo e sottotitolo
-- Lista 4 funzionalita: gestione clienti (blu), progetti (verde), pagamenti (ambra), documentazione (viola)
+Static informational card with:
+- Application logo
+- Title and subtitle
+- List of 4 features: client management (blue), projects (green), payments (amber), documentation (purple)
 
-## Liste Rapide (`_lists.blade.php`)
+## Quick Lists (`_lists.blade.php`)
 
-`_lists.blade.php` include 4 liste dalla sottocartella `lists/`, disposte in griglia 2x2:
+`_lists.blade.php` includes 4 lists from the `lists/` subfolder, arranged in a 2x2 grid:
 
 ### Tasks Due Soon (`_tasks-due-soon.blade.php`)
-- **Dato**: `$lists['tasks_due_soon']` (max 5)
-- Mostra: titolo task, nome progetto, data scadenza
-- Pallino colorato per status: rosso (scaduto), blu (in progress), grigio (todo)
-- Link "View all" → `route('tasks.index')`
+- **Data**: `$lists['tasks_due_soon']` (max 5)
+- Shows: task title, project name, due date
+- Colored dot for status: red (overdue), blue (in progress), gray (todo)
+- "View all" link → `route('tasks.index')`
 
 ### Upcoming Meetings (`_upcoming-meetings.blade.php`)
-- **Dato**: `$lists['upcoming_meetings']` (max 5)
-- Mostra: data (giorno grande + mese piccolo), titolo, progetto, orario (H:i)
-- Link "View all" → `route('meetings.index')`
+- **Data**: `$lists['upcoming_meetings']` (max 5)
+- Shows: date (large day + small month), title, project, time (H:i)
+- "View all" link → `route('meetings.index')`
 
 ### Overdue Payments (`_overdue-payments.blade.php`)
-- **Dato**: `$lists['overdue_payments']` (max 5)
-- Mostra: importo + valuta, cliente/progetto
-- Warning rosso: giorni di ritardo
-- Link "View all" → `route('payments.index')`
+- **Data**: `$lists['overdue_payments']` (max 5)
+- Shows: amount + currency, client/project
+- Red warning: days overdue
+- "View all" link → `route('payments.index')`
 
 ### Recent Payments (`_recent-payments.blade.php`)
-- **Dato**: `$lists['recent_payments']` (max 5)
-- Mostra: importo (verde con +), nome progetto, data pagamento
-- Icona checkmark verde
-- Link "View all" → `route('payments.index')`
+- **Data**: `$lists['recent_payments']` (max 5)
+- Shows: amount (green with +), project name, payment date
+- Green checkmark icon
+- "View all" link → `route('payments.index')`
 
-### Empty state
+### Empty State
 
-Ogni lista ha un messaggio di empty state dedicato quando non ci sono elementi.
+Each list has a dedicated empty state message when there are no items.
 
-## Valuta
+## Currency
 
-Il simbolo valuta (`$currencySymbol`) e il codice (`$currencyCode`) sono iniettati globalmente in tutte le view tramite il View Composer in `AppServiceProvider`. Le stat card e le liste li usano per formattare gli importi.
+The currency symbol (`$currencySymbol`) and code (`$currencyCode`) are globally injected into all views via the View Composer in `AppServiceProvider`. The stat cards and lists use them to format amounts.
 
-## Note tecniche
+## Technical Notes
 
-- Nessun componente Livewire: tutto server-side rendering con Blade + Alpine.js solo per il grafico.
-- Dark mode supportato su tutti i componenti tramite classi Tailwind `dark:`.
-- Le liste linkano alle pagine indice dei rispettivi moduli per approfondire.
-- Il grafico e l'unico componente che richiede JavaScript (Chart.js + Alpine.js).
+- No Livewire components: all server-side rendering with Blade + Alpine.js only for the chart.
+- Dark mode supported on all components via Tailwind `dark:` classes.
+- Lists link to the respective module index pages for further details.
+- The chart is the only component that requires JavaScript (Chart.js + Alpine.js).

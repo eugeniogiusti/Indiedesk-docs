@@ -1,8 +1,8 @@
 # Frontend
 
-Il modulo Documents usa il pattern **Partial Views** per separare index globale e tab documenti della show progetto, con modal Alpine dedicato a upload/edit.
+The Documents module uses the **Partial Views** pattern to separate the global index and the documents tab of the project show, with a dedicated Alpine modal for upload/edit.
 
-## Struttura File
+## File Structure
 
 ```
 resources/views/documents/
@@ -46,80 +46,80 @@ resources/js/components/
 └── documentModal.js
 ```
 
-## Pattern Frontend
+## Frontend Pattern
 
 ### Orchestrator Views
 
-La vista `documents/index.blade.php` funziona da orchestrator:
-- include header, statistiche e filtri
-- sceglie table o empty-state in base ai risultati
+The `documents/index.blade.php` view acts as an orchestrator:
+- includes header, statistics, and filters
+- chooses table or empty-state based on results
 
-Nel dettaglio progetto, la tab documenti usa `projects/show/_tab-documents.blade.php` e include la tabella riusabile `documents/partials/_document-table.blade.php`.
+In the project detail, the documents tab uses `projects/show/_tab-documents.blade.php` and includes the reusable table `documents/partials/_document-table.blade.php`.
 
-### Partial riusabili
+### Reusable Partials
 
-Il modulo separa i due contesti UI:
-- **Index globale documenti**: partial in `documents/index/*`
-- **Tab documenti della show progetto**: partial in `documents/partials/*`
+The module separates the two UI contexts:
+- **Global documents index**: partials in `documents/index/*`
+- **Documents tab of the project show**: partials in `documents/partials/*`
 
 ## Modal (Alpine.js)
 
 ### Document Modal
 
-Gestito in:
+Managed in:
 - view: `documents/partials/_modal.blade.php`
-- componente: `resources/js/components/documentModal.js`
+- component: `resources/js/components/documentModal.js`
 
-Flusso:
-- apertura create con evento `open-document-modal`
-- apertura edit con evento `edit-document` (payload record)
-- submit su route `documents.store` / `documents.update`
+Flow:
+- open create with `open-document-modal` event
+- open edit with `edit-document` event (record payload)
+- submit to route `documents.store` / `documents.update`
 
-Comportamenti principali:
-- il blocco upload file e visibile solo in create (`x-show="!isEdit"`)
-- il bottone submit in create richiede sia `name` che file selezionato
-- in edit aggiorna solo metadata/label
-- supporta chiusura con `Esc` e click fuori modal
+Key behaviors:
+- the file upload block is visible only in create (`x-show="!isEdit"`)
+- the submit button in create requires both `name` and a selected file
+- in edit, only metadata/labels are updated
+- supports closing with `Esc` and click outside modal
 
 ## Form Fields
 
-`documents/partials/_form-fields.blade.php` gestisce:
-- nome documento (`name`)
-- label multiple (`label_ids[]`)
-- note (`notes`)
+`documents/partials/_form-fields.blade.php` handles:
+- document name (`name`)
+- multiple labels (`label_ids[]`)
+- notes (`notes`)
 
-`documents/partials/_file-upload.blade.php` gestisce input file e visualizzazione nome file selezionato.
+`documents/partials/_file-upload.blade.php` handles file input and selected filename display.
 
-## Azioni tabella
+## Table Actions
 
-### Index globale (`documents/index/document-table/_row-actions.blade.php`)
+### Global index (`documents/index/document-table/_row-actions.blade.php`)
 
 - view project
-- preview documento
-- download documento
+- document preview
+- document download
 
-### Tab progetto (`documents/partials/document-table/_row-actions.blade.php`)
+### Project tab (`documents/partials/document-table/_row-actions.blade.php`)
 
 - preview
 - download
-- edit (evento `edit-document` con payload da `toFormPayload()`)
-- delete (con `data-confirm`)
+- edit (`edit-document` event with payload from `toFormPayload()`)
+- delete (with `data-confirm`)
 
-## Wiring JS globale
+## Global JS Wiring
 
-Registrazione componente in `resources/js/app.js`:
+Component registration in `resources/js/app.js`:
 - `window.documentModal = documentModal`
 
-Il listener globale `data-action` in `app.js` dispatcha gli eventi custom usati dal modal.
+The global `data-action` listener in `app.js` dispatches the custom events used by the modal.
 
-## Internazionalizzazione
+## Internationalization
 
-Le stringhe frontend documents usano:
+Documents frontend strings use:
 - `lang/*/documents.php`
 - `lang/*/ui.php`
 
-Il rendering badge etichette usa il componente Blade `x-documents.label-badge`.
+Label badge rendering uses the `x-documents.label-badge` Blade component.
 
 ## Dark Mode
 
-Il modulo supporta dark mode tramite classi Tailwind `dark:*`, coerente con il layout applicativo.
+The module supports dark mode via Tailwind `dark:*` classes, consistent with the application layout.

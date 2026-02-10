@@ -1,8 +1,8 @@
 # Backend
 
-Il modulo Payments gestisce incassi dei progetti con index globale (filtri + statistiche), CRUD nel contesto progetto e integrazione fatture.
+The Payments module manages project income with a global index (filters + statistics), CRUD within the project context, and invoice integration.
 
-## Struttura File
+## File Structure
 
 ```
 app/
@@ -21,102 +21,102 @@ app/
 
 ## Routes
 
-| Metodo | URI | Azione | Descrizione |
+| Method | URI | Action | Description |
 |--------|-----|--------|-------------|
-| GET | `/payments` | index | Lista pagamenti globale paginata con filtri |
-| POST | `/projects/{project}/payments` | store | Crea pagamento nel progetto |
-| PUT | `/projects/{project}/payments/{payment}` | update | Aggiorna pagamento del progetto |
-| DELETE | `/projects/{project}/payments/{payment}` | destroy | Elimina pagamento |
+| GET | `/payments` | index | Global paginated payment list with filters |
+| POST | `/projects/{project}/payments` | store | Create payment in the project |
+| PUT | `/projects/{project}/payments/{payment}` | update | Update project payment |
+| DELETE | `/projects/{project}/payments/{payment}` | destroy | Delete payment |
 
-### Integrazione Fatture
+### Invoice Integration
 
-Il flusso invoice usato dai pagamenti passa da route dedicate modulo Invoices:
+The invoice flow used by payments goes through dedicated Invoice module routes:
 
-| Metodo | URI | Azione | Descrizione |
+| Method | URI | Action | Description |
 |--------|-----|--------|-------------|
-| POST | `/invoices/payments/{payment}/generate` | invoices.generate | Genera fattura PDF |
-| POST | `/invoices/payments/{payment}/upload` | invoices.upload | Upload fattura manuale |
-| GET | `/invoices/payments/{payment}/download` | invoices.download | Download fattura |
-| GET | `/invoices/payments/{payment}/preview` | invoices.preview | Anteprima fattura |
-| DELETE | `/invoices/payments/{payment}` | invoices.destroy | Elimina fattura |
+| POST | `/invoices/payments/{payment}/generate` | invoices.generate | Generate invoice PDF |
+| POST | `/invoices/payments/{payment}/upload` | invoices.upload | Upload manual invoice |
+| GET | `/invoices/payments/{payment}/download` | invoices.download | Download invoice |
+| GET | `/invoices/payments/{payment}/preview` | invoices.preview | Invoice preview |
+| DELETE | `/invoices/payments/{payment}` | invoices.destroy | Delete invoice |
 
 ## Controller
 
-Il `PaymentController` usa il pattern **Query Classes** per separare query/filter logic dal controller.
+The `PaymentController` uses the **Query Classes** pattern to separate query/filter logic from the controller.
 
-### Metodi
+### Methods
 
-- **index()** - Usa `PaymentIndexQuery` per lista paginata e `PaymentStatsQuery` per card statistiche
-- **store()** - Valida con `StorePaymentRequest`, crea pagamento nel progetto e redirect su `projects.show?tab=payments`
-- **update()** - Valida con `UpdatePaymentRequest`, aggiorna pagamento e redirect su tab payments della show progetto
-- **destroy()** - Elimina pagamento e ritorna su tab payments della show progetto
+- **index()** - Uses `PaymentIndexQuery` for paginated list and `PaymentStatsQuery` for statistics cards
+- **store()** - Validates with `StorePaymentRequest`, creates payment in the project and redirects to `projects.show?tab=payments`
+- **update()** - Validates with `UpdatePaymentRequest`, updates payment and redirects to the payments tab of the project show
+- **destroy()** - Deletes payment and returns to the payments tab of the project show
 
 ## Model
 
-Il model `Payment` si trova in `app/Models/Payment.php`.
+The `Payment` model is located in `app/Models/Payment.php`.
 
-### Caratteristiche
+### Features
 
-- **Relazione project** - ogni pagamento appartiene a un progetto
-- **Costanti dominio** - `METHODS` e `CURRENCIES`
+- **project relationship** - each payment belongs to a project
+- **Domain constants** - `METHODS` and `CURRENCIES`
 - **Scopes** - `method()`, `currency()`, `forProject()`, `paid()`, `pending()`, `overdue()`, `thisMonth()`, `thisYear()`, `dateRange()`
-- **Helper stato** - `isPaid()`, `isPending()`, `isOverdue()`
-- **Helper importi** - `getFormattedAmount()`, `getCompactAmount()`
-- **Invoice helpers** - `hasInvoice()`, url download/preview
-- **CalendarEventable** - supporto evento calendario quando `paid_at` è presente
-- **toFormPayload()** - payload edit sicuro (`id` + campi editabili)
-- **Delete hook** - rimuove file fattura locale quando il pagamento viene eliminato
+- **Status helpers** - `isPaid()`, `isPending()`, `isOverdue()`
+- **Amount helpers** - `getFormattedAmount()`, `getCompactAmount()`
+- **Invoice helpers** - `hasInvoice()`, download/preview URLs
+- **CalendarEventable** - calendar event support when `paid_at` is present
+- **toFormPayload()** - safe edit payload (`id` + editable fields)
+- **Delete hook** - removes local invoice file when payment is deleted
 
-### Metodi di Pagamento
+### Payment Methods
 
-| Metodo | Descrizione |
+| Method | Description |
 |--------|-------------|
-| `cash` | Contanti |
-| `bank` | Bonifico |
+| `cash` | Cash |
+| `bank` | Bank transfer |
 | `stripe` | Stripe |
 | `paypal` | PayPal |
 
 ## Form Requests
 
-Validazione gestita da:
+Validation handled by:
 
-- **StorePaymentRequest** - creazione pagamento
-- **UpdatePaymentRequest** - modifica pagamento
+- **StorePaymentRequest** - payment creation
+- **UpdatePaymentRequest** - payment update
 
-### Campi obbligatori
+### Required Fields
 
-- `amount` - importo (`min:0.01`)
-- `currency` - valuta (auto-merge da `BusinessSettings::default_currency`)
+- `amount` - amount (`min:0.01`)
+- `currency` - currency (auto-merged from `BusinessSettings::default_currency`)
 
-### Campi condizionali
+### Conditional Fields
 
-- `due_date` richiesto quando `paid_at` è vuoto (`required_without:paid_at`)
-- `method` richiesto quando `paid_at` è presente (`required_with:paid_at`)
+- `due_date` required when `paid_at` is empty (`required_without:paid_at`)
+- `method` required when `paid_at` is present (`required_with:paid_at`)
 
-### Campi opzionali
+### Optional Fields
 
-- `paid_at` - data incasso
-- `reference` - riferimento pagamento
-- `notes` - note
+- `paid_at` - collection date
+- `reference` - payment reference
+- `notes` - notes
 
-Nota: in `prepareForValidation()` se `paid_at` manca viene forzato `method = null`.
+Note: in `prepareForValidation()` if `paid_at` is missing, `method = null` is forced.
 
 ## Query Classes
 
-Il modulo usa il pattern **Query Classes** per tenere la logica query fuori dal controller.
+The module uses the **Query Classes** pattern to keep query logic out of the controller.
 
 ### PaymentIndexQuery
 
-Gestisce lista pagamenti globale con:
-- paginazione (15)
+Manages the global payment list with:
+- pagination (15)
 - eager loading `project.client`
-- filtri `project_id`, `method`, `currency`, `date_from`, `date_to`
-- ricerca su `reference`, `notes`, nome progetto
-- ordinamento per `paid_at desc`
+- filters `project_id`, `method`, `currency`, `date_from`, `date_to`
+- search on `reference`, `notes`, project name
+- sorting by `paid_at desc`
 
 ### PaymentStatsQuery
 
-Calcola statistiche per card index usando solo pagamenti incassati (`paid_at` non nullo):
+Calculates statistics for index cards using only collected payments (`paid_at` not null):
 - `total_all_time`
 - `total_this_month`
 - `total_this_year`

@@ -1,8 +1,8 @@
 # Frontend
 
-Il modulo Tasks usa il pattern **Partial Views** per mantenere index globale e sezione tasks nella show progetto modulari e riusabili.
+The Tasks module uses the **Partial Views** pattern to keep the global index and tasks section in the project show modular and reusable.
 
-## Struttura File
+## File Structure
 
 ```
 resources/views/tasks/
@@ -45,56 +45,56 @@ resources/js/components/
 └── taskToggle.js
 ```
 
-## Pattern Frontend
+## Frontend Pattern
 
 ### Orchestrator Views
 
-La vista `tasks/index.blade.php` funziona da orchestrator:
-- include header, statistiche, filtri
-- sceglie table o empty-state in base ai risultati
+The `tasks/index.blade.php` view acts as an orchestrator:
+- includes header, statistics, filters
+- chooses table or empty-state based on results
 
-### Partial riusabili
+### Reusable Partials
 
-Il modulo separa i due contesti UI:
-- **Index globale task**: partial in `tasks/index/*`
-- **Tab tasks della show progetto**: partial in `tasks/partials/*`
+The module separates the two UI contexts:
+- **Global task index**: partials in `tasks/index/*`
+- **Tasks tab of the project show**: partials in `tasks/partials/*`
 
-`tasks/partials/_task-table.blade.php` è la tabella riusabile usata nella show progetto.
+`tasks/partials/_task-table.blade.php` is the reusable table used in the project show.
 
 ## Modal (Alpine.js)
 
-Il form create/edit task è gestito in:
+The create/edit task form is managed in:
 - view: `tasks/partials/_modal-form.blade.php`
-- componente: `resources/js/components/taskModal.js`
+- component: `resources/js/components/taskModal.js`
 
-Flusso:
-- apertura create con evento `open-task-modal`
-- apertura edit con evento `edit-task` (payload record)
-- submit su route `tasks.store` / `tasks.update`
+Flow:
+- open create with `open-task-modal` event
+- open edit with `edit-task` event (record payload)
+- submit to route `tasks.store` / `tasks.update`
 
 ## Toggle Done (Alpine + AJAX)
 
-Il toggle stato task nella show progetto è gestito in:
+The task status toggle in the project show is managed in:
 - row view: `tasks/partials/_table-row.blade.php`
-- componente: `resources/js/components/taskToggle.js`
+- component: `resources/js/components/taskToggle.js`
 
-Comportamento:
+Behavior:
 - optimistic UI (`done`/`todo`)
-- chiamata AJAX a `POST /projects/{project}/tasks/{task}/toggle-done`
-- rollback automatico in caso di errore
-- suono toggle best-effort (Web Audio API)
+- AJAX call to `POST /projects/{project}/tasks/{task}/toggle-done`
+- automatic rollback on error
+- best-effort toggle sound (Web Audio API)
 
-## Wiring JS globale
+## Global JS Wiring
 
-Registrazione componenti in `resources/js/app.js`:
+Component registration in `resources/js/app.js`:
 - `window.taskModal = taskModal`
 - `Alpine.data('taskToggle', taskToggle)`
 
-## Internazionalizzazione
+## Internationalization
 
-Le stringhe frontend tasks usano il file:
+Tasks frontend strings use the file:
 - `lang/*/tasks.php`
 
 ## Dark Mode
 
-Il modulo supporta dark mode tramite classi Tailwind `dark:*`, coerente con il layout applicativo.
+The module supports dark mode via Tailwind `dark:*` classes, consistent with the application layout.

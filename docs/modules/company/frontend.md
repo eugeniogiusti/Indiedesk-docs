@@ -1,8 +1,8 @@
 # Frontend
 
-Il modulo Company usa una pagina settings con form unico e tab interne Alpine per sezionare i campi.
+The Company module uses a settings page with a single form and Alpine internal tabs to section the fields.
 
-## Struttura File
+## File Structure
 
 ```
 resources/views/settings/
@@ -19,64 +19,64 @@ resources/views/settings/
     └── _actions.blade.php
 ```
 
-## Pattern Frontend
+## Frontend Pattern
 
 ### Orchestrator View
 
 `resources/views/settings/business.blade.php`:
-- include header
-- contiene il form principale `PUT settings.business.update`
-- include `_tabs-container` con tutte le sezioni
-- contiene form hidden separato per `DELETE settings.business.delete-logo`
+- includes header
+- contains the main form `PUT settings.business.update`
+- includes `_tabs-container` with all sections
+- contains a separate hidden form for `DELETE settings.business.delete-logo`
 
-### Tabs Alpine inline
+### Alpine Inline Tabs
 
-`_tabs-container.blade.php` gestisce stato tab con:
+`_tabs-container.blade.php` manages tab state with:
 - `x-data="{ activeTab: ... }"`
-- hidden input `_active_tab` valorizzato da `activeTab`
-- `x-show` + `x-cloak` per contenuto sezioni
+- hidden input `_active_tab` populated by `activeTab`
+- `x-show` + `x-cloak` for section content
 
 `_tabs-navigation.blade.php`:
-- switch tab via `@click="activeTab = '...'"`
-- aggiorna anche `window.location.hash` per UX
+- tab switch via `@click="activeTab = '...'"`
+- also updates `window.location.hash` for UX
 
-Tab disponibili:
+Available tabs:
 - `personal`
 - `legal`
 - `tax`
 - `contacts`
 - `business`
 
-## Sezioni form
+## Form Sections
 
-Le partial di contenuto usano componenti Blade form (`x-form-input`, `x-form-textarea`) e separano responsabilita:
+The content partials use Blade form components (`x-form-input`, `x-form-textarea`) and separate responsibilities:
 
-- `_personal-info`: nome/cognome owner
-- `_legal-address`: indirizzo legale completo
-- `_tax-info`: tax/vat + valuta default (select da `BusinessSettings::CURRENCIES`)
-- `_contacts`: email, PEC, telefono
-- `_business-info`: nome/descrizione business, sito, IBAN, logo
+- `_personal-info`: owner first/last name
+- `_legal-address`: complete legal address
+- `_tax-info`: tax/vat + default currency (select from `BusinessSettings::CURRENCIES`)
+- `_contacts`: email, certified email, phone
+- `_business-info`: business name/description, website, IBAN, logo
 
-`_actions.blade.php` contiene il submit del form.
+`_actions.blade.php` contains the form submit.
 
-## Gestione logo
+## Logo Management
 
 In `_business-info.blade.php`:
-- mostra preview logo se `logo_path` presente (`$settings->logo_url`)
-- supporta delete logo tramite submit del form hidden `delete-logo-form`
-- input file con validazioni lato client (`accept`) coerenti col backend
+- shows logo preview if `logo_path` is present (`$settings->logo_url`)
+- supports logo deletion via submit of the hidden `delete-logo-form`
+- file input with client-side validations (`accept`) consistent with the backend
 
-## Navigazione
+## Navigation
 
-Il link al modulo e in sidebar settings:
+The module link is in the settings sidebar:
 - `resources/views/layouts/sidebar/_nav-settings.blade.php`
 - route `settings.business.edit`
 
-## Internazionalizzazione
+## Internationalization
 
-Le stringhe UI usano principalmente:
+UI strings primarily use:
 - `lang/*/business_settings.php`
 
 ## Dark Mode
 
-Tutte le partial sono compatibili con classi Tailwind `dark:*`.
+All partials are compatible with Tailwind `dark:*` classes.

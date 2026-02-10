@@ -1,15 +1,15 @@
 # Frontend
 
-Il modulo Projects usa il pattern **Orchestrator + Partials** per index e show, con modal Alpine.js per CRUD e ricerca clienti asincrona.
+The Projects module uses the **Orchestrator + Partials** pattern for index and show, with an Alpine.js modal for CRUD and asynchronous client search.
 
-## Struttura File
+## File Structure
 
 ```
 resources/views/projects/
-├── index.blade.php                    (orchestrator index)
-├── show.blade.php                     (orchestrator show)
+├── index.blade.php                    (index orchestrator)
+├── show.blade.php                     (show orchestrator)
 ├── modals/
-│   └── _project-form.blade.php        (modal create/edit)
+│   └── _project-form.blade.php        (create/edit modal)
 ├── index/
 │   ├── _header.blade.php
 │   ├── _stats-cards.blade.php
@@ -60,211 +60,211 @@ resources/js/components/
 
 ### Header
 
-Icona con gradiente, titolo e pulsante "Nuovo Progetto" che dispatcha `open-project-modal`.
+Icon with gradient, title, and "New Project" button that dispatches `open-project-modal`.
 
 ### Stats Cards
 
-Griglia 4 card (`grid-cols-1 md:grid-cols-2 lg:grid-cols-4`):
+4-card grid (`grid-cols-1 md:grid-cols-2 lg:grid-cols-4`):
 
-| Card | Dato | Gradiente |
-|------|------|-----------|
-| Totale | conteggio progetti + nuovi mese | blue |
-| In corso | conteggio `in_progress` | yellow |
-| Completati | conteggio `completed` | green |
-| Archiviati | conteggio `archived` | gray |
+| Card | Data | Gradient |
+|------|------|----------|
+| Total | project count + new this month | blue |
+| In Progress | `in_progress` count | yellow |
+| Completed | `completed` count | green |
+| Archived | `archived` count | gray |
 
-### Filtri
+### Filters
 
-Form GET su `projects.index`:
-- **Ricerca** - testo su nome progetto, nome cliente, P.IVA
-- **Status** - dropdown (tutti, draft, in_progress, completed, archived)
+GET form on `projects.index`:
+- **Search** - text on project name, client name, VAT number
+- **Status** - dropdown (all, draft, in_progress, completed, archived)
 - **Priority** - dropdown (low, medium, high)
-- **Azioni** - bottoni Filtra / Reset
+- **Actions** - Filter / Reset buttons
 
-### Tabella
+### Table
 
-Colonne: nome, cliente, status badge, priority badge, link dev (icone), data creazione, azioni (edit/delete).
-Paginazione (15 per pagina).
+Columns: name, client, status badge, priority badge, dev links (icons), creation date, actions (edit/delete).
+Pagination (15 per page).
 
 ### Empty State
 
-Messaggio centrato con icona quando non ci sono progetti.
+Centered message with icon when there are no projects.
 
 ## Show
 
 ### show.blade.php (orchestrator)
 
-`show.blade.php` e l'orchestrator principale della pagina dettaglio progetto. Compone la pagina includendo:
+`show.blade.php` is the main orchestrator of the project detail page. It composes the page by including:
 
-1. `projects.show._header` - header sticky
-2. Griglia `grid-cols-1 lg:grid-cols-4`:
+1. `projects.show._header` - sticky header
+2. Grid `grid-cols-1 lg:grid-cols-4`:
    - **Sidebar** (1/4): `_client-info`, `_project-stats`, `_quick-links`
    - **Main content** (3/4): `_content-tabs`
-3. `projects.modals._project-form` - modal edit progetto (fuori dalla griglia)
-4. `ai._panel` - pannello AI chatbot (condizionale: solo se AI abilitata in `AiSettings`)
+3. `projects.modals._project-form` - edit project modal (outside the grid)
+4. `ai._panel` - AI chatbot panel (conditional: only if AI is enabled in `AiSettings`)
 
-### Header sticky
+### Sticky Header
 
-Freccia back, nome progetto, badge tipo/stato/priorita, scadenza. Bottone "Modifica" dispatcha `edit-project`.
+Back arrow, project name, type/status/priority badges, deadline. "Edit" button dispatches `edit-project`.
 
 ### Sidebar
 
-- **Client info** - componente `x-client-summary`, o badge "Progetto Interno" se senza cliente
-- **Project stats** - date creazione, aggiornamento (`diffForHumans`), scadenza con link Google Calendar
-- **Quick links** - componente `x-projects.links` con icone cliccabili (repo, staging, prod, figma, docs)
+- **Client info** - `x-client-summary` component, or "Internal Project" badge if no client
+- **Project stats** - creation, update dates (`diffForHumans`), deadline with Google Calendar link
+- **Quick links** - `x-projects.links` component with clickable icons (repo, staging, prod, figma, docs)
 
-### _content-tabs.blade.php (sotto-orchestrator tab)
+### _content-tabs.blade.php (tab sub-orchestrator)
 
-`_content-tabs.blade.php` gestisce la navigazione e il contenuto dei tab. E un sotto-orchestrator che:
+`_content-tabs.blade.php` manages tab navigation and content. It is a sub-orchestrator that:
 
-- Inizializza Alpine.js con `activeTab` da query string (`?tab=costs`), default `overview`
-- Renderizza la **barra navigazione** con 7 bottoni tab, ognuno con icona SVG e label i18n
-- Il tab attivo mostra bordo emerald (`border-emerald-500`), gli altri sono grigi con hover
-- Nel blocco contenuto, ogni tab e wrappato in `x-show="activeTab === '...'"` con `x-cloak`
-- Include i partial `_tab-*.blade.php` corrispondenti
+- Initializes Alpine.js with `activeTab` from query string (`?tab=costs`), default `overview`
+- Renders the **navigation bar** with 7 tab buttons, each with SVG icon and i18n label
+- The active tab shows an emerald border (`border-emerald-500`), others are gray with hover
+- In the content block, each tab is wrapped in `x-show="activeTab === '...'"` with `x-cloak`
+- Includes the corresponding `_tab-*.blade.php` partials
 
 ### Tabs
 
-7 tab totali.
+7 total tabs.
 
-Ogni tab della show include **partial di altri moduli** per riusare tabelle e modal gia esistenti. Il pattern e sempre lo stesso: header con titolo + bottone "Aggiungi", tabella partial del modulo, link "Vedi tutti" se > 10 record, empty state, e modal form del modulo.
+Each show tab includes **partials from other modules** to reuse existing tables and modals. The pattern is always the same: header with title + "Add" button, module partial table, "View all" link if > 10 records, empty state, and module form modal.
 
 ### Tab Overview
 
-Contenuto proprio del progetto: descrizione + note (con `nl2br`), nessun partial esterno.
+Project's own content: description + notes (with `nl2br`), no external partials.
 
 ### Tab Tasks
 
-Include partial dal modulo **Tasks**:
-- `tasks.partials._task-table` - tabella task con dati da `$showData['tasks']`
-- `tasks.partials._modal-form` - modal create/edit task
-- `tasks.index._empty-state` - stato vuoto
+Includes partials from the **Tasks** module:
+- `tasks.partials._task-table` - task table with data from `$showData['tasks']`
+- `tasks.partials._modal-form` - create/edit task modal
+- `tasks.index._empty-state` - empty state
 
-Evento apertura: `open-task-modal`. Link "Vedi tutti" punta a `tasks.index` filtrato per `project_id`.
+Open event: `open-task-modal`. "View all" link points to `tasks.index` filtered by `project_id`.
 
 ### Tab Meetings
 
-Include partial dal modulo **Meetings**:
-- `meetings.partials._meeting-table` - tabella riunioni da `$showData['meetings']`
-- `meetings.partials._modal-form` - modal create/edit meeting
+Includes partials from the **Meetings** module:
+- `meetings.partials._meeting-table` - meetings table from `$showData['meetings']`
+- `meetings.partials._modal-form` - create/edit meeting modal
 
-Evento apertura: `open-meeting-modal`. Link "Vedi tutti" punta a `meetings.index` filtrato per `project_id`.
+Open event: `open-meeting-modal`. "View all" link points to `meetings.index` filtered by `project_id`.
 
 ### Tab Payments
 
-Include partial dal modulo **Payments**:
-- `payments.partials._payment-table` - tabella pagamenti da `$showData['payments']`
-- `payments.partials._modal-form` - modal create/edit pagamento
-- `payments.partials._upload-invoice-modal` - modal upload fattura
+Includes partials from the **Payments** module:
+- `payments.partials._payment-table` - payments table from `$showData['payments']`
+- `payments.partials._modal-form` - create/edit payment modal
+- `payments.partials._upload-invoice-modal` - invoice upload modal
 
-Evento apertura: `open-payment-modal`. Link "Vedi tutti" punta a `payments.index` filtrato per `project_id`.
+Open event: `open-payment-modal`. "View all" link points to `payments.index` filtered by `project_id`.
 
 ### Tab Costs
 
-Include partial dal modulo **Costs**:
-- `costs.partials._cost-table` - tabella costi da `$showData['costs']`
-- `costs.partials._modal-form` - modal create/edit costo
-- `costs.partials._upload-receipt-modal` - modal upload ricevuta
+Includes partials from the **Costs** module:
+- `costs.partials._cost-table` - costs table from `$showData['costs']`
+- `costs.partials._modal-form` - create/edit cost modal
+- `costs.partials._upload-receipt-modal` - receipt upload modal
 
-Evento apertura: `open-cost-modal`. Link "Vedi tutti" punta a `costs.index` filtrato per `project_id`.
+Open event: `open-cost-modal`. "View all" link points to `costs.index` filtered by `project_id`.
 
 ### Tab Profit
 
-Unico tab senza partial esterni - usa il componente Blade `x-profit.stat-card` per le 4 card KPI.
+The only tab without external partials - uses the `x-profit.stat-card` Blade component for the 4 KPI cards.
 
-Valuta mostrata tramite `$currencySymbol` (da `BusinessSettings` via `AppServiceProvider`):
+Currency shown via `$currencySymbol` (from `BusinessSettings` via `AppServiceProvider`):
 
-| Card | Dato | Gradiente |
-|------|------|-----------|
-| Profitto totale | importo + margine % | emerald (verde se positivo, rosso se negativo) |
-| Pagamenti totali | importo + conteggio | blue |
-| Costi totali | importo + conteggio | red |
-| ROI | `(profitto/costi)*100%`, mostra ∞ se costi zero | purple |
+| Card | Data | Gradient |
+|------|------|----------|
+| Total Profit | amount + margin % | emerald (green if positive, red if negative) |
+| Total Payments | amount + count | blue |
+| Total Costs | amount + count | red |
+| ROI | `(profit/costs)*100%`, shows infinity if costs are zero | purple |
 
-Due bottoni azione che switchano tab (`@click="activeTab = '...'"`)::
-- "Vedi Pagamenti" (blue) con badge conteggio
-- "Vedi Costi" (red) con badge conteggio
+Two action buttons that switch tabs (`@click="activeTab = '...'"`)::
+- "View Payments" (blue) with count badge
+- "View Costs" (red) with count badge
 
 ### Tab Documents
 
-Include partial dal modulo **Documents**:
-- `documents.partials._document-table` - tabella documenti da `$showData['documents']`
-- `documents.partials._modal` - modal upload documento (riceve anche `$labels` da `Label::ordered()`)
+Includes partials from the **Documents** module:
+- `documents.partials._document-table` - documents table from `$showData['documents']`
+- `documents.partials._modal` - document upload modal (also receives `$labels` from `Label::ordered()`)
 
-Evento apertura: `open-document-modal`. Link "Vedi tutti" punta a `documents.index` filtrato per `project_id`.
+Open event: `open-document-modal`. "View all" link points to `documents.index` filtered by `project_id`.
 
-### Riepilogo dipendenze cross-modulo
+### Cross-Module Dependency Summary
 
-La show progetto e un **hub** che integra partial di 5 moduli esterni:
+The project show is a **hub** that integrates partials from 5 external modules:
 
-| Tab | Modulo | Partial tabella | Partial modal |
-|-----|--------|-----------------|---------------|
+| Tab | Module | Table Partial | Modal Partial |
+|-----|--------|---------------|---------------|
 | Tasks | `tasks` | `_task-table` | `_modal-form` |
 | Meetings | `meetings` | `_meeting-table` | `_modal-form` |
 | Payments | `payments` | `_payment-table` | `_modal-form` + `_upload-invoice-modal` |
 | Costs | `costs` | `_cost-table` | `_modal-form` + `_upload-receipt-modal` |
 | Documents | `documents` | `_document-table` | `_modal` |
 
-Tutti i dati sono preparati dal backend in `$showData` (via `ProjectShowQuery`) con limite 10 record per tab e conteggi totali per i link "Vedi tutti".
+All data is prepared by the backend in `$showData` (via `ProjectShowQuery`) with a limit of 10 records per tab and total counts for the "View all" links.
 
 ## Modal (Alpine.js)
 
 ### Project Modal
 
-Componente: `projectModal.js`
+Component: `projectModal.js`
 
-Stato: `open`, `isEdit`, `projectId`, `activeTab`, `formData`.
+State: `open`, `isEdit`, `projectId`, `activeTab`, `formData`.
 
-3 tab interni:
+3 internal tabs:
 
 **Info:**
-- Nome (obbligatorio)
-- Tipo (dropdown: client_work, product, content, asset)
-- Cliente (opzionale, con checkbox "Progetto interno")
-  - Ricerca asincrona via `clientSearch.js` su `/api/clients/search?q=`
-  - Debounce 300ms, dropdown risultati, badge cliente selezionato
-- Descrizione, Status, Priority, Date (start_date, due_date)
+- Name (required)
+- Type (dropdown: client_work, product, content, asset)
+- Client (optional, with "Internal project" checkbox)
+  - Asynchronous search via `clientSearch.js` on `/api/clients/search?q=`
+  - 300ms debounce, results dropdown, selected client badge
+- Description, Status, Priority, Dates (start_date, due_date)
 
 **Links:**
 - repo_url, staging_url, production_url, figma_url, docs_url
 
 **Notes:**
-- Campo note (textarea)
+- Notes field (textarea)
 
-Apertura: eventi `open-project-modal` (create) e `edit-project` (edit con payload `toFormPayload()`).
+Open: `open-project-modal` (create) and `edit-project` (edit with `toFormPayload()` payload) events.
 
 ### Client Search
 
-Componente: `clientSearch.js`
+Component: `clientSearch.js`
 
-Ricerca asincrona clienti con debounce. Metodi: `searchClients()`, `selectClient()`, `clearClient()`, `syncFromProject()`.
+Asynchronous client search with debounce. Methods: `searchClients()`, `selectClient()`, `clearClient()`, `syncFromProject()`.
 
 ### Project Search
 
-Componente: `projectSearch.js`
+Component: `projectSearch.js`
 
-Ricerca globale progetti per navbar su `/api/search/projects?q=`. Navigazione diretta al progetto selezionato.
+Global project search for navbar on `/api/search/projects?q=`. Direct navigation to the selected project.
 
-## Wiring JS
+## JS Wiring
 
-Registrazione componenti in `resources/js/app.js`:
+Component registration in `resources/js/app.js`:
 - `Alpine.data('projectModal', projectModal)`
 - `Alpine.data('clientSearch', clientSearch)`
 - `Alpine.data('projectSearch', projectSearch)`
 
-## Internazionalizzazione
+## Internationalization
 
-Stringhe in `lang/*/projects.php` (10 lingue supportate: en, it, fr, es, de, nl, pt, pl, uk, ro, da).
+Strings in `lang/*/projects.php` (10 supported languages: en, it, fr, es, de, nl, pt, pl, uk, ro, da).
 
-Chiavi principali: titoli pagina, campi form, opzioni tipo/stato/priorita, placeholder, statistiche, label tab e link.
+Main keys: page titles, form fields, type/status/priority options, placeholders, statistics, tab labels and links.
 
-Le etichette date usano `Carbon::translatedFormat(...)`.
+Date labels use `Carbon::translatedFormat(...)`.
 
 ## Dark Mode
 
-Supporto completo con classi Tailwind `dark:*`:
+Full support with Tailwind `dark:*` classes:
 - Background: `bg-white dark:bg-gray-800`
-- Testo: `text-gray-900 dark:text-white`
-- Bordi: `border-gray-200 dark:border-gray-700`
-- Gradienti card: variante dark con opacita ridotta
-- Form: `bg-white dark:bg-gray-700`
+- Text: `text-gray-900 dark:text-white`
+- Borders: `border-gray-200 dark:border-gray-700`
+- Card gradients: dark variant with reduced opacity
+- Forms: `bg-white dark:bg-gray-700`

@@ -1,50 +1,49 @@
 # Backend Patterns
 
-Questa sezione descrive i pattern backend usati nel progetto (Laravel).
+This section describes the backend patterns used in the project (Laravel).
 
-**1. Controller sottili**
-- Responsabilita: orchestrare, non contenere business logic.
-- Esempio: `app/Http/Controllers/Tasks/TaskController.php`.
-- Il controller chiama query per index e ritorna view con i dati.
+**1. Thin controllers**
+- Responsibility: orchestrate, not contain business logic.
+- Example: `app/Http/Controllers/Tasks/TaskController.php`.
+- The controller calls queries for index and returns the view with data.
 
-**2. FormRequest per validazione**
-- Ogni azione di creazione o update ha una request dedicata.
-- Esempi:
+**2. FormRequest for validation**
+- Every create or update action has a dedicated request.
+- Examples:
 - `app/Http/Requests/Tasks/StoreTaskRequest.php`
 - `app/Http/Requests/Tasks/UpdateTaskRequest.php`
 
-**3. Query object per lettura e filtri**
-- Le query sono separate e riusabili.
-- Esempi:
-- `app/Queries/Tasks/TaskIndexQuery.php` per filtri in index.
-- `app/Queries/Tasks/TaskStatsQuery.php` per statistiche.
-- Vantaggi: testabili, riusabili, controller piu puliti.
+**3. Query objects for reads and filters**
+- Queries are separated and reusable.
+- Examples:
+- `app/Queries/Tasks/TaskIndexQuery.php` for index filters.
+- `app/Queries/Tasks/TaskStatsQuery.php` for statistics.
+- Benefits: testable, reusable, cleaner controllers.
 
-**4. Model scopes e costanti**
-- I model espongono costanti e scope per filtri.
-- Esempio: `Task::STATUSES`, `Task::TYPES`, scope `status()`, `type()`.
+**4. Model scopes and constants**
+- Models expose constants and scopes for filtering.
+- Example: `Task::STATUSES`, `Task::TYPES`, scope `status()`, `type()`.
 
-**5. Redirect mirati con contesto**
-- Dopo create/update/delete da Project Show, si torna alla tab corretta:
+**5. Targeted redirects with context**
+- After create/update/delete from Project Show, redirect back to the current tab:
 - `route(projects.show, [project => $project, tab => tasks])`.
 
-**6. Endpoint JSON per UI interattiva**
-- Per toggle rapide (es. task done), si usano endpoint JSON.
-- Controller ritorna payload con stato aggiornato per Alpine.
+**6. JSON endpoints for interactive UI**
+- For quick toggles (e.g. task done), JSON endpoints are used.
+- Controller returns a payload with updated state for Alpine.
 
-**7. Pattern toFormPayload() nei Model**
+**7. toFormPayload() pattern in Models**
 
-I model espongono un metodo `toFormPayload()` che ritorna solo i campi sicuri per i form frontend: `id` + campi `$fillable`. Questo evita di esporre dati sensibili o relazioni non necessarie nel DOM.
+Models expose a `toFormPayload()` method that returns only safe fields for frontend forms: `id` + `$fillable` fields. This avoids exposing sensitive data or unnecessary relationships in the DOM.
 
-Per campi speciali (date, relazioni many-to-many) il metodo può formattare o aggiungere dati extra. Il metodo accetta un parametro opzionale per estendere il payload.
+For special fields (dates, many-to-many relationships) the method can format or add extra data. The method accepts an optional parameter to extend the payload.
 
-**8. Services per logica di dominio**
+**8. Services for domain logic**
 
-La business logic complessa è estratta in classi Service dentro `app/Services/`, organizzate per dominio (Invoices, Receipts, TwoFactor, etc.). I controller restano snelli delegando le operazioni ai service. Questo rende la logica testabile e riusabile.
+Complex business logic is extracted into Service classes inside `app/Services/`, organized by domain (Invoices, Receipts, TwoFactor, etc.). Controllers stay lean by delegating operations to services. This makes logic testable and reusable.
 
-**Naming e organizzazione**
-- Controller per modulo in sottocartelle: `app/Http/Controllers/<Modulo>`.
-- Query per modulo in `app/Queries/<Modulo>`.
-- Request per modulo in `app/Http/Requests/<Modulo>`.
-- Services per dominio in `app/Services/<Dominio>`.
-
+**Naming and organization**
+- Controllers per module in subfolders: `app/Http/Controllers/<Module>`.
+- Queries per module in `app/Queries/<Module>`.
+- Requests per module in `app/Http/Requests/<Module>`.
+- Services per domain in `app/Services/<Domain>`.

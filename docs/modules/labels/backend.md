@@ -1,8 +1,8 @@
 # Backend
 
-Il modulo Labels gestisce anagrafica etichette (nome/colore), associazione ai documenti e CRUD globale.
+The Labels module manages label records (name/color), association with documents, and global CRUD.
 
-## Struttura File
+## File Structure
 
 ```
 app/
@@ -20,63 +20,63 @@ app/
 
 ## Routes
 
-| Metodo | URI | Azione | Descrizione |
+| Method | URI | Action | Description |
 |--------|-----|--------|-------------|
-| GET | `/labels` | index | Pagina gestione etichette |
-| POST | `/labels` | store | Crea etichetta |
-| PUT | `/labels/{label}` | update | Aggiorna etichetta |
-| DELETE | `/labels/{label}` | destroy | Elimina etichetta |
+| GET | `/labels` | index | Label management page |
+| POST | `/labels` | store | Create label |
+| PUT | `/labels/{label}` | update | Update label |
+| DELETE | `/labels/{label}` | destroy | Delete label |
 
 ## Controller
 
-`LabelController` orchestra il modulo e delega la business logic a `LabelService`.
+`LabelController` orchestrates the module and delegates business logic to `LabelService`.
 
-### Metodi
+### Methods
 
-- **index()** - carica elenco etichette con `LabelService::getAll()`
-- **store()** - valida con `StoreLabelRequest` e crea etichetta
-- **update()** - valida con `UpdateLabelRequest` e aggiorna etichetta
-- **destroy()** - elimina etichetta via service
+- **index()** - loads label list with `LabelService::getAll()`
+- **store()** - validates with `StoreLabelRequest` and creates label
+- **update()** - validates with `UpdateLabelRequest` and updates label
+- **destroy()** - deletes label via service
 
 ## Service
 
-`LabelService` incapsula le operazioni CRUD del modulo.
+`LabelService` encapsulates the module's CRUD operations.
 
-### Responsabilita principali
+### Main Responsibilities
 
-- **create()** - crea etichetta (`name`, `color`)
-- **update()** - aggiorna etichetta e ritorna record aggiornato
-- **delete()** - prima scollega etichetta da tutti i documenti (`detach`), poi elimina record
-- **getAll()** - ritorna etichette ordinate per nome
+- **create()** - creates label (`name`, `color`)
+- **update()** - updates label and returns the updated record
+- **delete()** - first detaches the label from all documents (`detach`), then deletes the record
+- **getAll()** - returns labels sorted by name
 
 ## Model
 
-Il model `Label` si trova in `app/Models/Label.php`.
+The `Label` model is located in `app/Models/Label.php`.
 
-### Caratteristiche
+### Features
 
-- **Relazione documents** - many-to-many con `Document`
-- **Costante `COLORS`** - palette colori consentiti
-- **Scope `ordered()`** - ordinamento alfabetico per nome
-- **Accessor `color_hex`** - converte key colore in hex
-- **Accessor `documents_count`** - conta documenti associati
-- **toFormPayload()** - payload edit sicuro (`id` + campi editabili)
+- **documents relationship** - many-to-many with `Document`
+- **`COLORS` constant** - allowed color palette
+- **`ordered()` scope** - alphabetical ordering by name
+- **`color_hex` accessor** - converts color key to hex
+- **`documents_count` accessor** - counts associated documents
+- **toFormPayload()** - safe edit payload (`id` + editable fields)
 
-### Colori supportati
+### Supported Colors
 
 `blue`, `green`, `red`, `yellow`, `purple`, `pink`, `indigo`, `orange`
 
 ## Form Requests
 
-Validazione gestita da:
+Validation handled by:
 
-- **StoreLabelRequest** - creazione
-- **UpdateLabelRequest** - modifica
+- **StoreLabelRequest** - creation
+- **UpdateLabelRequest** - update
 
-### Regole principali
+### Main Rules
 
-- `name` obbligatorio, stringa max 50
-- `color` obbligatorio, deve essere una key valida in `Label::COLORS`
-- `name` univoco:
+- `name` required, string max 50
+- `color` required, must be a valid key in `Label::COLORS`
+- `name` unique:
   - store: `unique:labels,name`
-  - update: unique con ignore del record corrente
+  - update: unique with ignore of the current record

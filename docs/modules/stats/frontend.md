@@ -1,8 +1,8 @@
 # Frontend
 
-Il modulo Statistics (cartella docs `stats`) usa viste Blade composte da partial, filtri GET e un componente JS per il grafico Chart.js.
+The Statistics module (docs folder `stats`) uses Blade views composed of partials, GET filters, and a JS component for the Chart.js chart.
 
-## Struttura File
+## File Structure
 
 ```
 resources/views/statistics/
@@ -24,65 +24,65 @@ resources/js/components/
 └── annualTrendChart.js
 ```
 
-## Pattern Frontend
+## Frontend Pattern
 
 ### Orchestrator View
 
-`statistics/index.blade.php` funge da orchestrator:
-- header modulo
-- filtri periodo
+`statistics/index.blade.php` acts as the orchestrator:
+- module header
+- period filters
 - summary cards
 - chart
-- monthly table (solo quando presente)
+- monthly table (only when present)
 
-### Partial principali
+### Main Partials
 
 - **_filters.blade.php**
-  - selettori anno/mese con submit automatico (`onchange="this.form.submit()"`)
-  - azione reset a vista annuale
-  - bottone download PDF con stesso filtro corrente
+  - year/month selectors with auto-submit (`onchange="this.form.submit()"`)
+  - reset action to annual view
+  - PDF download button with same current filter
 
 - **_summary.blade.php**
-  - card KPI finanziari (`profit`, `payments`, `costs`, `pending`)
-  - card KPI operativi (`projects_started`, `projects_completed`, `tasks_completed`, `meetings_held`, `new_clients`)
+  - financial KPI cards (`profit`, `payments`, `costs`, `pending`)
+  - operational KPI cards (`projects_started`, `projects_completed`, `tasks_completed`, `meetings_held`, `new_clients`)
 
 - **_chart.blade.php**
-  - inizializza Alpine `annualTrendChart(...)` passando dataset dal backend
-  - supporta due modalita:
-    - annuale (`monthly`)
-    - mensile (`daily`)
+  - initializes Alpine `annualTrendChart(...)` passing dataset from backend
+  - supports two modes:
+    - annual (`monthly`)
+    - monthly (`daily`)
 
 - **_monthly-table.blade.php**
-  - tabella breakdown annuale mese-per-mese
-  - link cliccabile sul mese per entrare nel dettaglio mensile
-  - footer con totali
+  - annual month-by-month breakdown table
+  - clickable month link to enter monthly detail
+  - footer with totals
 
-## Componente JS chart
+## JS Chart Component
 
 `resources/js/components/annualTrendChart.js`:
-- usa Chart.js (bar per payments/costs + line per profit)
-- distrugge/reinizializza il grafico a ogni render
-- ascolta cambio tema (`MutationObserver` su classe `dark`) per ricalcolare colori
-- formatter tooltip/asse Y con `currencySymbol`
+- uses Chart.js (bar for payments/costs + line for profit)
+- destroys/reinitializes the chart on each render
+- listens for theme change (`MutationObserver` on `dark` class) to recalculate colors
+- tooltip/Y-axis formatter with `currencySymbol`
 
-Registrazione componente in `resources/js/app.js`:
+Component registration in `resources/js/app.js`:
 - `Alpine.data('annualTrendChart', annualTrendChart)`
 
-## PDF report
+## PDF Report
 
-Template dedicato in `resources/views/statistics/pdf/*`:
-- layout separato per stampa
-- include header, summary e tabella mensile
-- usato esclusivamente da `StatisticsPdfExporter`
+Dedicated template in `resources/views/statistics/pdf/*`:
+- separate layout for print
+- includes header, summary, and monthly table
+- used exclusively by `StatisticsPdfExporter`
 
-## Internazionalizzazione
+## Internationalization
 
-Le stringhe frontend statistics usano:
+Statistics frontend strings use:
 - `lang/*/statistics.php`
 
-Le etichette mesi nel filtro e nei dataset usano `Carbon::translatedFormat(...)`.
+Month labels in filters and datasets use `Carbon::translatedFormat(...)`.
 
 ## Dark Mode
 
-Il modulo supporta dark mode con classi `dark:*` nelle partial.
-Il grafico aggiorna palette automaticamente al cambio tema.
+The module supports dark mode with `dark:*` classes in the partials.
+The chart automatically updates its palette when the theme changes.

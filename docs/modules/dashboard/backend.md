@@ -1,8 +1,8 @@
 # Backend
 
-Il modulo Dashboard aggrega dati da tutti i moduli principali (progetti, task, pagamenti, costi, meeting) in una vista riassuntiva. Usa 3 query class dedicate per separare le responsabilita.
+The Dashboard module aggregates data from all main modules (projects, tasks, payments, costs, meetings) into a summary view. It uses 3 dedicated query classes to separate responsibilities.
 
-## Struttura File
+## File Structure
 
 ```
 app/
@@ -16,18 +16,18 @@ app/
 
 ## Routes
 
-| Metodo | URI | Controller | Azione | Descrizione |
+| Method | URI | Controller | Action | Description |
 |--------|-----|------------|--------|-------------|
-| GET | `/dashboard` | DashboardController | `index` | Pagina dashboard principale |
+| GET | `/dashboard` | DashboardController | `index` | Main dashboard page |
 
 Middleware: `auth`, `verified`, `2fa`.
 
 ## Controller
 
-`DashboardController` ha un unico metodo `index()` che:
-1. Istanzia le 3 query class
-2. Chiama `handle()` su ognuna
-3. Passa `$stats`, `$lists`, `$chart` alla view
+`DashboardController` has a single `index()` method that:
+1. Instantiates the 3 query classes
+2. Calls `handle()` on each one
+3. Passes `$stats`, `$lists`, `$chart` to the view
 
 ```php
 public function index()
@@ -42,63 +42,63 @@ public function index()
 
 ## DashboardStatsQuery
 
-Calcola i KPI per le stat card. Ritorna un array con 5 chiavi:
+Calculates KPIs for the stat cards. Returns an array with 5 keys:
 
-| Chiave | Tipo | Contenuto |
-|--------|------|-----------|
-| `profit_this_month` | `array` | `amount`, `payments`, `costs` del mese corrente |
-| `pending_payments` | `array` | `count`, `total`, `overdue_count` dei pagamenti in attesa |
-| `active_projects` | `int` | Conteggio progetti con status `in_progress` |
+| Key | Type | Content |
+|-----|------|---------|
+| `profit_this_month` | `array` | `amount`, `payments`, `costs` of the current month |
+| `pending_payments` | `array` | `count`, `total`, `overdue_count` of pending payments |
+| `active_projects` | `int` | Count of projects with `in_progress` status |
 | `open_tasks` | `array` | `total`, `todo`, `in_progress`, `blocked` |
-| `meetings_this_week` | `int` | Conteggio meeting schedulati nella settimana corrente |
+| `meetings_this_week` | `int` | Count of meetings scheduled in the current week |
 
-### Metodi privati
+### Private Methods
 
-- `getProfitThisMonth()` - Somma pagamenti del mese (filtrati per valuta) meno somma costi del mese. Filtra per `BusinessSettings::current()->default_currency`.
-- `getPendingPayments()` - Conta e somma pagamenti pending, traccia quelli scaduti (overdue).
-- `getActiveProjectsCount()` - Conta progetti con status `in_progress`.
-- `getOpenTasksCount()` - Conta task aperti (todo + in_progress), breakdown per status incluso blocked.
-- `getMeetingsThisWeekCount()` - Conta meeting schedulati nella settimana corrente.
+- `getProfitThisMonth()` - Sums payments for the month (filtered by currency) minus the sum of costs for the month. Filters by `BusinessSettings::current()->default_currency`.
+- `getPendingPayments()` - Counts and sums pending payments, tracks overdue ones.
+- `getActiveProjectsCount()` - Counts projects with `in_progress` status.
+- `getOpenTasksCount()` - Counts open tasks (todo + in_progress), breakdown by status including blocked.
+- `getMeetingsThisWeekCount()` - Counts meetings scheduled in the current week.
 
 ## DashboardListsQuery
 
-Recupera liste ordinate di elementi recenti/urgenti. Ritorna un array con 5 chiavi:
+Retrieves sorted lists of recent/urgent items. Returns an array with 5 keys:
 
-| Chiave | Query | Limite |
-|--------|-------|--------|
-| `tasks_due_soon` | Task con scadenza nei prossimi 7 giorni, status aperto | 5 |
-| `upcoming_meetings` | Meeting futuri schedulati | 5 |
-| `overdue_payments` | Pagamenti pending con `due_date < now()` | 5 |
-| `recent_payments` | Ultimi pagamenti ricevuti (paid), ordinati per `paid_at` desc | 5 |
-| `projects_due_soon` | Progetti `in_progress` con `due_date >= now()`, ordinati per scadenza | 5 |
+| Key | Query | Limit |
+|-----|-------|-------|
+| `tasks_due_soon` | Tasks due within the next 7 days, open status | 5 |
+| `upcoming_meetings` | Future scheduled meetings | 5 |
+| `overdue_payments` | Pending payments with `due_date < now()` | 5 |
+| `recent_payments` | Latest received payments (paid), sorted by `paid_at` desc | 5 |
+| `projects_due_soon` | `in_progress` projects with `due_date >= now()`, sorted by deadline | 5 |
 
-### Ottimizzazione N+1
+### N+1 Optimization
 
-Il metodo `hydrateProjects()` carica in batch tutti i progetti referenziati nelle liste con eager loading della relazione `client`, evitando query N+1.
+The `hydrateProjects()` method batch-loads all projects referenced in the lists with eager loading of the `client` relationship, avoiding N+1 queries.
 
 ## DashboardChartQuery
 
-Genera i dati per il grafico annuale. Ritorna un array con 4 chiavi:
+Generates data for the annual chart. Returns an array with 4 keys:
 
-| Chiave | Tipo | Contenuto |
-|--------|------|-----------|
-| `labels` | `array` | 12 abbreviazioni mesi tradotte (Gen, Feb, ...) |
-| `payments` | `array` | Totali mensili pagamenti dell'anno corrente |
-| `costs` | `array` | Totali mensili costi dell'anno corrente |
-| `profit` | `array` | Profitto calcolato (payments - costs) per mese |
+| Key | Type | Content |
+|-----|------|---------|
+| `labels` | `array` | 12 translated month abbreviations (Jan, Feb, ...) |
+| `payments` | `array` | Monthly payment totals for the current year |
+| `costs` | `array` | Monthly cost totals for the current year |
+| `profit` | `array` | Calculated profit (payments - costs) per month |
 
-### Metodi privati
+### Private Methods
 
-- `getCurrentYearMonths()` - Genera collection di 12 mesi con chiavi: `key` (Y-m), `label` (mese tradotto), `start`, `end`.
-- `getMonthlyPayments(Collection $months)` - Query pagamenti pagati nell'anno, filtrati per valuta da `BusinessSettings::current()->default_currency`, raggruppati per mese con somma importi.
-- `getMonthlyCosts(Collection $months)` - Stessa logica per i costi.
+- `getCurrentYearMonths()` - Generates a collection of 12 months with keys: `key` (Y-m), `label` (translated month), `start`, `end`.
+- `getMonthlyPayments(Collection $months)` - Queries paid payments for the year, filtered by currency from `BusinessSettings::current()->default_currency`, grouped by month with summed amounts.
+- `getMonthlyCosts(Collection $months)` - Same logic for costs.
 
-## Valuta
+## Currency
 
-Tutte e 3 le query class usano `BusinessSettings::current()->default_currency` per filtrare pagamenti e costi per valuta. Il singleton `BusinessSettings` esegue una sola query per request grazie alla cache statica.
+All 3 query classes use `BusinessSettings::current()->default_currency` to filter payments and costs by currency. The `BusinessSettings` singleton executes only one query per request thanks to the static cache.
 
-## Note tecniche
+## Technical Notes
 
-- Le query class seguono il pattern CQRS: incapsulano tutta la logica di lettura dati.
-- Nessun dato viene cachato a livello applicativo: le aggregazioni sono calcolate ad ogni request.
-- I model scope (`open()`, `upcoming()`, `overdue()`, `paid()`, `thisYear()`, `thisMonth()`, `thisWeek()`) semplificano le query.
+- The query classes follow the CQRS pattern: they encapsulate all data reading logic.
+- No data is cached at the application level: aggregations are calculated on every request.
+- Model scopes (`open()`, `upcoming()`, `overdue()`, `paid()`, `thisYear()`, `thisMonth()`, `thisWeek()`) simplify the queries.

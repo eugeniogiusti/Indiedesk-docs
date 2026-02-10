@@ -1,8 +1,8 @@
 # Backend
 
-Il modulo Documents gestisce caricamento, metadata, tagging con label, download/preview file e CRUD nel contesto progetto, con index globale filtrabile.
+The Documents module handles file upload, metadata, label tagging, file download/preview, and CRUD within the project context, with a filterable global index.
 
-## Struttura File
+## File Structure
 
 ```
 app/
@@ -23,89 +23,89 @@ app/
 
 ## Routes
 
-| Metodo | URI | Azione | Descrizione |
+| Method | URI | Action | Description |
 |--------|-----|--------|-------------|
-| GET | `/documents` | index | Lista documenti globale paginata con filtri |
-| POST | `/projects/{project}/documents` | store | Upload nuovo documento nel progetto |
-| PUT | `/projects/{project}/documents/{document}` | update | Aggiorna metadata/label documento |
-| DELETE | `/projects/{project}/documents/{document}` | destroy | Elimina documento e file |
-| GET | `/projects/{project}/documents/{document}/download` | download | Download file |
-| GET | `/projects/{project}/documents/{document}/preview` | preview | Anteprima inline file |
+| GET | `/documents` | index | Global paginated document list with filters |
+| POST | `/projects/{project}/documents` | store | Upload new document to the project |
+| PUT | `/projects/{project}/documents/{document}` | update | Update document metadata/labels |
+| DELETE | `/projects/{project}/documents/{document}` | destroy | Delete document and file |
+| GET | `/projects/{project}/documents/{document}/download` | download | File download |
+| GET | `/projects/{project}/documents/{document}/preview` | preview | Inline file preview |
 
 ## Controller
 
-Il `DocumentController` orchestra il flusso e delega la logica di storage al `DocumentService`.
+The `DocumentController` orchestrates the flow and delegates storage logic to `DocumentService`.
 
-### Metodi
+### Methods
 
-- **index()** - Usa `DocumentIndexQuery` per lista paginata e `DocumentStatsQuery` per card statistiche
-- **store()** - Valida con `StoreDocumentRequest`, delega upload a `DocumentService::upload()` e redirect su `projects.show?tab=documents`
-- **update()** - Valida con `UpdateDocumentRequest`, delega update a `DocumentService::update()`
-- **destroy()** - Delega cancellazione a `DocumentService::delete()`
-- **download()** - Delega download file a `DocumentService::download()`
-- **preview()** - Delega preview inline a `DocumentService::preview()`
+- **index()** - Uses `DocumentIndexQuery` for paginated list and `DocumentStatsQuery` for statistics cards
+- **store()** - Validates with `StoreDocumentRequest`, delegates upload to `DocumentService::upload()` and redirects to `projects.show?tab=documents`
+- **update()** - Validates with `UpdateDocumentRequest`, delegates update to `DocumentService::update()`
+- **destroy()** - Delegates deletion to `DocumentService::delete()`
+- **download()** - Delegates file download to `DocumentService::download()`
+- **preview()** - Delegates inline preview to `DocumentService::preview()`
 
 ## Service
 
-`DocumentService` incapsula la logica file-system del modulo.
+`DocumentService` encapsulates the module's file-system logic.
 
-### Responsabilita principali
+### Main Responsibilities
 
-- **upload()** - genera filename univoco, salva file su disco `local/documents`, crea record documento e sincronizza label
-- **update()** - aggiorna solo metadata (`name`, `notes`) e sincronizza label
-- **delete()** - elimina file fisico (se presente) e poi il record DB
-- **download()** - verifica esistenza file e restituisce risposta download con nome documento
-- **preview()** - verifica esistenza file, determina mime-type e restituisce risposta inline con header sicuri
+- **upload()** - generates a unique filename, saves file to `local/documents` disk, creates document record, and syncs labels
+- **update()** - updates only metadata (`name`, `notes`) and syncs labels
+- **delete()** - deletes physical file (if present) then the DB record
+- **download()** - verifies file existence and returns a download response with the document name
+- **preview()** - verifies file existence, determines mime-type, and returns an inline response with secure headers
 
 ## Model
 
-Il model `Document` si trova in `app/Models/Document.php`.
+The `Document` model is located in `app/Models/Document.php`.
 
-### Caratteristiche
+### Features
 
-- **Relazione project** - ogni documento appartiene a un progetto
-- **Relazione labels** - many-to-many con `Label` tramite pivot `document_label`
+- **project relationship** - each document belongs to a project
+- **labels relationship** - many-to-many with `Label` via `document_label` pivot
 - **Scopes** - `forProject()`, `withLabel()`, `search()`, `recent()`
-- **Helper file** - `file_size` (accessor), `file_extension` (accessor)
-- **Helper URL** - `getDownloadUrl()`, `getPreviewUrl()`, `getDeleteUrl()`, `getUpdateUrl()`
-- **toFormPayload()** - payload edit (`id` + campi editabili + `label_ids`)
+- **File helpers** - `file_size` (accessor), `file_extension` (accessor)
+- **URL helpers** - `getDownloadUrl()`, `getPreviewUrl()`, `getDeleteUrl()`, `getUpdateUrl()`
+- **toFormPayload()** - edit payload (`id` + editable fields + `label_ids`)
 
 ## Form Requests
 
-Validazione gestita da:
+Validation handled by:
 
-- **StoreDocumentRequest** - creazione/upload documento
-- **UpdateDocumentRequest** - modifica metadata documento
+- **StoreDocumentRequest** - document creation/upload
+- **UpdateDocumentRequest** - document metadata update
 
-### Campi obbligatori (store)
+### Required Fields (store)
 
-- `name` - nome documento
-- `file` - file obbligatorio (`mimes:pdf,jpg,jpeg,png`, max 10MB)
+- `name` - document name
+- `file` - required file (`mimes:pdf,jpg,jpeg,png`, max 10MB)
 
-### Campi obbligatori (update)
+### Required Fields (update)
 
-- `name` - nome documento
+- `name` - document name
 
-### Campi opzionali
+### Optional Fields
 
-- `label_ids` - array etichette (`exists:labels,id`)
-- `notes` - note (`max:1000`)
+- `label_ids` - label array (`exists:labels,id`)
+- `notes` - notes (`max:1000`)
 
 ## Query Classes
 
-Il modulo usa Query Classes per tenere la query logic fuori dal controller.
+The module uses Query Classes to keep query logic out of the controller.
 
 ### DocumentIndexQuery
 
-Gestisce lista documenti globale con:
+Manages the global document list with:
 - eager loading `project`, `labels`
-- filtro per etichetta (`label_id`)
-- ricerca testuale (`search`) su nome documento/progetto
-- ordinamento recenti (`uploaded_at desc` via scope `recent()`)
-- paginazione (20)
+- filter by label (`label_id`)
+- text search (`search`) on document/project name
+- recent sorting (`uploaded_at desc` via `recent()` scope)
+- pagination (20)
 
 ### DocumentStatsQuery
 
-Calcola statistiche per la index:
-- `this_month` - documenti caricati nel mese corrente
-- `by_label` - top label per numero documenti (max 5)
+Calculates statistics for the index:
+- `this_month` - documents uploaded in the current month
+- `by_label` - top labels by document count (max 5)

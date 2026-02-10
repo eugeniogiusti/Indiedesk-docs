@@ -1,8 +1,8 @@
 # Backend
 
-Il modulo Receipts gestisce upload, preview, download e cancellazione di ricevute/scontrini associati ai costi. A differenza del modulo Invoice, non genera PDF: gestisce solo file caricati manualmente.
+The Receipts module handles upload, preview, download, and deletion of receipts associated with costs. Unlike the Invoice module, it does not generate PDFs: it only manages manually uploaded files.
 
-## Struttura File
+## File Structure
 
 ```
 app/
@@ -19,65 +19,65 @@ app/
 
 ## Routes
 
-Tutte sotto middleware `auth`, `verified`, `2fa`. Le route sono nested sotto progetto e costo:
+All under `auth`, `verified`, `2fa` middleware. Routes are nested under project and cost:
 
-| Metodo | URI | Azione | Descrizione |
+| Method | URI | Action | Description |
 |--------|-----|--------|-------------|
-| POST | `/projects/{project}/costs/{cost}/receipt` | `upload` | Upload ricevuta |
+| POST | `/projects/{project}/costs/{cost}/receipt` | `upload` | Upload receipt |
 | GET | `/projects/{project}/costs/{cost}/receipt/download` | `download` | Download file |
-| GET | `/projects/{project}/costs/{cost}/receipt/preview` | `preview` | Anteprima inline |
-| DELETE | `/projects/{project}/costs/{cost}/receipt` | `destroy` | Cancella ricevuta |
+| GET | `/projects/{project}/costs/{cost}/receipt/preview` | `preview` | Inline preview |
+| DELETE | `/projects/{project}/costs/{cost}/receipt` | `destroy` | Delete receipt |
 
 ## Controller
 
-`ReceiptController` delega tutte le operazioni a `ReceiptService`:
+`ReceiptController` delegates all operations to `ReceiptService`:
 
-- `upload(UploadReceiptRequest $request, Project $project, Cost $cost)` - Salva file caricato
-- `download(Project $project, Cost $cost)` - Scarica file
-- `preview(Project $project, Cost $cost)` - Apre file inline nel browser
-- `destroy(Project $project, Cost $cost)` - Cancella file e azzera `receipt_path`
+- `upload(UploadReceiptRequest $request, Project $project, Cost $cost)` - Saves uploaded file
+- `download(Project $project, Cost $cost)` - Downloads file
+- `preview(Project $project, Cost $cost)` - Opens file inline in browser
+- `destroy(Project $project, Cost $cost)` - Deletes file and resets `receipt_path`
 
 ## ReceiptService
 
-Orchestratore del modulo. Gestisce il ciclo di vita dei file ricevuta.
+Module orchestrator. Manages the receipt file lifecycle.
 
-### Metodi
+### Methods
 
-- `upload(Cost $cost, UploadedFile $file)` - Genera filename, salva tramite `ReceiptStorageManager`, aggiorna `Cost.receipt_path`
-- `download(Cost $cost)` - Recupera e scarica file
-- `preview(Cost $cost)` - Renderizza file inline
-- `delete(Cost $cost)` - Rimuove file e azzera `receipt_path`
-- `ensureReceiptExists(Cost $cost)` - Valida che la ricevuta esista, altrimenti abort 404
+- `upload(Cost $cost, UploadedFile $file)` - Generates filename, saves via `ReceiptStorageManager`, updates `Cost.receipt_path`
+- `download(Cost $cost)` - Retrieves and downloads file
+- `preview(Cost $cost)` - Renders file inline
+- `delete(Cost $cost)` - Removes file and resets `receipt_path`
+- `ensureReceiptExists(Cost $cost)` - Validates that the receipt exists, otherwise abort 404
 
-### Generazione filename
+### Filename Generation
 
-Il metodo `generateFilename()` crea nomi file strutturati:
+The `generateFilename()` method creates structured filenames:
 
-- **Formato**: `{prefisso}-{tipo}-{data}-{timestamp}.{estensione}`
-- **Prefisso**: Stringa localizzata `__('receipts.filename_prefix')`
-- **Tipo**: Dal tipo del costo (hosting, api, tool, license, ads, service, travel)
-- **Data**: `paid_at` formattata come `YYYY-MM-DD`
-- **Timestamp**: Unix timestamp per unicita
-- **Esempio**: `receipt-hosting-2025-01-15-1736942400.pdf`
+- **Format**: `{prefix}-{type}-{date}-{timestamp}.{extension}`
+- **Prefix**: Localized string `__('receipts.filename_prefix')`
+- **Type**: From the cost type (hosting, api, tool, license, ads, service, travel)
+- **Date**: `paid_at` formatted as `YYYY-MM-DD`
+- **Timestamp**: Unix timestamp for uniqueness
+- **Example**: `receipt-hosting-2025-01-15-1736942400.pdf`
 
 ## ReceiptStorageManager
 
-Gestisce lo storage fisico dei file ricevuta.
+Manages the physical storage of receipt files.
 
-- **Percorso storage**: `storage/app/receipts/`
-- **Disco**: Laravel `local`
+- **Storage path**: `storage/app/receipts/`
+- **Disk**: Laravel `local`
 
-### Metodi
+### Methods
 
-- `saveUploadedFile(UploadedFile $file, string $filename)` - Salva con `storeAs`, ritorna path
-- `download(string $path, ?string $downloadName)` - Response HTTP download (attachment)
-- `preview(string $path, ?string $displayName)` - Response HTTP inline con MIME type corretto
-- `delete(?string $path)` - Rimuove file
-- `exists(?string $path)` - Verifica esistenza
-- `getMimeType(string $path)` - Ritorna MIME type (`application/pdf`, `image/jpeg`, `image/png`, fallback `application/octet-stream`)
-- `ensureDirectoryExists()` - Crea directory se non esiste
+- `saveUploadedFile(UploadedFile $file, string $filename)` - Saves with `storeAs`, returns path
+- `download(string $path, ?string $downloadName)` - HTTP download response (attachment)
+- `preview(string $path, ?string $displayName)` - HTTP inline response with correct MIME type
+- `delete(?string $path)` - Removes file
+- `exists(?string $path)` - Checks existence
+- `getMimeType(string $path)` - Returns MIME type (`application/pdf`, `image/jpeg`, `image/png`, fallback `application/octet-stream`)
+- `ensureDirectoryExists()` - Creates directory if it does not exist
 
-### Header response
+### Response Headers
 
 **Preview (inline)**:
 - `Content-Disposition: inline`
@@ -87,41 +87,41 @@ Gestisce lo storage fisico dei file ricevuta.
 **Download (attachment)**:
 - `Content-Disposition: attachment`
 
-## Validazione Upload
+## Upload Validation
 
 `UploadReceiptRequest`:
-- File obbligatorio
-- Formati: pdf, jpg, jpeg, png
-- Dimensione massima: 5MB (meta delle fatture)
-- Messaggi errore localizzati (`__('receipts.*')`)
+- File required
+- Formats: pdf, jpg, jpeg, png
+- Maximum size: 5MB (half of invoices)
+- Localized error messages (`__('receipts.*')`)
 
-## Model Cost
+## Cost Model
 
-Campi rilevanti per le ricevute:
-- `receipt_path` - Path al file salvato (nullable)
-- `hasReceipt()` - Verifica se `receipt_path` e valorizzato
-- `getReceiptUploadUrl()` - Ritorna URL route upload
-- `getReceiptDownloadUrl()` - Ritorna URL route download
-- `getReceiptPreviewUrl()` - Ritorna URL route preview
-- `getReceiptDeleteUrl()` - Ritorna URL route delete
+Receipt-related fields:
+- `receipt_path` - Path to saved file (nullable)
+- `hasReceipt()` - Checks if `receipt_path` has a value
+- `getReceiptUploadUrl()` - Returns upload route URL
+- `getReceiptDownloadUrl()` - Returns download route URL
+- `getReceiptPreviewUrl()` - Returns preview route URL
+- `getReceiptDeleteUrl()` - Returns delete route URL
 
-La cancellazione del file avviene automaticamente alla cancellazione del Cost (via model boot).
+File deletion happens automatically when the Cost is deleted (via model boot).
 
-## Differenze con il modulo Invoice
+## Differences from the Invoice Module
 
-| Aspetto | Invoice | Receipt |
-|---------|---------|---------|
-| Generazione PDF | Si (DomPDF) | No |
-| Solo upload manuale | No (anche genera) | Si |
-| Dimensione max | 10MB | 5MB |
+| Aspect | Invoice | Receipt |
+|--------|---------|---------|
+| PDF generation | Yes (DomPDF) | No |
+| Manual upload only | No (also generates) | Yes |
+| Max size | 10MB | 5MB |
 | Storage path | `storage/app/invoices/` | `storage/app/receipts/` |
-| Associato a | Payment | Cost |
-| Filename | `invoice-{id}-{anno}.ext` | `{prefix}-{tipo}-{data}-{ts}.ext` |
+| Associated with | Payment | Cost |
+| Filename | `invoice-{id}-{year}.ext` | `{prefix}-{type}-{date}-{ts}.ext` |
 | Route nesting | Flat (`/invoices/payments/{payment}`) | Nested (`/projects/{project}/costs/{cost}/receipt`) |
 
-## Note tecniche
+## Technical Notes
 
-- Il modulo non ha generazione automatica: gestisce solo file caricati dall'utente.
-- Il filename include il tipo di costo, rendendo i file identificabili anche fuori dall'applicazione.
-- Le route sono nested sotto progetto/costo perche le ricevute sono sempre nel contesto di un costo di un progetto specifico.
-- Come per le fatture, le azioni sono integrate nelle view del modulo costi, non in view proprie.
+- The module has no automatic generation: it only manages files uploaded by the user.
+- The filename includes the cost type, making files identifiable even outside the application.
+- Routes are nested under project/cost because receipts are always in the context of a specific project's cost.
+- As with invoices, actions are integrated into the cost module views, not in their own views.

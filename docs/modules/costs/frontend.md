@@ -1,8 +1,8 @@
 # Frontend
 
-Il modulo Costs usa il pattern **Partial Views** per mantenere index globale e sezione costi nella show progetto modulari e riusabili.
+The Costs module uses the **Partial Views** pattern to keep the global index and costs section in the project show modular and reusable.
 
-## Struttura File
+## File Structure
 
 ```
 resources/views/costs/
@@ -55,77 +55,77 @@ resources/js/components/
 └── receiptUploadModal.js
 ```
 
-## Pattern Frontend
+## Frontend Pattern
 
 ### Orchestrator Views
 
-La vista `costs/index.blade.php` funziona da orchestrator:
-- include header, statistiche, filtri
-- sceglie table o empty-state in base ai risultati
+The `costs/index.blade.php` view acts as an orchestrator:
+- includes header, statistics, filters
+- chooses table or empty-state based on results
 
-### Partial riusabili
+### Reusable Partials
 
-Il modulo separa i due contesti UI:
-- **Index globale costi**: partial in `costs/index/*`
-- **Tab costi della show progetto**: partial in `costs/partials/*`
+The module separates the two UI contexts:
+- **Global costs index**: partials in `costs/index/*`
+- **Costs tab of the project show**: partials in `costs/partials/*`
 
-`costs/partials/_cost-table.blade.php` e usata nella show progetto (`projects/show/_tab-costs.blade.php`).
+`costs/partials/_cost-table.blade.php` is used in the project show (`projects/show/_tab-costs.blade.php`).
 
 ## Modal (Alpine.js)
 
 ### Cost Modal
 
-Gestito in:
+Managed in:
 - view: `costs/partials/_modal-form.blade.php`
-- componente: `resources/js/components/costModal.js`
+- component: `resources/js/components/costModal.js`
 
-Flusso:
-- apertura create con evento `open-cost-modal`
-- apertura edit con evento `edit-cost` (payload record)
-- submit su route `costs.store` / `costs.update`
+Flow:
+- open create with `open-cost-modal` event
+- open edit with `edit-cost` event (record payload)
+- submit to route `costs.store` / `costs.update`
 
-Il componente gestisce stato `open`, `isEdit`, `costId` e `formData`.
+The component manages `open`, `isEdit`, `costId`, and `formData` state.
 
 ### Upload Receipt Modal
 
-Gestito in:
+Managed in:
 - view: `costs/partials/_upload-receipt-modal.blade.php`
-- componente: `resources/js/components/receiptUploadModal.js`
+- component: `resources/js/components/receiptUploadModal.js`
 
-Flusso:
-- apertura con evento `upload-receipt` (passa `costId`)
-- costruzione dinamica `uploadUrl` (`/projects/{projectId}/costs/{costId}/receipt`)
-- upload file ricevuta
+Flow:
+- open with `upload-receipt` event (passes `costId`)
+- dynamic `uploadUrl` construction (`/projects/{projectId}/costs/{costId}/receipt`)
+- receipt file upload
 
-## Azioni tabella costi (show progetto)
+## Cost Table Actions (project show)
 
-In `costs/partials/cost-table/_row-receipt.blade.php` sono disponibili:
-- preview ricevuta
-- download ricevuta
-- delete ricevuta
-- upload ricevuta
+In `costs/partials/cost-table/_row-receipt.blade.php` the following are available:
+- receipt preview
+- receipt download
+- receipt delete
+- receipt upload
 
-Le azioni usano route `receipts.*`.
+Actions use `receipts.*` routes.
 
-In `costs/partials/cost-table/_row-actions.blade.php` sono disponibili:
-- edit costo (evento `edit-cost` con payload da `toFormPayload()`)
-- delete costo (`costs.destroy`)
+In `costs/partials/cost-table/_row-actions.blade.php` the following are available:
+- edit cost (`edit-cost` event with payload from `toFormPayload()`)
+- delete cost (`costs.destroy`)
 
-## Wiring JS globale
+## Global JS Wiring
 
-Registrazione componenti in `resources/js/app.js`:
+Component registration in `resources/js/app.js`:
 - `window.costModal = costModal`
 - `window.receiptUploadModal = receiptUploadModal`
 
-Il listener globale `data-action` in `app.js` dispatcha gli eventi custom usati dai modal.
+The global `data-action` listener in `app.js` dispatches the custom events used by the modals.
 
-## Internazionalizzazione
+## Internationalization
 
-Le stringhe frontend costs usano:
+Costs frontend strings use:
 - `lang/*/costs.php`
 - `lang/*/receipts.php`
 - `lang/*/ui.php`
 
 ## Dark Mode
 
-Il modulo supporta dark mode tramite classi Tailwind `dark:*`, coerente con il layout applicativo.
+The module supports dark mode via Tailwind `dark:*` classes, consistent with the application layout.

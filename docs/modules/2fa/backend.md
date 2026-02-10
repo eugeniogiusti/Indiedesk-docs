@@ -1,8 +1,8 @@
 # Backend
 
-Il modulo 2FA gestisce autenticazione a due fattori con TOTP, recovery codes e trusted devices.
+The 2FA module handles two-factor authentication with TOTP, recovery codes, and trusted devices.
 
-## Struttura File
+## File Structure
 
 ```
 app/
@@ -32,101 +32,101 @@ bootstrap/
 
 ## Routes
 
-### Challenge login (solo `auth`)
+### Challenge login (`auth` only)
 
-| Metodo | URI | Nome route | Descrizione |
+| Method | URI | Route Name | Description |
 |--------|-----|------------|-------------|
-| GET | `/two-factor/challenge` | `2fa.show` | Pagina challenge 2FA |
-| POST | `/two-factor/challenge` | `2fa.verify` | Verifica OTP/recovery e accesso |
+| GET | `/two-factor/challenge` | `2fa.show` | 2FA challenge page |
+| POST | `/two-factor/challenge` | `2fa.verify` | Verify OTP/recovery and grant access |
 
-### Setup da profilo (gruppo protetto `auth`, `verified`, `2fa`)
+### Profile setup (protected group `auth`, `verified`, `2fa`)
 
-| Metodo | URI | Nome route | Descrizione |
+| Method | URI | Route Name | Description |
 |--------|-----|------------|-------------|
-| POST | `/two-factor/enable` | `two-factor.enable` | Avvia setup (secret in sessione) |
-| POST | `/two-factor/confirm` | `two-factor.confirm` | Conferma setup con OTP |
-| POST | `/two-factor/cancel` | `two-factor.cancel` | Annulla setup in corso |
-| DELETE | `/two-factor/disable` | `two-factor.disable` | Disattiva 2FA (password richiesta) |
+| POST | `/two-factor/enable` | `two-factor.enable` | Start setup (secret stored in session) |
+| POST | `/two-factor/confirm` | `two-factor.confirm` | Confirm setup with OTP |
+| POST | `/two-factor/cancel` | `two-factor.cancel` | Cancel setup in progress |
+| DELETE | `/two-factor/disable` | `two-factor.disable` | Disable 2FA (password required) |
 
 ### Trusted devices
 
-| Metodo | URI | Nome route | Descrizione |
+| Method | URI | Route Name | Description |
 |--------|-----|------------|-------------|
-| GET | `/profile/trusted-devices` | `profile.trusted-devices.index` | Lista device fidati |
-| DELETE | `/profile/trusted-devices/{deviceId}` | `profile.trusted-devices.revoke` | Revoca singolo device |
-| DELETE | `/profile/trusted-devices` | `profile.trusted-devices.revoke-all` | Revoca tutti i device |
+| GET | `/profile/trusted-devices` | `profile.trusted-devices.index` | List trusted devices |
+| DELETE | `/profile/trusted-devices/{deviceId}` | `profile.trusted-devices.revoke` | Revoke single device |
+| DELETE | `/profile/trusted-devices` | `profile.trusted-devices.revoke-all` | Revoke all devices |
 
 ## Middleware
 
-`EnsureTwoFactorAuthenticated` e registrato come alias `2fa` in `bootstrap/app.php`.
+`EnsureTwoFactorAuthenticated` is registered as alias `2fa` in `bootstrap/app.php`.
 
-Logica:
-- passa se utente non autenticato (delegato ad altri middleware)
-- passa se 2FA non abilitato (`two_factor_confirmed_at` nullo)
-- passa se device corrente e trusted
-- passa se sessione contiene `2fa_verified_{userId}`
-- evita loop consentendo route `2fa.*`
-- altrimenti redirect a `2fa.show`
+Logic:
+- passes if user is not authenticated (delegated to other middleware)
+- passes if 2FA is not enabled (`two_factor_confirmed_at` is null)
+- passes if current device is trusted
+- passes if session contains `2fa_verified_{userId}`
+- avoids loops by allowing `2fa.*` routes
+- otherwise redirects to `2fa.show`
 
 ## Controller
 
 ### TwoFactorChallengeController
 
-- **show()**: mostra pagina challenge solo se 2FA confermato
+- **show()**: shows challenge page only if 2FA is confirmed
 - **verify()**:
-  - valida codice (`VerifyTwoFactorRequest`)
-  - verifica OTP o recovery via `TwoFactorService`
-  - se recovery code usato, lo consuma
-  - setta sessione `2fa_verified_{userId}=true`
-  - opzionale: salva device come trusted (`remember_device`)
+  - validates code (`VerifyTwoFactorRequest`)
+  - verifies OTP or recovery via `TwoFactorService`
+  - if recovery code used, it is consumed
+  - sets session `2fa_verified_{userId}=true`
+  - optional: saves device as trusted (`remember_device`)
 
 ### TwoFactorSetupController
 
-- **enable()**: genera secret e salva in sessione `2fa_secret`
+- **enable()**: generates secret and saves it in session `2fa_secret`
 - **confirm()**:
-  - legge `2fa_secret` dalla sessione
-  - verifica codice OTP
-  - abilita 2FA su utente + genera recovery codes
-  - salva recovery codes in sessione per visualizzazione one-shot
-  - setta sessione `2fa_verified_{userId}`
-- **cancel()**: rimuove `2fa_secret` dalla sessione
-- **disable()**: richiede password (`DisableTwoFactorRequest`), disabilita 2FA e pulisce sessione
+  - reads `2fa_secret` from session
+  - verifies OTP code
+  - enables 2FA on user + generates recovery codes
+  - saves recovery codes in session for one-shot display
+  - sets session `2fa_verified_{userId}`
+- **cancel()**: removes `2fa_secret` from session
+- **disable()**: requires password (`DisableTwoFactorRequest`), disables 2FA and clears session
 
 ### TrustedDeviceController
 
-- **index()**: carica device con `TrustedDeviceQuery`, calcola hash device corrente
-- **revoke()**: elimina un device dell'utente
-- **revokeAll()**: elimina tutti i device e resetta sessione `2fa_verified_{userId}`
+- **index()**: loads devices with `TrustedDeviceQuery`, computes current device hash
+- **revoke()**: deletes a user's device
+- **revokeAll()**: deletes all devices and resets session `2fa_verified_{userId}`
 
 ## Services
 
 ### TwoFactorService
 
-Responsabilita:
-- generazione secret TOTP (`PragmaRX/Google2FA`)
-- verifica codice TOTP
-- generazione recovery codes
-- verifica codice OTP o recovery
-- consumo recovery code
-- enable/disable 2FA sul model `User`
+Responsibilities:
+- TOTP secret generation (`PragmaRX/Google2FA`)
+- TOTP code verification
+- recovery codes generation
+- OTP or recovery code verification
+- recovery code consumption
+- enable/disable 2FA on the `User` model
 
 ### TrustedDeviceService
 
-Responsabilita:
-- generazione hash device (UA + IP)
-- creazione device trusted con metadati (nome browser/OS, IP)
-- deduplica: non crea duplicati se hash gia presente
+Responsibilities:
+- device hash generation (UA + IP)
+- trusted device creation with metadata (browser/OS name, IP)
+- deduplication: does not create duplicates if hash already exists
 
 ## Model
 
 ### User
 
-Campi 2FA rilevanti:
+2FA-related fields:
 - `two_factor_secret`
 - `two_factor_recovery_codes` (cast `array`)
 - `two_factor_confirmed_at` (cast `datetime`)
 
-Relazione:
+Relationship:
 - `trustedDevices()` hasMany `TrustedDevice`
 
 Helper:
@@ -134,7 +134,7 @@ Helper:
 
 ### TrustedDevice
 
-Campi principali:
+Main fields:
 - `user_id`, `device_hash`, `device_name`, `ip_address`, `expires_at`
 
 Helper:
@@ -143,17 +143,17 @@ Helper:
 
 ## Form Requests
 
-- `VerifyTwoFactorRequest`: valida challenge (`one_time_password`, `remember_device`)
-- `ConfirmTwoFactorRequest`: valida OTP setup (6 cifre)
-- `DisableTwoFactorRequest`: richiede `current_password`
+- `VerifyTwoFactorRequest`: validates challenge (`one_time_password`, `remember_device`)
+- `ConfirmTwoFactorRequest`: validates OTP setup (6 digits)
+- `DisableTwoFactorRequest`: requires `current_password`
 
-## Stato sessione usato dal modulo
+## Session state used by the module
 
-- `2fa_secret` - setup in corso
-- `2fa_verified_{userId}` - challenge superata nella sessione corrente
-- `recovery_codes` - codici da mostrare subito dopo abilitazione
+- `2fa_secret` - setup in progress
+- `2fa_verified_{userId}` - challenge passed in the current session
+- `recovery_codes` - codes to display immediately after enabling
 
-## Note tecniche
+## Technical notes
 
-- Il flusso challenge usa route `2fa.*`; setup profilo usa route `two-factor.*`.
-- Nelle traduzioni convivono chiavi in namespace `twofactor.*` e `two_factor.*`.
+- The challenge flow uses `2fa.*` routes; profile setup uses `two-factor.*` routes.
+- In translations, keys coexist under the `twofactor.*` and `two_factor.*` namespaces.

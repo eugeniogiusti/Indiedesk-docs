@@ -1,8 +1,8 @@
 # Backend
 
-Il modulo Statistics gestisce metriche finanziarie e operative per periodo, trend grafico e export PDF.
+The Statistics module manages financial and operational metrics by period, chart trends, and PDF export.
 
-## Struttura File
+## File Structure
 
 ```
 app/
@@ -22,47 +22,47 @@ app/
 
 ## Routes
 
-| Metodo | URI | Azione | Descrizione |
+| Method | URI | Action | Description |
 |--------|-----|--------|-------------|
-| GET | `/statistics` | index | Dashboard statistiche per anno/mese |
-| GET | `/statistics/export-pdf` | export-pdf | Export PDF del report corrente |
+| GET | `/statistics` | index | Statistics dashboard by year/month |
+| GET | `/statistics/export-pdf` | export-pdf | PDF export of the current report |
 
 ## Controller
 
-`StatisticsController` coordina input periodo, query aggregata e export.
+`StatisticsController` coordinates period input, aggregated query, and export.
 
-### Metodi
+### Methods
 
-- **index()** - risolve `year`/`month`, calcola `availableYears`, invoca `StatisticsQuery` e renderizza `statistics.index`
-- **exportPdf()** - usa `StatisticsPdfExporter` per generare e scaricare il report PDF
-- **getAvailableYears()** - costruisce elenco anni disponibili (dal corrente fino al 2026)
+- **index()** - resolves `year`/`month`, calculates `availableYears`, invokes `StatisticsQuery`, and renders `statistics.index`
+- **exportPdf()** - uses `StatisticsPdfExporter` to generate and download the PDF report
+- **getAvailableYears()** - builds the list of available years (from the current year up to 2026)
 
 ## Query Orchestrator
 
-`StatisticsQuery` e l'orchestratore delle query:
-- calcola intervallo periodo (`startDate`, `endDate`) in base a anno/mese
-- compone output unico:
-  - `summary` (finanziario + operativo)
-  - `monthly` (breakdown per mese, solo vista annuale)
-  - `chart` (dataset grafico mensile o giornaliero)
+`StatisticsQuery` is the query orchestrator:
+- calculates the period range (`startDate`, `endDate`) based on year/month
+- composes a single output:
+  - `summary` (financial + operational)
+  - `monthly` (month-by-month breakdown, annual view only)
+  - `chart` (monthly or daily chart dataset)
 
 ## SubQueries
 
 ### FinancialStatsQuery
 
-Calcola KPI economici nel periodo selezionato, filtrati per la valuta di default da `BusinessSettings::current()->default_currency`:
-- `payments` (incassi pagati)
+Calculates financial KPIs for the selected period, filtered by the default currency from `BusinessSettings::current()->default_currency`:
+- `payments` (paid income)
 - `costs`
 - `profit` (`payments - costs`)
-- `pending` (pagamenti non incassati)
+- `pending` (uncollected payments)
 
-Note implementative:
-- usa date su `paid_at` per incassi/costi
-- `pending` usa `project.created_at` nel range selezionato
+Implementation notes:
+- uses dates on `paid_at` for income/costs
+- `pending` uses `project.created_at` within the selected range
 
 ### OperationalStatsQuery
 
-Calcola KPI operativi nel periodo:
+Calculates operational KPIs for the period:
 - `projects_started`
 - `projects_completed`
 - `tasks_completed`
@@ -71,9 +71,9 @@ Calcola KPI operativi nel periodo:
 
 ### ChartDataQuery
 
-Prepara dataset per grafico:
-- **vista annuale**: serie mensili (`type=monthly`)
-- **vista mese singolo**: serie giornaliere (`type=daily`)
+Prepares the chart dataset:
+- **annual view**: monthly series (`type=monthly`)
+- **single month view**: daily series (`type=daily`)
 
 Output:
 - `labels`
@@ -81,28 +81,28 @@ Output:
 - `costs`
 - `profit`
 
-Note implementative:
-- aggregazioni SQL con `strftime` (SQLite-friendly)
-- filtra pagamenti pagati + valuta di default da `BusinessSettings`
+Implementation notes:
+- SQL aggregations with `strftime` (SQLite-friendly)
+- filters paid payments + default currency from `BusinessSettings`
 
 ### MonthlyBreakdownQuery
 
-Costruisce tabella annuale mese-per-mese, filtrando i dati finanziari per la valuta di default da `BusinessSettings`:
-- `payments`, `costs`, `profit` (filtrati per valuta)
-- `projects`, `tasks`, `clients` (conteggi assoluti)
+Builds the annual month-by-month table, filtering financial data by the default currency from `BusinessSettings`:
+- `payments`, `costs`, `profit` (filtered by currency)
+- `projects`, `tasks`, `clients` (absolute counts)
 
-Restituisce una `Collection` con 12 righe normalizzate (mesi senza dati inclusi).
+Returns a `Collection` with 12 normalized rows (months without data are included).
 
-## Service PDF
+## PDF Service
 
-`StatisticsPdfExporter` incapsula l'export:
-- usa `StatisticsQuery` per stessi dati della pagina web
-- risolve simbolo valuta da `BusinessSettings::default_currency` (fallback `EUR`)
-- genera PDF via `barryvdh/laravel-dompdf`
-- filename dinamico in base a periodo (`Titolo-YYYY.pdf` o `Titolo-YYYY-MM.pdf`)
+`StatisticsPdfExporter` encapsulates the export:
+- uses `StatisticsQuery` for the same data as the web page
+- resolves the currency symbol from `BusinessSettings::default_currency` (fallback `EUR`)
+- generates PDF via `barryvdh/laravel-dompdf`
+- dynamic filename based on period (`Title-YYYY.pdf` or `Title-YYYY-MM.pdf`)
 
-## Note tecniche
+## Technical Notes
 
-- Le query statistiche sono centralizzate in classi dedicate (pattern Query Classes + orchestrator).
-- Tutte le query finanziarie leggono la valuta da `BusinessSettings::current()->default_currency` (unica fonte di verita).
-- Il PDF espone il simbolo valuta tramite la costante `BusinessSettings::CURRENCIES`.
+- Statistics queries are centralized in dedicated classes (Query Classes + orchestrator pattern).
+- All financial queries read the currency from `BusinessSettings::current()->default_currency` (single source of truth).
+- The PDF exposes the currency symbol via the `BusinessSettings::CURRENCIES` constant.

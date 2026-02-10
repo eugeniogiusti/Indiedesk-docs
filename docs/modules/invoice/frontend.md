@@ -1,8 +1,8 @@
 # Frontend
 
-Il modulo Invoice non ha view proprie dedicate (index/show): le azioni fattura sono integrate nelle view del modulo pagamenti tramite componenti e partial.
+The Invoice module does not have its own dedicated views (index/show): invoice actions are integrated into the payment module views via components and partials.
 
-## Struttura File
+## File Structure
 
 ```
 resources/views/
@@ -27,63 +27,63 @@ resources/views/
     └── invoice-actions.blade.php
 ```
 
-## Componente Invoice Actions
+## Invoice Actions Component
 
-`components/payments/invoice-actions.blade.php` - Componente Blade che mostra le azioni fattura in base allo stato.
+`components/payments/invoice-actions.blade.php` - Blade component that shows invoice actions based on state.
 
-### Se la fattura esiste (`$payment->hasInvoice()`)
+### If the invoice exists (`$payment->hasInvoice()`)
 
-- Badge con numero fattura
-- Bottone **Preview** (icona occhio, blu) - apre inline nel browser
-- Bottone **Download** (icona freccia giu, blu) - scarica file
-- Bottone **Elimina** (icona cestino, rosso) - cancella fattura
+- Badge with invoice number
+- **Preview** button (eye icon, blue) - opens inline in browser
+- **Download** button (down arrow icon, blue) - downloads file
+- **Delete** button (trash icon, red) - deletes invoice
 
-### Se la fattura non esiste
+### If the invoice does not exist
 
-- Bottone **Genera** (icona documento, blu) - POST alla route `invoices.generate`, genera e scarica PDF
-- Bottone **Upload** (icona upload, grigio) - apre modal di upload
+- **Generate** button (document icon, blue) - POST to `invoices.generate` route, generates and downloads PDF
+- **Upload** button (upload icon, gray) - opens upload modal
 
-## Modal Upload Fattura
+## Invoice Upload Modal
 
 `payments/partials/_upload-invoice-modal.blade.php`
 
-- Componente Alpine.js: `uploadInvoiceModal()`
-- Evento apertura: `@open-upload-modal.window`
-- Form action dinamica basata sul payment ID
-- Input file: accetta solo PDF
-- Hint dimensione massima: 10MB
-- Stati bottone: normale/submit
+- Alpine.js component: `uploadInvoiceModal()`
+- Open event: `@open-upload-modal.window`
+- Dynamic form action based on payment ID
+- File input: accepts only PDF
+- Maximum size hint: 10MB
+- Button states: normal/submit
 
-## Colonne tabella pagamenti
+## Payment Table Columns
 
-Due partial per mostrare lo stato fattura nelle tabelle pagamenti:
+Two partials for showing invoice status in payment tables:
 
-- `payments/partials/payment-table/_row-invoice.blade.php` - Usato nella show progetto (tab pagamenti)
-- `payments/index/payment-table/_row-invoice.blade.php` - Usato nella pagina index pagamenti
+- `payments/partials/payment-table/_row-invoice.blade.php` - Used in the project show (payments tab)
+- `payments/index/payment-table/_row-invoice.blade.php` - Used in the payments index page
 
-Entrambi mostrano:
-- Se fattura esiste: link preview + download
-- Se fattura non esiste: form genera + bottone upload
-- Azioni: preview, download, elimina (oppure genera se non c'e)
+Both show:
+- If invoice exists: preview + download link
+- If invoice does not exist: generate form + upload button
+- Actions: preview, download, delete (or generate if none exists)
 
-## Template PDF
+## PDF Template
 
-`invoices/pdf.blade.php` e il template usato da DomPDF per generare il PDF della fattura. Non e una view web, ma un template HTML ottimizzato per la conversione in PDF.
+`invoices/pdf.blade.php` is the template used by DomPDF to generate the invoice PDF. It is not a web view, but an HTML template optimized for PDF conversion.
 
-### Struttura
+### Structure
 
-Il template include 5 partial dalla sottocartella `invoices/partials/`:
+The template includes 5 partials from the `invoices/partials/` subfolder:
 
-1. **styles** - CSS inline per PDF: font DejaVu Sans (sicuro per Unicode/PDF), layout table-based, colori grigi/neri professionali, padding 40px
-2. **header** - Logo business (se configurato), nome attivita, numero fattura (`Invoice #{numero}`), data fattura
-3. **parties** - Due colonne: a sinistra dati business (nome titolare, indirizzo legale, CF, P.IVA), a destra dati cliente (nome, indirizzo fatturazione, P.IVA) con fallback al nome progetto se non c'e cliente
-4. **amount** - Importo formattato con simbolo valuta, data scadenza se presente
-5. **description** - Note del pagamento (o testo default "Payment"), importo a destra, istruzioni di pagamento con IBAN in box stilizzato (se configurato in BusinessSettings)
-6. **footer** - Informazioni sulla valuta utilizzata
+1. **styles** - Inline CSS for PDF: DejaVu Sans font (safe for Unicode/PDF), table-based layout, professional gray/black colors, 40px padding
+2. **header** - Business logo (if configured), business name, invoice number (`Invoice #{number}`), invoice date
+3. **parties** - Two columns: left side business data (owner name, legal address, tax ID, VAT number), right side client data (name, billing address, VAT number) with fallback to project name if no client
+4. **amount** - Formatted amount with currency symbol, due date if present
+5. **description** - Payment notes (or default "Payment" text), amount on the right, payment instructions with IBAN in a styled box (if configured in BusinessSettings)
+6. **footer** - Information about the currency used
 
-## Note tecniche
+## Technical Notes
 
-- Il modulo non ha pagine proprie: tutte le interazioni avvengono dentro le view dei pagamenti.
-- L'upload usa Alpine.js per la gestione del modal, nessun altro JS dedicato.
-- Il template PDF usa CSS inline e layout table-based per massima compatibilita con DomPDF.
-- Preview e download usano response HTTP con header appropriati (inline vs attachment).
+- The module does not have its own pages: all interactions happen inside the payment views.
+- Upload uses Alpine.js for modal management, no other dedicated JS.
+- The PDF template uses inline CSS and table-based layout for maximum DomPDF compatibility.
+- Preview and download use HTTP responses with appropriate headers (inline vs attachment).
