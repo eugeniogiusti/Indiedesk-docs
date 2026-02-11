@@ -22,7 +22,7 @@ if you're using IndieDesk, you already know how to handle it.
 
 ## 1. Create a new site in Herd
 
-Open Herd and create a new site with at least **PHP 8.3+** selected.
+Open Herd and create a new site with **PHP 8.3+** selected.
 
 ![Herd - Create new site](/img/getting-started/create.png)
 
