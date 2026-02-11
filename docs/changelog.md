@@ -2,7 +2,7 @@
 title: Changelog
 ---
 
-## [v1.0.0] - 2026-02-07
+## [v1.0.0] - 2026-02-11 - Latest version of laravel 12.51
 
 ### Added
 - Initial documentation structure
