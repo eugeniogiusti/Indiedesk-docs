@@ -91,7 +91,7 @@ Replace `/your_project_path` with the actual absolute path to your IndieDesk pro
 
 Go to http://indiedesk.test/register to register your user and then login
 
-![Registration](/img/getting-started/registeration.png)
+![Registration](/img/getting-started/registration.png)
 
 ### Language and timezone
 
