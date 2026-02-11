@@ -15,7 +15,7 @@ if you're using IndieDesk, you already know how to handle it.
 
 - macOS or Windows
 - [Laravel Herd](https://herd.laravel.com/) installed
-- PHP 8.3 or higher
+- PHP 8.3
 - Composer
 
 ---
