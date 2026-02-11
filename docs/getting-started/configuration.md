@@ -15,14 +15,14 @@ if you're using IndieDesk, you already know how to handle it.
 
 - macOS or Windows
 - [Laravel Herd](https://herd.laravel.com/) installed
-- PHP 8.3
+- PHP 8.4
 - Composer
 
 ---
 
 ## 1. Create a new site in Herd
 
-Open Herd and create a new site with **PHP 8.3+** selected.
+Open Herd and create a new site with **PHP 8.4** selected.
 
 ![Herd - Create new site](/img/getting-started/create.png)
 
