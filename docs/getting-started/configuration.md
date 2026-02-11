@@ -45,6 +45,19 @@ composer install
 npm install && npm run build
 ```
 
+If npm run build fails on macOS (Apple Silicon)
+
+Run these commands once and try again:
+```bash
+rm -rf node_modules package-lock.json
+npm cache verify
+npm install
+npm run build
+```
+This fixes macOS issues that sometimes block native Node packages.
+You do not need to repeat this again.
+
+
 ---
 
 ## 4. Environment setup
