@@ -60,7 +60,7 @@ IndieDesk is built using:
 - Blade
 - Alpine.js
 - Tailwind CSS
-- MySQL / SQLite
+- SQLite
 
 <div
   style={{
