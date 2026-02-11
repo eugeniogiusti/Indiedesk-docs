@@ -52,6 +52,7 @@ If you like owning your stack, IndieDesk will feel natural.
 
 ---
 
+
 ## Tech stack
 
 IndieDesk is built using:
