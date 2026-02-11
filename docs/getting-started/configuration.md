@@ -87,11 +87,6 @@ DB_DATABASE=/your_project_path/database/database.sqlite
 Replace `/your_project_path` with the actual absolute path to your IndieDesk project folder.
 :::
 
-### Register your user
-
-Go to http://indiedesk.test/register to register your user and then login
-
-![Registration](/img/getting-started/registration.png)
 
 ### Language and timezone
 
@@ -119,9 +114,13 @@ php artisan migrate
 
 ---
 
-## 7. Open the application
+## 7 Register your user
 
-Open the URL provided by Herd in your browser.
+
+
+Go to http://indiedesk.test/register to register your user and then login
+
+![Registration](/img/getting-started/registration.png)
 
 ---
 
