@@ -20,23 +20,7 @@ if you're using IndieDesk, you already know how to handle it.
 
 ---
 
-## 1. Create a new site in Herd
-
-Open Herd and create a new site with **PHP 8.4** selected.
-
-![Herd - Create new site](/img/getting-started/create.png)
-
----
-
-## 2. Link the project
-
-Select **Link existing project** and point it to the folder where you extracted IndieDesk.
-
-![Herd - Link existing project](/img/getting-started/link.png)
-
----
-
-## 3. Install dependencies
+## 1. Install dependencies
 
 Open a terminal, navigate to the project folder and run:
 
@@ -60,7 +44,7 @@ You do not need to repeat this again.
 
 ---
 
-## 4. Environment setup
+## 2. Environment setup
 
 Copy the configuration file and generate the application key:
 
@@ -71,7 +55,7 @@ php artisan key:generate
 
 ---
 
-## 5. Configure `.env`
+## 3. Configure `.env`
 
 Open the `.env` file and set the following values.
 
@@ -103,7 +87,7 @@ Available languages: `da`, `de`, `en`, `es`, `fr`, `it`, `nl`, `pl`, `pt`, `ro`,
 
 ---
 
-## 6. Database setup
+## 4. Database setup
 
 Create the SQLite file and run the migrations:
 
@@ -111,6 +95,22 @@ Create the SQLite file and run the migrations:
 touch database/database.sqlite
 php artisan migrate
 ```
+
+---
+
+## 5. Create a new site in Herd
+
+Open Herd and create a new site with **PHP 8.4** selected.
+
+![Herd - Create new site](/img/getting-started/create.png)
+
+---
+
+## 6. Link the project
+
+Select **Link existing project** and point it to the folder where you extracted IndieDesk.
+
+![Herd - Link existing project](/img/getting-started/link.png)
 
 ---
 
