@@ -1,3 +1,10 @@
+---
+title: 2FA Module Frontend - IndieDesk
+sidebar_label: Frontend
+description: Two-factor authentication UI with QR code setup, trusted devices and login challenge. Alpine.js interactions and Blade partials.
+keywords: [2FA UI, Alpine.js authentication, QR code, trusted devices, login challenge, IndieDesk frontend, security UI, TOTP setup]
+---
+
 # Frontend
 
 The 2FA module is distributed between the profile page (setup/management) and the login challenge page.

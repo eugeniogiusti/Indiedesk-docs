@@ -1,3 +1,10 @@
+---
+title: Payments Module Frontend - IndieDesk
+sidebar_label: Frontend
+description: Payment tracking UI with Alpine.js modals, invoice integration and Blade partials. Filters, stats cards and reusable table components.
+keywords: [Alpine.js payments, payment UI, invoice integration, Blade partials, modal forms, IndieDesk frontend, payment tracking UI, table filters]
+---
+
 # Frontend
 
 The Payments module uses the **Partial Views** pattern to keep the global index and payments section in the project show modular and reusable.

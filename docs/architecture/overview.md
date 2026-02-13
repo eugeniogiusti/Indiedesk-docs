@@ -1,3 +1,10 @@
+---
+title: Architecture Overview
+sidebar_label: Overview
+description: Learn about IndieDesk's architecture patterns. Understanding the Laravel MVC structure, controllers, queries, Blade components and Alpine.js integration.
+keywords: [Laravel architecture, MVC patterns, Blade components, Alpine.js, Laravel controllers, backend patterns, frontend patterns]
+---
+
 # Architecture - Overview
 
 This documentation describes the architectural patterns of the Laravel project and how backend and frontend collaborate. Examples are based on the Tasks module and the Project Show page with tabs.

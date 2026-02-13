@@ -1,3 +1,10 @@
+---
+title: Company Module Frontend - IndieDesk
+sidebar_label: Frontend
+description: Business settings UI with Alpine.js tabs, logo management and Blade form components. Sectioned forms with dark mode support.
+keywords: [Alpine.js tabs, settings UI, Blade components, form sections, logo upload, IndieDesk frontend, settings page, tab navigation]
+---
+
 # Frontend
 
 The Company module uses a settings page with a single form and Alpine internal tabs to section the fields.

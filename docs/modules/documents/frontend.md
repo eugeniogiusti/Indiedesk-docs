@@ -1,3 +1,10 @@
+---
+title: Documents Module Frontend - IndieDesk
+sidebar_label: Frontend
+description: Document management UI with Alpine.js upload modal, file preview and Blade partials. Label tagging, table actions and reusable components.
+keywords: [Alpine.js upload, document UI, file preview, Blade partials, label tagging, IndieDesk frontend, document management UI, modal forms]
+---
+
 # Frontend
 
 The Documents module uses the **Partial Views** pattern to separate the global index and the documents tab of the project show, with a dedicated Alpine modal for upload/edit.

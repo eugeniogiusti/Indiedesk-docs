@@ -1,3 +1,10 @@
+---
+title: Invoice Module Frontend - IndieDesk
+sidebar_label: Frontend
+description: Invoice UI integrated in payments with PDF template, Alpine.js upload modal and Blade components. DomPDF template and action buttons.
+keywords: [invoice UI, PDF template, Alpine.js invoice, Blade components, DomPDF, IndieDesk frontend, invoice upload, payment integration]
+---
+
 # Frontend
 
 The Invoice module does not have its own dedicated views (index/show): invoice actions are integrated into the payment module views via components and partials.

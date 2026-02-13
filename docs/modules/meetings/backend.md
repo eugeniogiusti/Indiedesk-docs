@@ -1,3 +1,10 @@
+---
+title: Meetings Module Backend - IndieDesk
+sidebar_label: Backend
+description: Meeting management in Laravel with scheduling, status tracking and calendar integration. CRUD operations and query classes patterns.
+keywords: [Laravel meetings, meeting management, calendar meetings, meeting scheduling, IndieDesk meetings, Laravel calendar, meeting tracking]
+---
+
 # Backend
 
 The Meetings module manages project operational meetings with a global index (filters + statistics) and CRUD within the project context.

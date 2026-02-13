@@ -1,3 +1,10 @@
+---
+title: Backend Patterns - IndieDesk Architecture
+sidebar_label: Backend Patterns
+description: Learn Laravel backend patterns used in IndieDesk. Thin controllers, FormRequest validation, Query classes, and business logic organization.
+keywords: [Laravel backend, thin controllers, FormRequest, Query classes, Laravel patterns, business logic, validation, Laravel best practices]
+---
+
 # Backend Patterns
 
 This section describes the backend patterns used in the project (Laravel).

@@ -1,3 +1,10 @@
+---
+title: Labels Module Backend - IndieDesk
+sidebar_label: Backend
+description: Label and tag management system in Laravel. Color-coded labels, document tagging and CRUD operations with service layer patterns.
+keywords: [Laravel labels, task labels, project labels, Laravel tags, label management, IndieDesk labels, document tagging]
+---
+
 # Backend
 
 The Labels module manages label records (name/color), association with documents, and global CRUD.

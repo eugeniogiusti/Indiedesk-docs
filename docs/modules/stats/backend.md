@@ -1,3 +1,10 @@
+---
+title: Statistics Module Backend - IndieDesk
+sidebar_label: Backend
+description: Financial and operational analytics in Laravel. Dashboard charts, metrics by period, PDF export and query orchestrator patterns.
+keywords: [Laravel statistics, dashboard charts, Laravel analytics, financial metrics, IndieDesk stats, operational analytics, PDF export]
+---
+
 # Backend
 
 The Statistics module manages financial and operational metrics by period, chart trends, and PDF export.

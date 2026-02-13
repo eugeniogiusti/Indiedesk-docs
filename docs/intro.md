@@ -1,5 +1,9 @@
 ---
 sidebar_position: 1
+title: Introduction to IndieDesk
+sidebar_label: Introduction
+description: IndieDesk is a self-hosted workspace built with Laravel 12 for indie developers, freelancers and solo founders. Manage projects, tasks, clients and costs without relying on third-party SaaS tools.
+keywords: [IndieDesk, Laravel, self-hosted, indie developer, project management, freelancer tools, Laravel 12, workspace, task management]
 ---
 
 # Introduction

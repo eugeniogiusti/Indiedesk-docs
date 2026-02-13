@@ -1,3 +1,10 @@
+---
+title: Tasks Module Backend - IndieDesk
+sidebar_label: Backend
+description: Learn how the Tasks module manages project tasks in Laravel. Query classes, CRUD operations, status toggles and project integration patterns.
+keywords: [Laravel tasks, task management, Laravel CRUD, project tasks, query classes, IndieDesk tasks, task toggle]
+---
+
 # Backend
 
 The Tasks module manages project operational tasks with a global index (filters + statistics) and CRUD within the project context.

@@ -1,3 +1,10 @@
+---
+title: Invoice Module Backend - IndieDesk
+sidebar_label: Backend
+description: Complete guide to IndieDesk invoice system. PDF generation, manual upload, storage management and invoice numbering in Laravel.
+keywords: [Laravel invoice, PDF generation, invoice management, Laravel payments, invoice storage, invoice numbering]
+---
+
 # Backend
 
 The Invoice module handles PDF generation, manual upload, preview, download, and deletion of invoices associated with payments. It uses a service layer with separate responsibilities: PDF generation, storage management, filename construction, and numbering.

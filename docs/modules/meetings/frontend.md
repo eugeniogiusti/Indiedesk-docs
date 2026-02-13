@@ -1,3 +1,10 @@
+---
+title: Meetings Module Frontend - IndieDesk
+sidebar_label: Frontend
+description: Meeting management UI with Alpine.js modals, datetime inputs and Blade partials. Calendar integration, status filters and table components.
+keywords: [Alpine.js meetings, meeting UI, datetime forms, Blade partials, calendar integration, IndieDesk frontend, meeting tables, modal forms]
+---
+
 # Frontend
 
 The Meetings module uses the **Partial Views** pattern to keep the global index and meetings section in the project show modular and reusable.

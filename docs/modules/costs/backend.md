@@ -1,3 +1,10 @@
+---
+title: Costs Module Backend - IndieDesk
+sidebar_label: Backend
+description: Expense tracking and cost management in Laravel. Recurring costs, receipt integration, filters and project cost analysis patterns.
+keywords: [Laravel costs, expense tracking, cost management, project costs, recurring expenses, IndieDesk costs, expense receipts]
+---
+
 # Backend
 
 The Costs module manages project costs with a global index (filters + statistics), CRUD within the project context, and receipt integration.

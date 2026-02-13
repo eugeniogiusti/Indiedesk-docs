@@ -1,3 +1,10 @@
+---
+title: Clients Module Frontend - IndieDesk
+sidebar_label: Frontend
+description: Client UI with Alpine.js modals, Blade partial views and orchestrator pattern. Tab navigation, dark mode and responsive design.
+keywords: [Alpine.js modals, Blade partials, client UI, orchestrator pattern, tab navigation, IndieDesk frontend, responsive design, dark mode]
+---
+
 # Frontend
 
 The Clients module uses the **Partial Views** pattern to keep views modular,

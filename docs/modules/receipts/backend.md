@@ -1,3 +1,10 @@
+---
+title: Receipts Module Backend - IndieDesk
+sidebar_label: Backend
+description: Receipt management for expense tracking in Laravel. File upload, storage, preview and download patterns for cost receipts.
+keywords: [Laravel receipts, receipt management, expense receipts, file upload, IndieDesk receipts, cost receipts, receipt storage]
+---
+
 # Backend
 
 The Receipts module handles upload, preview, download, and deletion of receipts associated with costs. Unlike the Invoice module, it does not generate PDFs: it only manages manually uploaded files.

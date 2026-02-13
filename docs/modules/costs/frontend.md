@@ -1,3 +1,10 @@
+---
+title: Costs Module Frontend - IndieDesk
+sidebar_label: Frontend
+description: Expense tracking UI with Alpine.js modals, receipt upload and Blade partials. Cost tables, filters and reusable components.
+keywords: [Alpine.js costs, expense UI, receipt upload, Blade partials, modal forms, IndieDesk frontend, cost tracking UI, table components]
+---
+
 # Frontend
 
 The Costs module uses the **Partial Views** pattern to keep the global index and costs section in the project show modular and reusable.

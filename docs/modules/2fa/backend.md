@@ -1,3 +1,10 @@
+---
+title: 2FA Module Backend - IndieDesk
+sidebar_label: Backend
+description: Two-factor authentication system in Laravel with TOTP, recovery codes and trusted devices. Complete security implementation guide.
+keywords: [Laravel 2FA, two-factor authentication, TOTP, Laravel security, authentication, IndieDesk 2FA, recovery codes]
+---
+
 # Backend
 
 The 2FA module handles two-factor authentication with TOTP, recovery codes, and trusted devices.

@@ -1,3 +1,10 @@
+---
+title: Projects Module Frontend - IndieDesk
+sidebar_label: Frontend
+description: Project management UI with Alpine.js tabs, async client search and Blade orchestrator pattern. Multi-tab detail page and cross-module integration.
+keywords: [Alpine.js projects, tab navigation, async search, Blade orchestrator, project UI, IndieDesk frontend, multi-tab interface, client search]
+---
+
 # Frontend
 
 The Projects module uses the **Orchestrator + Partials** pattern for index and show, with an Alpine.js modal for CRUD and asynchronous client search.

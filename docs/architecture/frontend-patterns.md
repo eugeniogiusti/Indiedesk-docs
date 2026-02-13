@@ -1,3 +1,10 @@
+---
+title: Frontend Patterns - IndieDesk Architecture
+sidebar_label: Frontend Patterns
+description: Frontend patterns in IndieDesk using Blade and Alpine.js. Module structure, component organization, modals, tabs and reusable partials.
+keywords: [Blade patterns, Alpine.js, frontend patterns, Blade components, modals, tabs, Laravel frontend, Alpine components]
+---
+
 # Frontend Patterns
 
 This section describes the frontend patterns in Blade and Alpine.

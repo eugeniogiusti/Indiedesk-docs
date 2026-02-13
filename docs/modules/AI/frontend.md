@@ -1,3 +1,10 @@
+---
+title: AI Module Frontend - IndieDesk
+sidebar_label: Frontend
+description: AI chat interface with Alpine.js orchestrator, SSE streaming and Blade partials. Feature-based architecture and persistent state.
+keywords: [Alpine.js chat, AI interface, SSE streaming, chat UI, IndieDesk frontend, AI assistant UI, feature-based architecture, real-time chat]
+---
+
 # Frontend
 
 The AI module follows the **partial views + Alpine orchestrator component** pattern used in other modules.

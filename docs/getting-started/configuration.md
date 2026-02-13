@@ -1,5 +1,9 @@
 ---
 sidebar_position: 2
+title: Configuration and Installation Guide
+sidebar_label: Configuration
+description: Complete guide to install and configure IndieDesk locally with Laravel Herd. Learn how to set up your self-hosted workspace for indie developers in minutes.
+keywords: [IndieDesk installation, Laravel Herd, PHP 8.4, SQLite setup, Laravel configuration, self-hosted setup, local development]
 ---
 
 # Configuration

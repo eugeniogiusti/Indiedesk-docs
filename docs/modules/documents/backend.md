@@ -1,3 +1,10 @@
+---
+title: Documents Module Backend - IndieDesk
+sidebar_label: Backend
+description: Document management system in Laravel. File upload, storage, metadata, label tagging and preview patterns with query classes.
+keywords: [Laravel documents, document management, file storage, Laravel storage, file upload, IndieDesk documents, document tagging]
+---
+
 # Backend
 
 The Documents module handles file upload, metadata, label tagging, file download/preview, and CRUD within the project context, with a filterable global index.

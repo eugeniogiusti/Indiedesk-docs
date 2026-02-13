@@ -1,3 +1,10 @@
+---
+title: Tasks Module Frontend - IndieDesk
+sidebar_label: Frontend
+description: Task UI with Alpine.js components, Blade partials and AJAX toggles. Modal forms, table interactions and dark mode support.
+keywords: [Alpine.js tasks, Blade components, task UI, frontend patterns, modal forms, IndieDesk frontend, AJAX interactions, dark mode]
+---
+
 # Frontend
 
 The Tasks module uses the **Partial Views** pattern to keep the global index and tasks section in the project show modular and reusable.

@@ -1,5 +1,8 @@
 ---
-title: laravel boost
+title: Laravel Boost - AI Development Tool for IndieDesk
+sidebar_label: Laravel Boost
+description: Laravel Boost development tool integration. MCP server for AI context, route visibility and database schema access for enhanced development.
+keywords: [Laravel Boost, AI development, Laravel MCP, development tools, IndieDesk AI, Laravel context, Cursor AI, Claude Desktop]
 sidebar_position: 60
 ---
 

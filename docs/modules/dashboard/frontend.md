@@ -1,3 +1,10 @@
+---
+title: Dashboard Module Frontend - IndieDesk
+sidebar_label: Frontend
+description: Dashboard UI with Chart.js integration, Alpine.js components and Blade partials. KPI cards, annual trends and quick lists with dark mode.
+keywords: [Chart.js dashboard, Alpine.js charts, dashboard UI, KPI cards, Blade partials, IndieDesk frontend, annual trends, dark mode charts]
+---
+
 # Frontend
 
 The dashboard is composed of a main view that includes 4 sections via partials: stat cards, annual chart, welcome card, and quick lists.

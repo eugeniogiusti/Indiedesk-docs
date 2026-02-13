@@ -1,3 +1,10 @@
+---
+title: Calendar Module Backend - IndieDesk
+sidebar_label: Backend
+description: Google Calendar integration in Laravel. Event management, calendar link generation, FullCalendar patterns and scheduling system.
+keywords: [Laravel calendar, Google Calendar integration, event management, FullCalendar, IndieDesk calendar, scheduling, calendar events]
+---
+
 # Backend
 
 The Calendar module handles the generation of Google Calendar links for application events. It does not use the Google API: it builds `calendar.google.com/calendar/render` URLs with query parameters that open the pre-filled "Create event" form.

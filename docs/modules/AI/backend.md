@@ -1,3 +1,10 @@
+---
+title: AI Module Backend - IndieDesk
+sidebar_label: Backend
+description: AI assistant integration for projects using Laravel AI SDK. OpenAI integration, conversation storage and contextual project assistant.
+keywords: [Laravel AI, OpenAI integration, AI assistant, Laravel AI SDK, project assistant, IndieDesk AI, conversation storage]
+---
+
 # Backend
 
 The AI module adds a contextual assistant to projects with conversation storage, global settings, and Laravel AI SDK integration.

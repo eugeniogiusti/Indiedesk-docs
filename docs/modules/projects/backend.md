@@ -1,3 +1,10 @@
+---
+title: Projects Module Backend - IndieDesk
+sidebar_label: Backend
+description: Project management in Laravel with lifecycle tracking, soft delete, profit stats and aggregated data. Query classes and CRUD patterns.
+keywords: [Laravel projects, project management, project lifecycle, soft delete, Laravel CRUD, IndieDesk projects, project tracking]
+---
+
 # Backend
 
 The Projects module manages the project lifecycle, detail with aggregated data, and statistics for the index.

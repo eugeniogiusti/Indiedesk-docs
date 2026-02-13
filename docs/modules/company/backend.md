@@ -1,3 +1,10 @@
+---
+title: Company Module Backend - IndieDesk
+sidebar_label: Backend
+description: Business settings and company profile management in Laravel. Singleton pattern, logo upload, tax data and currency configuration.
+keywords: [Laravel company settings, business profile, company management, Laravel settings, singleton pattern, IndieDesk company, profile management]
+---
+
 # Backend
 
 The Company module corresponds to **Business Settings**: company profile, tax/contact data, default currency, and logo.

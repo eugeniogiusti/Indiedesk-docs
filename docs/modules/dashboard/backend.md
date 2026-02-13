@@ -1,3 +1,10 @@
+---
+title: Dashboard Module Backend - IndieDesk
+sidebar_label: Backend
+description: Laravel dashboard with aggregated stats, charts and KPIs. Query orchestrator pattern for projects, tasks, payments and meetings overview.
+keywords: [Laravel dashboard, dashboard overview, Laravel statistics, dashboard charts, IndieDesk dashboard, KPI dashboard, analytics dashboard]
+---
+
 # Backend
 
 The Dashboard module aggregates data from all main modules (projects, tasks, payments, costs, meetings) into a summary view. It uses 3 dedicated query classes to separate responsibilities.

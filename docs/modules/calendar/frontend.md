@@ -1,3 +1,10 @@
+---
+title: Calendar Module Frontend - IndieDesk
+sidebar_label: Frontend
+description: Google Calendar integration UI with embedded iframe and calendar links. Server-side link generation across modules with Blade partials.
+keywords: [Google Calendar UI, calendar iframe, Blade partials, calendar links, IndieDesk frontend, event integration, calendar embeds]
+---
+
 # Frontend
 
 The Calendar module has two frontend components: the "Add to Google Calendar" links scattered across module views and a dedicated page with an embedded iframe.

@@ -1,3 +1,10 @@
+---
+title: Clients Module Backend - IndieDesk
+sidebar_label: Backend
+description: Client registry management in Laravel with soft delete, filters, search and statistics. Query classes pattern and CRUD operations.
+keywords: [Laravel clients, client management, soft delete, Laravel CRM, client registry, IndieDesk clients]
+---
+
 # Backend
 
 The Clients module manages the client registry with support for soft delete, filters, search, and statistics.

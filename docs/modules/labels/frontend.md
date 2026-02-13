@@ -1,3 +1,10 @@
+---
+title: Labels Module Frontend - IndieDesk
+sidebar_label: Frontend
+description: Label management UI with Alpine.js modal, color picker and Blade partials. CRUD operations, table actions and dark mode support.
+keywords: [Alpine.js labels, label UI, color picker, Blade partials, CRUD modal, IndieDesk frontend, label management, tag UI]
+---
+
 # Frontend
 
 The Labels module uses a single management page with Blade partials and an Alpine modal for create/edit.

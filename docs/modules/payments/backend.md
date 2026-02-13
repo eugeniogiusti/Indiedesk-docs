@@ -1,3 +1,10 @@
+---
+title: Payments Module Backend - IndieDesk
+sidebar_label: Backend
+description: Payment tracking and invoice management in Laravel. CRUD operations, filters, statistics and project income integration patterns.
+keywords: [Laravel payments, payment tracking, invoice payments, Laravel billing, payment management, IndieDesk payments, income tracking]
+---
+
 # Backend
 
 The Payments module manages project income with a global index (filters + statistics), CRUD within the project context, and invoice integration.

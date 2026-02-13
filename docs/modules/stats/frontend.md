@@ -1,3 +1,10 @@
+---
+title: Statistics Module Frontend - IndieDesk
+sidebar_label: Frontend
+description: Financial statistics UI with Chart.js integration, PDF export and Blade partials. Period filters, KPI cards and monthly breakdown tables.
+keywords: [Chart.js statistics, statistics UI, PDF export, Blade partials, KPI cards, IndieDesk frontend, financial charts, monthly breakdown]
+---
+
 # Frontend
 
 The Statistics module (docs folder `stats`) uses Blade views composed of partials, GET filters, and a JS component for the Chart.js chart.

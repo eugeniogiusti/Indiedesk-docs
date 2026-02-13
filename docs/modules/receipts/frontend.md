@@ -1,3 +1,10 @@
+---
+title: Receipts Module Frontend - IndieDesk
+sidebar_label: Frontend
+description: Receipt management UI integrated in costs with drag-and-drop upload, Alpine.js modal and Blade components. File preview and readonly actions.
+keywords: [Alpine.js receipts, drag and drop upload, receipt UI, Blade components, file upload, IndieDesk frontend, receipt actions, cost integration]
+---
+
 # Frontend
 
 The Receipts module does not have its own views: receipt actions are integrated into the cost module views via components, partials, and an upload modal.

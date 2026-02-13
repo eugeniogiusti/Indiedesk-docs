@@ -1,0 +1,12 @@
+# robots.txt for IndieDesk Documentation
+# Allow all search engines to index the site
+
+User-agent: *
+Allow: /
+
+# Disallow indexing of build artifacts and internal files
+Disallow: /.docusaurus/
+Disallow: /build/
+
+# Sitemap location
+Sitemap: https://docs.indiedesk.link/sitemap.xml
