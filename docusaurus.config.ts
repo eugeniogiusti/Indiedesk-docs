@@ -90,9 +90,6 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          editUrl: 'https://github.com/eugeniogiusti/documentazione-template/tree/main/',
-          showLastUpdateAuthor: true,
-          showLastUpdateTime: true,
         },
         blog: false,
         theme: {
