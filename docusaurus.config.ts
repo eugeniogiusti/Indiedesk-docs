@@ -4,7 +4,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
   title: 'IndieDesk',
-  tagline:'A self-hosted workspace for indie developers, built on Laravel 12',
+  tagline: 'A self-hosted workspace for indie developers, built on Laravel 12',
   favicon: 'img/favicon.ico',
 
   future: {
@@ -13,6 +13,8 @@ const config: Config = {
 
   url: 'https://docs.indiedesk.link',
   baseUrl: '/',
+  // 1.trailingSlash fissato a false: evita che Google veda duplicati tra /pagina e /pagina/
+  trailingSlash: false, 
 
   organizationName: 'eugeniogiusti',
   projectName: 'documentazione-template',
@@ -20,15 +22,8 @@ const config: Config = {
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
 
-  // SEO: Metadata
   headTags: [
-    {
-      tagName: 'meta',
-      attributes: {
-        name: 'keywords',
-        content: 'IndieDesk, Laravel, indie developer, self-hosted, project management, freelancer tools, Laravel 12, Alpine.js, Tailwind CSS, open source, developer workspace',
-      },
-    },
+    // Mantieni l'autore
     {
       tagName: 'meta',
       attributes: {
@@ -36,21 +31,7 @@ const config: Config = {
         content: 'Eugenio Giusti',
       },
     },
-    {
-      tagName: 'meta',
-      attributes: {
-        property: 'og:type',
-        content: 'website',
-      },
-    },
-    {
-      tagName: 'meta',
-      attributes: {
-        name: 'twitter:card',
-        content: 'summary_large_image',
-      },
-    },
-    // Structured Data (Schema.org)
+    // Mantieni lo Schema.org (JSON-LD) che è perfetto per la SEO
     {
       tagName: 'script',
       attributes: {
@@ -61,7 +42,7 @@ const config: Config = {
         '@type': 'SoftwareApplication',
         name: 'IndieDesk',
         applicationCategory: 'DeveloperApplication',
-        description: 'A self-hosted workspace for indie developers, built on Laravel 12. Manage projects, clients, tasks, invoices and more.',
+        description: 'A self-hosted workspace for indie developers, built on Laravel 12.',
         operatingSystem: 'Linux, Windows, macOS',
         offers: {
           '@type': 'Offer',
@@ -91,11 +72,10 @@ const config: Config = {
         docs: {
           sidebarPath: './sidebars.ts',
         },
-        blog: false,
+        blog: false, // Disattivato, così i file nella cartella blog non vengono calcolati
         theme: {
           customCss: './src/css/custom.css',
         },
-        // SEO: Sitemap automatica
         sitemap: {
           changefreq: 'weekly',
           priority: 0.5,
@@ -107,29 +87,21 @@ const config: Config = {
   ],
 
   themeConfig: {
-    // SEO: Social card image for Open Graph and Twitter
     image: 'img/og-image.png',
-
-    // SEO: Metadata
+    // 2. Metadata centralizzati qui (puliti i doppioni che erano in headTags)
     metadata: [
-      {name: 'description', content: 'IndieDesk - A self-hosted workspace for indie developers. Built with Laravel 12, manage projects, clients, tasks, invoices, and more. Full control over your data.'},
-      {name: 'keywords', content: 'IndieDesk, Laravel, indie developer, self-hosted, project management, freelancer, task management, invoice, Laravel 12'},
+      {name: 'description', content: 'IndieDesk - A self-hosted workspace for indie developers. Built with Laravel 12.'},
+      {name: 'keywords', content: 'IndieDesk, Laravel, indie developer, self-hosted, project management, Laravel 12'},
       {property: 'og:title', content: 'IndieDesk - Self-Hosted Workspace for Indie Developers'},
-      {property: 'og:description', content: 'A self-hosted workspace built with Laravel 12. Manage projects, clients, tasks, invoices and more. Full control over your data.'},
+      {property: 'og:type', content: 'website'},
       {property: 'og:url', content: 'https://docs.indiedesk.link'},
-      {property: 'og:image', content: 'https://docs.indiedesk.link/img/og-image.png'},
-      {name: 'twitter:title', content: 'IndieDesk - Self-Hosted Workspace for Indie Developers'},
-      {name: 'twitter:description', content: 'A self-hosted workspace built with Laravel 12 for indie developers and freelancers.'},
-      {name: 'twitter:image', content: 'https://docs.indiedesk.link/img/og-image.png'},
+      {name: 'twitter:card', content: 'summary_large_image'},
     ],
 
-    colorMode: {
-      respectPrefersColorScheme: true,
-    },
     navbar: {
       title: 'Home',
       logo: {
-        alt: 'Laravel Business Template for Indie developers',
+        alt: 'IndieDesk Logo',
         src: 'img/logo.svg',
       },
       items: [
@@ -139,31 +111,27 @@ const config: Config = {
           position: 'left',
           label: 'Docs',
         },
-        {
-          type: 'localeDropdown',
-          position: 'right',
-        },
       ],
     },
-    
-footer: {
-  style: 'dark',
-  links: [
-    {
-      items: [
+
+    footer: {
+      style: 'dark',
+      links: [
         {
-          label: 'Website',
-          href: 'http://indiedesk.link',
-        },
-        {
-          label: 'Buy IndieDesk',
-          href: 'https://eugeniogiusti.gumroad.com/l/indiedesk',
+          items: [
+            {
+              label: 'Website',
+              href: 'https://indiedesk.link', // 3. Link con HTTPS corretto
+            },
+            {
+              label: 'Buy IndieDesk',
+              href: 'https://eugeniogiusti.gumroad.com/l/indiedesk',
+            },
+          ],
         },
       ],
+      copyright: `© ${new Date().getFullYear()} IndieDesk. Built by an indie developer.`,
     },
-  ],
-  copyright: `© ${new Date().getFullYear()} IndieDesk. Built by an indie developer.`,
-},
 
     prism: {
       theme: prismThemes.github,
