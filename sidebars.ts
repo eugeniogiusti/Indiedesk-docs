@@ -81,6 +81,15 @@ const sidebars: SidebarsConfig = {
 
     {
       type: 'category',
+      label: 'Timesheets',
+      items: [
+        'modules/timesheets/backend',
+        'modules/timesheets/frontend',
+      ],
+    },
+
+    {
+      type: 'category',
       label: 'Costs',
       items: [
         'modules/costs/backend',
