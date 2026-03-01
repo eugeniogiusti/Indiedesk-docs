@@ -20,9 +20,11 @@ app/
 │       └── StoreTimesheetRequest.php
 ├── Models/
 │   └── Timesheet.php
-└── Queries/Timesheets/
-    ├── TimesheetIndexQuery.php
-    └── TimesheetStatsQuery.php
+├── Queries/Timesheets/
+│   ├── TimesheetIndexQuery.php
+│   └── TimesheetStatsQuery.php
+└── Services/Timesheets/
+    └── TimesheetReportGenerator.php
 ```
 
 The project-show data preparation lives in:
@@ -37,6 +39,7 @@ app/Queries/Projects/
 | Method | URI | Name | Description |
 |--------|-----|------|-------------|
 | GET | `/timesheets` | `timesheets.index` | Global paginated timesheet list with filters |
+| GET | `/projects/{project}/timesheets/{timesheet}/report` | `timesheets.report` | Download monthly timesheet as PDF |
 | POST | `/projects/{project}/timesheets` | `timesheets.store` | Create or update monthly timesheet |
 | DELETE | `/projects/{project}/timesheets/{timesheet}` | `timesheets.destroy` | Delete monthly timesheet |
 
@@ -47,6 +50,7 @@ app/Queries/Projects/
 ### Methods
 
 - **index()** — uses `TimesheetIndexQuery` for the paginated list, `TimesheetStatsQuery` for stat cards, and `availableYears()` for the year filter select
+- **report()** — delegates to `TimesheetReportGenerator::download()` and streams the PDF response
 - **store()** — validates with `StoreTimesheetRequest`, calls `updateOrCreate` on the project's timesheets, redirects to `projects.show?tab=timesheets&ts_month=X&ts_year=Y`
 - **destroy()** — deletes the timesheet, redirects to `projects.show?tab=timesheets`
 
@@ -114,6 +118,36 @@ Computes statistics in PHP (not SQL) because `daily_hours` is stored as JSON:
 | `earnings_this_year` | Sum of earnings in current year |
 
 Fetches only `daily_hours` and `hourly_rate` columns for efficiency.
+
+## PDF Report
+
+`TimesheetReportGenerator` (in `app/Services/Timesheets/`) handles PDF generation via **DomPDF** (`barryvdh/laravel-dompdf`).
+
+### Download flow
+
+1. Loads `project.client` and `BusinessSettings::current()`
+2. Builds `$workedDays` — filters `daily_hours` to days > 0, resolves ISO weekday name via Carbon, sorts by day
+3. Renders `timesheets.pdf` Blade view with all data
+4. Streams the PDF via `response()->streamDownload()` with a locale-aware filename
+
+### Filename format
+
+```
+{report_title_slug}-{project_slug}-{mm}-{yyyy}.pdf
+```
+
+`report_title_slug` is generated from `Str::slug(__('timesheets.report_title'))`, so it follows the active locale (e.g. `report-ore-lavorate` in Italian, `worked-hours-report` in English).
+
+### PDF layout
+
+| Section | Content |
+|---------|---------|
+| Header | Business logo + name (left) · Report title + month/year (right) |
+| Parties | Business address/VAT (left) · Project name + client (right) |
+| Worked days table | Day number, weekday name, hours — one row per worked day |
+| Summary | Total hours · Hourly rate · **Total** (hours × rate) |
+| Notes | Displayed only when `$timesheet->notes` is set |
+| Footer | Business name + generation date |
 
 ## Project Show Integration
 

@@ -5,6 +5,12 @@ description: Track all updates, new features and improvements in IndieDesk. Comp
 keywords: [IndieDesk changelog, version history, updates, new features, Laravel 12, release notes]
 ---
 
+## [v1.0.5] - 2026-03-02
+
+### Added
+- **Timesheet PDF report** — download a monthly worked hours report as PDF directly from the project timesheet tab; includes business info, project/client details, worked days table, and total earnings; filename is locale-aware (`{report-title-slug}-{project-slug}-{mm}-{yyyy}.pdf`)
+- **Blaze** — enabled `livewire/blaze` function compiler on all anonymous Blade components (`resources/views/components/`) for faster rendering pipeline
+
 ## [v1.0.4] - 2026-03-01
 
 ### Added

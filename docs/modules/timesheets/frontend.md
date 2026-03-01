@@ -14,6 +14,7 @@ The Timesheets module has two UI contexts: a **global index** with filters and s
 ```
 resources/views/timesheets/
 ├── index.blade.php
+├── pdf.blade.php                    ← PDF report (rendered by DomPDF)
 ├── index/
 │   ├── _header.blade.php
 │   ├── _stats-cards.blade.php
@@ -133,6 +134,35 @@ The form area contains two independent `<form>` elements:
 
 The save button sits outside the save form and is linked to it via the `form="timesheet-save-form"` attribute.
 
+### PDF Download Button
+
+A download link rendered only when `$currentTs` exists:
+
+```blade
+@if($currentTs)
+    <a href="{{ route('timesheets.report', [$project, $currentTs]) }}" ...>
+        {{ __('timesheets.report_download') }}
+    </a>
+@endif
+```
+
+Clicking it hits `timesheets.report` and the browser receives a streamed PDF file.
+
+## PDF View (`pdf.blade.php`)
+
+A standalone HTML document rendered by DomPDF (no app layout, no Tailwind). Uses `display: table` for multi-column layouts since DomPDF does not support Flexbox or CSS Grid.
+
+| Section | Description |
+|---------|-------------|
+| Header | Logo image (absolute path from `storage_path`) + business name on the left; report title + month/year on the right |
+| Parties | Business address/VAT on the left; project name + client on the right |
+| Worked days table | One row per day with hours > 0: day number, weekday name, hours |
+| Summary | Total hours, hourly rate, total amount (hidden when `hourly_rate = 0`) |
+| Notes | Displayed inside a shaded box when present |
+| Footer | Business name + generation date |
+
+Font stack: `DejaVu Sans` (bundled with DomPDF) + `Noto Sans CJK` (loaded from `storage/fonts/`) for CJK character support.
+
 ## Internationalization
 
 All frontend strings use `lang/*/timesheets.php`:
@@ -145,6 +175,8 @@ All frontend strings use `lang/*/timesheets.php`:
 - `no_rate_warning`, `delete_confirm`
 - `search_placeholder`, `all_months`, `all_years`
 - `no_timesheets`, `no_timesheets_desc`
+- `report_download`, `report_title`, `report_from`, `report_project`, `report_vat`
+- `report_worked_days`, `report_day`, `report_weekday`, `report_generated`, `report_total`
 
 ## Dark Mode
 
