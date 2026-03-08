@@ -5,6 +5,33 @@ description: Track all updates, new features and improvements in IndieDesk. Comp
 keywords: [IndieDesk changelog, version history, updates, new features, Laravel 12, release notes]
 ---
 
+## [v1.0.6] - 2026-03-08
+
+### Added
+- **Dashboard — Recent Costs list** — new `_recent-costs.blade.php` card showing the 5 most recent registered costs (amount in red with `-`, project name, type badge, date); added `getRecentCosts()` to `DashboardListsQuery` and included costs in `hydrateProjects()` batch loading to prevent N+1 queries
+
+### Fixed
+- **Statistics PDF styles** — aligned base styles (font stack, units, line-height) with the invoice PDF for consistent typography across all PDF exports
+
+### Updated
+- **Dashboard lists layout** — reorganised from a flat 2×2 grid to 3 rows: tasks+meetings (2 cols), recent payments+recent costs (2 cols), overdue payments (full width)
+- barryvdh/laravel-debugbar (v4.0.10 → v4.1.1)
+- dompdf/dompdf (v3.1.4 → v3.1.5)
+- laravel/boost (v2.2.1 → v2.2.3)
+- laravel/mcp (v0.5.9 → v0.6.0)
+- laravel/roster (v0.5.0 → v0.5.1)
+- league/commonmark (2.8.0 → 2.8.1)
+- livewire/blaze (v1.0.3 → v1.0.4)
+- php-debugbar/php-debugbar (v3.4.1 → v3.5.1)
+- phpdocumentor/reflection-docblock (6.0.1 → 6.0.2)
+- prism-php/prism (v0.99.20 → v0.99.21)
+- psy/psysh (v0.12.20 → v0.12.21)
+- sabberworm/php-css-parser (v9.2.0 → v9.3.0)
+- symfony/console (v7.4.6 → v7.4.7)
+- symfony/http-foundation (v7.4.6 → v7.4.7)
+- symfony/http-kernel (v7.4.6 → v7.4.7)
+- symfony/mime (v7.4.6 → v7.4.7)
+
 ## [v1.0.5] - 2026-03-02
 
 ### Added

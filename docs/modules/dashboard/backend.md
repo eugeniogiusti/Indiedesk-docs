@@ -69,7 +69,7 @@ Calculates KPIs for the stat cards. Returns an array with 5 keys:
 
 ## DashboardListsQuery
 
-Retrieves sorted lists of recent/urgent items. Returns an array with 5 keys:
+Retrieves sorted lists of recent/urgent items. Returns an array with 6 keys:
 
 | Key | Query | Limit |
 |-----|-------|-------|
@@ -77,11 +77,12 @@ Retrieves sorted lists of recent/urgent items. Returns an array with 5 keys:
 | `upcoming_meetings` | Future scheduled meetings | 5 |
 | `overdue_payments` | Pending payments with `due_date < now()` | 5 |
 | `recent_payments` | Latest received payments (paid), sorted by `paid_at` desc | 5 |
+| `recent_costs` | Latest costs with `paid_at` not null, sorted by `paid_at` desc | 5 |
 | `projects_due_soon` | `in_progress` projects with `due_date >= now()`, sorted by deadline | 5 |
 
 ### N+1 Optimization
 
-The `hydrateProjects()` method batch-loads all projects referenced in the lists with eager loading of the `client` relationship, avoiding N+1 queries.
+The `hydrateProjects()` method batch-loads all projects referenced in the lists (including `recent_costs`) with eager loading of the `client` relationship, avoiding N+1 queries.
 
 ## DashboardChartQuery
 

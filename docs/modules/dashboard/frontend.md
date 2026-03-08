@@ -27,7 +27,8 @@ resources/views/dashboard/
     ├── _tasks-due-soon.blade.php
     ├── _upcoming-meetings.blade.php
     ├── _overdue-payments.blade.php
-    └── _recent-payments.blade.php
+    ├── _recent-payments.blade.php
+    └── _recent-costs.blade.php
 
 resources/js/components/
 └── annualTrendChart.js
@@ -40,7 +41,7 @@ Uses `<x-app-layout>`. Grid structure:
 1. **Header** - Page title and current date
 2. **Stats cards** - Row of 4 KPI cards (`_stats-cards.blade.php`)
 3. **2-column grid** - Chart (2/3 width) + Welcome card (1/3 width)
-4. **Quick lists** - 2x2 grid with 4 lists (`_lists.blade.php`)
+4. **Quick lists** - 3 rows: tasks+meetings, payments+costs, overdue full width (`_lists.blade.php`)
 
 ## Stat Cards
 
@@ -91,7 +92,9 @@ Alpine.js component registered in `app.js` that uses Chart.js:
 
 - **Type**: Mixed - bars (payments/costs) + line (profit)
 - **Colors**: Payments emerald, costs red, profit indigo
-- **Dark mode**: Automatically detects via `MutationObserver` on the `dark` class of `<html>`, regenerates the chart when it changes
+- **Dark mode**: `MutationObserver` watches only for changes to the `dark` class on `<html>` (dirty check: re-renders only if dark mode actually changed)
+- **Responsive**: `responsive: false` — Chart.js internal ResizeObserver disabled to avoid canvas being set to 0x0 during CSS sidebar transitions. Resize is managed manually via a `ResizeObserver` on the chart container
+- **Initial render**: `ResizeObserver` fires as soon as the container gets real dimensions (handles background tabs correctly, replaces the old `requestAnimationFrame` polling)
 - **Tooltip**: Currency formatting with `it-IT` locale
 - **Y axis**: Starts at zero, currency symbol prefix on ticks
 
@@ -110,7 +113,11 @@ Static informational card with:
 
 ## Quick Lists (`_lists.blade.php`)
 
-`_lists.blade.php` includes 4 lists from the `lists/` subfolder, arranged in a 2x2 grid:
+`_lists.blade.php` includes 5 lists from the `lists/` subfolder, arranged in 3 rows:
+
+- **Row 1** (2 columns): Tasks Due Soon + Upcoming Meetings
+- **Row 2** (2 columns): Recent Payments + Recent Costs
+- **Row 3** (full width): Overdue Payments
 
 ### Tasks Due Soon (`_tasks-due-soon.blade.php`)
 - **Data**: `$lists['tasks_due_soon']` (max 5)
@@ -123,16 +130,22 @@ Static informational card with:
 - Shows: date (large day + small month), title, project, time (H:i)
 - "View all" link → `route('meetings.index')`
 
-### Overdue Payments (`_overdue-payments.blade.php`)
-- **Data**: `$lists['overdue_payments']` (max 5)
-- Shows: amount + currency, client/project
-- Red warning: days overdue
-- "View all" link → `route('payments.index')`
-
 ### Recent Payments (`_recent-payments.blade.php`)
 - **Data**: `$lists['recent_payments']` (max 5)
 - Shows: amount (green with +), project name, payment date
 - Green checkmark icon
+- "View all" link → `route('payments.index')`
+
+### Recent Costs (`_recent-costs.blade.php`)
+- **Data**: `$lists['recent_costs']` (max 5)
+- Shows: amount (red with -), project name, cost type badge, date
+- Red wallet icon
+- "View all" link → `route('costs.index')`
+
+### Overdue Payments (`_overdue-payments.blade.php`)
+- **Data**: `$lists['overdue_payments']` (max 5)
+- Full width row — shows: amount + currency, client/project
+- Red warning: days overdue or amber "due today"
 - "View all" link → `route('payments.index')`
 
 ### Empty State
