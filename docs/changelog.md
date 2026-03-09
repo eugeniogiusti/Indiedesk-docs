@@ -5,6 +5,14 @@ description: Track all updates, new features and improvements in IndieDesk. Comp
 keywords: [IndieDesk changelog, version history, updates, new features, Laravel 12, release notes]
 ---
 
+## [v1.0.7] - 2026-03-08
+
+### Added
+- **GitHub Integration — Repository tab** — each project with a GitHub `repo_url` now shows a dedicated Repository tab with: commit activity heatmap (52 weeks × 7 days), recent commits list (author, relative date, SHA linked to GitHub), and repo info badges (stars, forks, default branch); data is lazy-loaded via a JSON endpoint (`GET /projects/{project}/repository`) and cached 10 minutes server-side
+- **GitHubService** — new `app/Services/GitHub/GitHubService.php` wrapping the GitHub REST API (`commit_activity`, `commits`, repo info endpoints) with per-repo cache and silent failure handling
+- **Business Settings — Integrations tab** — new tab in Business Settings for third-party integrations; first integration: GitHub PAT (`github_pat` field) with required scopes info box
+- **`repositoryTab` Alpine.js component** — registered in `app.js`, handles fetch, loading/error states, heatmap color logic, month label computation and relative date formatting
+
 ## [v1.0.6] - 2026-03-08
 
 ### Added

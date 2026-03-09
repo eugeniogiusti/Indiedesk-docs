@@ -187,6 +187,15 @@ const sidebars: SidebarsConfig = {
         'modules/AI/laravelboost',
       ],
     },
+
+    {
+      type: 'category',
+      label: 'GitHub',
+      items: [
+        'modules/github/backend',
+        'modules/github/frontend',
+      ],
+    },
     
 
   ],

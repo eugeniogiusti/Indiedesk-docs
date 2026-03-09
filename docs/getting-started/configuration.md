@@ -151,3 +151,18 @@ Go to the **AI** section and enter your OpenAI API key.
 You can get an API key here: [https://platform.openai.com/api-keys](https://platform.openai.com/api-keys)
 
 ![AI settings](/img/getting-started/api.png)
+
+### GitHub Integration (optional)
+
+Go to **Settings → Business → Integrations** and enter your GitHub Personal Access Token (PAT).
+
+This enables the **Repository tab** on each project — showing commit activity, recent commits and repo info — for any project that has a GitHub `repo_url` set.
+
+To generate a token, go to [https://github.com/settings/tokens](https://github.com/settings/tokens) and create a classic token with the following scopes:
+
+- `repo` — access to public and private repositories
+- `read:user` — author avatars in the commits list
+
+Once saved, open any project, add the GitHub repo URL in the project settings (Links tab), and the **Repository** tab will appear automatically.
+
+![AI settings](/img/getting-started/github.png)
