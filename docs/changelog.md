@@ -5,6 +5,20 @@ description: Track all updates, new features and improvements in IndieDesk. Comp
 keywords: [IndieDesk changelog, version history, updates, new features, Laravel 12, release notes]
 ---
 
+## [v1.0.8] - 2026-03-10
+
+### Fixed
+- **MySQL compatibility** — dashboard and statistics charts now work correctly with both SQLite and MySQL
+
+
+### Updated
+- barryvdh/laravel-debugbar (v4.1.1 → v4.1.3)
+- guzzlehttp/psr7 (2.8.0 → 2.9.0)
+- laravel/breeze (v2.3.8 → v2.4.0)
+- laravel/framework (v12.53.0 → v12.54.0)
+- laravel/mcp (v0.6.0 → v0.6.1)
+- laravel/prompts (v0.3.13 → v0.3.14)
+
 ## [v1.0.7] - 2026-03-09
 
 ### Added
