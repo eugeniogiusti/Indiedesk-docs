@@ -223,7 +223,7 @@ The `/calendar` page shows an embedded Google Calendar iframe. To configure it w
 **4.** Copy the `src="..."` value from the iframe tag. It looks like:
 
 ```
-https://calendar.google.com/calendar/embed?src=you%40gmail.com&ctz=Europe%2FRome
+https://calendar.google.com/calendar/embed?src=your%40gmail.com&ctz=Europe%2FRome
 ```
 
 **5.** Open `resources/views/calendar/index.blade.php` and replace the `src` attribute:
