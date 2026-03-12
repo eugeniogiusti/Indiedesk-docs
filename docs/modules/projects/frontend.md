@@ -47,7 +47,7 @@ resources/views/projects/
     ├── _header.blade.php
     ├── _content-tabs.blade.php
     ├── _client-info.blade.php
-    ├── _project-stats.blade.php
+    ├── _quick-info.blade.php
     ├── _quick-links.blade.php
     ├── _tab-overview.blade.php
     ├── _tab-tasks.blade.php
@@ -55,7 +55,10 @@ resources/views/projects/
     ├── _tab-payments.blade.php
     ├── _tab-costs.blade.php
     ├── _tab-profit.blade.php
-    └── _tab-documents.blade.php
+    ├── _tab-documents.blade.php
+    ├── _tab-timesheets.blade.php
+    ├── _tab-repository.blade.php
+    └── _tab-editor.blade.php
 
 resources/js/components/
 ├── projectModal.js
@@ -105,7 +108,7 @@ Centered message with icon when there are no projects.
 
 1. `projects.show._header` - sticky header
 2. Grid `grid-cols-1 lg:grid-cols-4`:
-   - **Sidebar** (1/4): `_client-info`, `_project-stats`, `_quick-links`
+   - **Sidebar** (1/4): `_client-info`, `_quick-info`, `_quick-links`
    - **Main content** (3/4): `_content-tabs`
 3. `projects.modals._project-form` - edit project modal (outside the grid)
 4. `ai._panel` - AI chatbot panel (conditional: only if AI is enabled in `AiSettings`)
@@ -125,14 +128,16 @@ Back arrow, project name, type/status/priority badges, deadline. "Edit" button d
 `_content-tabs.blade.php` manages tab navigation and content. It is a sub-orchestrator that:
 
 - Initializes Alpine.js with `activeTab` from query string (`?tab=costs`), default `overview`
-- Renders the **navigation bar** with 7 tab buttons, each with SVG icon and i18n label
+- Renders the **navigation bar** with tab buttons, each with SVG icon and i18n label
+- The navigation wrapper uses `overflow-x-auto` + `min-w-max` to prevent overflow at low zoom levels
 - The active tab shows an emerald border (`border-emerald-500`), others are gray with hover
 - In the content block, each tab is wrapped in `x-show="activeTab === '...'"` with `x-cloak`
+- The Editor tab uses `<template x-if>` instead of `x-show` to avoid initializing Trix before the tab is opened
 - Includes the corresponding `_tab-*.blade.php` partials
 
 ### Tabs
 
-7 total tabs.
+9 total tabs (Repository and Editor are always visible).
 
 Each show tab includes **partials from other modules** to reuse existing tables and modals. The pattern is always the same: header with title + "Add" button, module partial table, "View all" link if > 10 records, empty state, and module form modal.
 
@@ -200,6 +205,26 @@ Includes partials from the **Documents** module:
 
 Open event: `open-document-modal`. "View all" link points to `documents.index` filtered by `project_id`.
 
+### Tab Timesheets
+
+Includes partials from the **Timesheets** module for monthly hour tracking. No cross-tab data from `$showData` — timesheets load independently.
+
+### Tab Repository
+
+Conditional tab (only shown when `$project->repo_url` contains `github.com`). Powered by the `repositoryTab` Alpine.js component — fetches data lazily from `GET /projects/{project}/repository` and renders a commit activity heatmap + recent commits list.
+
+### Tab Editor
+
+Rich text editor powered by **Trix**. Self-contained tab with no external module partials.
+
+- Form `PUT /projects/{project}/editor` submits the hidden input `editor_notes`
+- `<trix-editor>` is bound to the hidden input via the `input` attribute
+- `data-upload-url` points to `POST /projects/{project}/editor/images` for inline image upload
+- `data-error-upload` and `data-error-invalid-type` carry localized error strings for the toast
+- Tab content uses `<template x-if>` (not `x-show`) so Trix is only initialized when the tab is first opened, avoiding unnecessary DOM work on page load
+- Supported image formats: PNG, JPG, GIF — max 20MB
+- Save button is disabled while an upload is in progress (re-enabled in the `finally` block)
+
 ### Cross-Module Dependency Summary
 
 The project show is a **hub** that integrates partials from 5 external modules:
@@ -259,11 +284,40 @@ Component registration in `resources/js/app.js`:
 - `Alpine.data('clientSearch', clientSearch)`
 - `Alpine.data('projectSearch', projectSearch)`
 
+### Trix Integration
+
+Trix is imported globally in `app.js` (`import 'trix'`) and configured via two document-level event listeners:
+
+**`trix-initialize`** — fires when a `<trix-editor>` mounts:
+- Adds a click handler that opens links in a new tab (`_blank`), skipping image attachment anchors
+- Sets `accept="image/jpeg,image/png,image/gif"` on the hidden file input (OS picker filter)
+
+**`trix-attachment-add`** — fires when a file is dragged/pasted into the editor:
+- Reads `data-upload-url` from the editor element
+- Disables the form submit button during upload
+- POSTs the file to the upload endpoint with the CSRF token
+- On success: calls `attachment.setAttributes({ url })` to embed the image
+- On failure: removes the attachment and shows an error toast via `Alpine.store('toast')`
+- Always re-enables the submit button in `finally`
+
+
 ## Internationalization
 
 Strings in `lang/*/projects.php` (10 supported languages: en, it, fr, es, de, nl, pt, pl, uk, ro, da).
 
 Main keys: page titles, form fields, type/status/priority options, placeholders, statistics, tab labels and links.
+
+Editor-specific keys: `editor_tab`, `editor_saved`, `editor_image_invalid_type`, `editor_image_upload_error`.
+
+Date labels use `Carbon::translatedFormat(...)`.
+
+## Internationalization
+
+Strings in `lang/*/projects.php` (10 supported languages: en, it, fr, es, de, nl, pt, pl, uk, ro, da).
+
+Main keys: page titles, form fields, type/status/priority options, placeholders, statistics, tab labels and links.
+
+Editor-specific keys: `editor_tab`, `editor_saved`, `editor_image_invalid_type`, `editor_image_upload_error`.
 
 Date labels use `Carbon::translatedFormat(...)`.
 
@@ -275,3 +329,4 @@ Full support with Tailwind `dark:*` classes:
 - Borders: `border-gray-200 dark:border-gray-700`
 - Card gradients: dark variant with reduced opacity
 - Forms: `bg-white dark:bg-gray-700`
+- **Trix editor**: toolbar and editor area overridden in `app.css` with gray-800/900 palette; toolbar icons inverted via `filter: invert(1)`

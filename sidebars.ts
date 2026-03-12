@@ -190,6 +190,15 @@ const sidebars: SidebarsConfig = {
 
     {
       type: 'category',
+      label: 'Taxes',
+      items: [
+        'modules/taxes/backend',
+        'modules/taxes/frontend',
+      ],
+    },
+
+    {
+      type: 'category',
       label: 'GitHub',
       items: [
         'modules/github/backend',

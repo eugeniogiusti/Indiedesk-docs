@@ -5,6 +5,41 @@ description: Track all updates, new features and improvements in IndieDesk. Comp
 keywords: [IndieDesk changelog, version history, updates, new features, Laravel 12, release notes]
 ---
 
+## [v1.0.10] - 2026-03-12
+
+### Added
+- **Projects — Editor tab** — new rich text editor tab on the project show page powered by Trix; supports bold, italic, links, headings, lists, quotes and inline image upload (PNG, JPG, GIF, max 20MB); content saved as HTML in the new `editor_notes` column (separate from the plain-text `notes` field)
+- **Private image storage for editor** — images uploaded via the editor are stored privately (`local` disk, `editor-images/{project_id}/`); served through an authenticated route (`GET /projects/{project}/editor/images/{filename}`) with `Cache-Control: private`
+- **`ProjectEditorController`** — `update`, `uploadImage`, `serveImage` methods; `UpdateEditorRequest` + `StoreEditorImageRequest` for validation
+- **Trix dark mode** — full dark mode override for Trix toolbar and editor area; undo/redo group and file input hidden via CSS
+- **Tab navigation overflow fix** — `_content-tabs.blade.php` nav wrapper now uses `overflow-x-auto` + `min-w-max` to prevent overflow at lower browser zoom levels
+
+### Updated
+- nesbot/carbon (3.11.1 → 3.11.3)
+- laravel/framework (v12.54.0 → v12.54.1)
+- prism-php/prism (v0.99.21 → v0.99.22)
+- laravel/mcp (v0.6.1 → v0.6.2)
+- laravel/boost (v2.2.3 → v2.3.1)
+- laravel/breeze (v2.4.0 → v2.4.1)
+- laravel/pint (v1.27.1 → v1.29.0)
+- livewire/blaze (v1.0.4 → v1.0.7)
+- pestphp/pest (v4.4.1 → v4.4.2)
+
+## [v1.0.9] - 2026-03-11
+
+### Added
+- **Taxes module** — full CRUD for tax payment tracking: amount, description, due date, paid date, reference year, optional notes, and document attachment (upload / preview / download); four stat cards (total all time, this year, unpaid amount, count this year); filters by year, paid status, and free-text search
+- **Tax document attachment** — upload PDF/image documents per tax record; stored locally with a locale-aware filename prefix; supports preview, download and delete
+- **Google Calendar integration for taxes** — each unpaid tax shows a calendar icon next to the due date; clicking it opens Google Calendar with the event pre-filled (title includes date, description and reference year; body includes all tax details and notes)
+- **Taxes translations** — full `taxes.php` lang file in all 13 supported languages (it, en, de, fr, es, pt, nl, pl, ro, ru, uk, da, zh)
+
+### Improved
+- **Project type badge** — `<x-projects.type-badge>` now displayed in the project column of all index tables: tasks, payments, costs, meetings, timesheets, documents
+- **Timesheets index** — project column now shows client name when a project is linked to a client (was missing)
+
+### Fixed
+- **Statistics MySQL compatibility** — `MonthlyBreakdownQuery` was using SQLite-only `strftime()`; replaced with a `dateExpr()` helper that outputs `DATE_FORMAT` for MySQL and `strftime` for SQLite
+
 ## [v1.0.8] - 2026-03-10
 
 ### Fixed

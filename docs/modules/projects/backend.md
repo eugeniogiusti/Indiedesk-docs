@@ -16,12 +16,15 @@ app/
 ├── Http/
 │   ├── Controllers/
 │   │   ├── Projects/
-│   │   │   └── ProjectController.php
+│   │   │   ├── ProjectController.php
+│   │   │   └── ProjectEditorController.php
 │   │   └── Api/Projects/
 │   │       └── ProjectSearchController.php
 │   └── Requests/Projects/
 │       ├── StoreProjectRequest.php
-│       └── UpdateProjectRequest.php
+│       ├── UpdateProjectRequest.php
+│       ├── UpdateEditorRequest.php
+│       └── StoreEditorImageRequest.php
 ├── Models/
 │   └── Project.php
 └── Queries/Projects/
@@ -43,6 +46,9 @@ app/
 | POST | `/projects/{id}/restore` | restore | Restore project |
 | DELETE | `/projects/{id}/force-delete` | forceDelete | Permanently delete |
 | GET | `/api/search/projects` | __invoke | Project search for navbar |
+| PUT | `/projects/{project}/editor` | update | Save editor content |
+| POST | `/projects/{project}/editor/images` | uploadImage | Upload image from Trix editor |
+| GET | `/projects/{project}/editor/images/{filename}` | serveImage | Serve private editor image |
 
 Note: the `/projects/{project}/chat*` routes are part of the AI module and are documented in `docs/modules/AI/backend.md`.
 
@@ -56,6 +62,14 @@ Application queries are delegated to dedicated classes in `app/Queries/Projects/
 - **index()** - Uses `ProjectIndexQuery` for list/filters/pagination and `ProjectStatsQuery` for statistics cards
 - **store()** - Validation via `StoreProjectRequest`, then record creation
 - **show()** - Uses `ProjectShowQuery` for tab blocks (tasks, meetings, payments, costs, documents) and `ProjectProfitStatsQuery` for profit/margin
+
+### ProjectEditorController
+
+`ProjectEditorController` manages the rich text editor tab for project notes.
+
+- **update()** - Saves `editor_notes` via `UpdateEditorRequest`, redirects back to `?tab=editor`
+- **uploadImage()** - Accepts an image (`StoreEditorImageRequest`, max 20MB, jpeg/jpg/png/gif), stores it privately at `editor-images/{project_id}/{filename}`, returns `{ url }` JSON
+- **serveImage()** - Streams the private image via `response()->file()` with `Cache-Control: private`
 - **update()** - Validation via `UpdateProjectRequest`, with conditional redirect (`show` or `index`)
 - **destroy()** - Soft delete
 - **restore()** - Restore deleted record
@@ -71,6 +85,12 @@ Application queries are delegated to dedicated classes in `app/Queries/Projects/
 ## Model
 
 The `Project` model is located in `app/Models/Project.php`.
+
+### Fields
+
+The `editor_notes` column (`longText`, nullable) stores the HTML content produced by the Trix editor. It is separate from the plain-text `notes` field used in the project form.
+
+Added via migration: `2026_03_12_114609_add_editor_notes_to_projects_table`.
 
 ### Features
 
@@ -126,6 +146,12 @@ Validation handled by:
 - priority: `priority`
 - project URLs: `repo_url`, `staging_url`, `production_url`, `figma_url`, `docs_url`
 - text: `description`, `notes`
+
+**UpdateEditorRequest** - saves the rich text editor content:
+- `editor_notes` (nullable string, raw HTML from Trix)
+
+**StoreEditorImageRequest** - validates image uploads from the editor:
+- `image` (required, file, mimes: jpeg/jpg/png/gif, max 20MB)
 
 ## Query Classes
 

@@ -40,7 +40,7 @@ Each model that implements `CalendarEventable` exposes buttons/links in its own 
 
 | Module | View | Condition |
 |--------|------|-----------|
-| **Projects** | `projects/show/_project-stats.blade.php` | `$project->googleCalendarUrl()` (project deadline) |
+| **Projects** | `projects/show/_quick-info.blade.php` | `$project->googleCalendarUrl()` (project deadline) |
 | **Tasks** | `tasks/partials/_table-row-actions.blade.php` | `$task->googleCalendarUrl()` (task deadline) |
 | **Payments** | `payments/partials/payment-table/_row-actions.blade.php` | `$payment->googleCalendarUrl()` (payment date) |
 | **Meetings** | `meetings/partials/_meeting-table.blade.php` | `$meeting->googleCalendarUrl()` (meeting date) |
