@@ -139,11 +139,17 @@ Back arrow, project name, type/status/priority badges, deadline. "Edit" button d
 
 9 total tabs (Repository and Editor are always visible).
 
-Each show tab includes **partials from other modules** to reuse existing tables and modals. The pattern is always the same: header with title + "Add" button, module partial table, "View all" link if > 10 records, empty state, and module form modal.
+Each show tab includes **partials from other modules** to reuse existing tables and modals. The pattern is always the same: header with title + "Add" button, module partial table, "View all" link if > 50 records, empty state, and module form modal.
 
 ### Tab Overview
 
-Project's own content: description + notes (with `nl2br`), no external partials.
+Project's own content: description + notes, no external partials.
+
+Both fields support **inline editing** without opening the modal:
+- Clicking "Edit" enters edit mode (textarea via `inlineField` Alpine.js component)
+- Changes are saved via `PATCH /projects/{project}/field` with `{ field, value }`
+- Display uses `whitespace-pre-wrap` to preserve newlines
+- Translations (`ui.saved`, `ui.error_saving`) are passed from Blade to the component as parameters — no hardcoded strings in JS
 
 ### Tab Tasks
 
@@ -237,7 +243,7 @@ The project show is a **hub** that integrates partials from 5 external modules:
 | Costs | `costs` | `_cost-table` | `_modal-form` + `_upload-receipt-modal` |
 | Documents | `documents` | `_document-table` | `_modal` |
 
-All data is prepared by the backend in `$showData` (via `ProjectShowQuery`) with a limit of 10 records per tab and total counts for the "View all" links.
+All data is prepared by the backend in `$showData` (via `ProjectShowQuery`) with a limit of 50 records per tab and total counts for the "View all" links.
 
 ## Modal (Alpine.js)
 
@@ -283,6 +289,7 @@ Component registration in `resources/js/app.js`:
 - `Alpine.data('projectModal', projectModal)`
 - `Alpine.data('clientSearch', clientSearch)`
 - `Alpine.data('projectSearch', projectSearch)`
+- `Alpine.data('inlineField', inlineField)` — inline field editing for description/notes on the overview tab
 
 ### Trix Integration
 

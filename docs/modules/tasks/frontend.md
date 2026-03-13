@@ -97,6 +97,25 @@ Component registration in `resources/js/app.js`:
 - `window.taskModal = taskModal`
 - `Alpine.data('taskToggle', taskToggle)`
 
+## Task Types
+
+Available task types defined in `Task::TYPES`:
+`feature`, `bug`, `improvement`, `research`, `administrative`, `marketing`, `other`.
+
+Translation keys follow the pattern `tasks.type_{key}` (e.g. `tasks.type_marketing`, `tasks.type_improvement`).
+
+## Due Date Badge
+
+The `<x-tasks.due-date>` component applies colored badges based on the deadline:
+
+| Condition | Label key | Color |
+|-----------|-----------|-------|
+| `isToday()` | `tasks.due_today` | blue |
+| `isPast()` | `tasks.overdue` | red |
+| within 3 days | `tasks.due_soon` | orange |
+
+`isToday()` is checked **before** `isPast()` to prevent tasks due today from showing "Overdue".
+
 ## Internationalization
 
 Tasks frontend strings use the file:

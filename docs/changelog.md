@@ -5,6 +5,26 @@ description: Track all updates, new features and improvements in IndieDesk. Comp
 keywords: [IndieDesk changelog, version history, updates, new features, Laravel 12, release notes]
 ---
 
+## [v1.0.11] - 2026-03-13
+
+### Added
+- **Inline field editing — Project overview tab** — description and notes fields on the project show page are now editable inline without opening the modal; a dedicated `PATCH /projects/{project}/field` endpoint handles the update via `PatchProjectFieldRequest` (allowlist: `description`, `notes`); the `patchField()` method was added directly to `ProjectController`
+- **`inlineField` Alpine.js component** — new `resources/js/components/inlineField.js` registered as `Alpine.data('inlineField', inlineField)` in `app.js`; accepts `patchUrl`, `fieldName`, `initialValue`, `msgSaved`, `msgError` as parameters; translated messages are passed from Blade to avoid hardcoding strings in JS
+- **`ui.saved` / `ui.error_saving` translation keys** — added to all 13 language files (`lang/*/ui.php`)
+- **Task types: `marketing` and `improvement`** — added to `Task::TYPES` constant and to all 13 `lang/*/tasks.php` files
+- **`tasks.due_today` translation key** — added to all 13 `lang/*/tasks.php` files; shown on the due date badge when the task deadline is today
+
+### Improved
+- **Inline text newline preservation** — description and notes display divs use `whitespace-pre-wrap` so saved newlines render correctly without `nl2br`
+- **Project show tab limit raised to 50** — `ProjectShowQuery::$limit` increased from 10 to 50; all "View all" threshold checks in `_tab-tasks`, `_tab-meetings`, `_tab-payments`, `_tab-costs`, `_tab-documents` updated from `> 10` to `> 50`
+- **Clickable project name in project index** — project name in `_row-name.blade.php` is now a link to `projects.show`
+- **Clickable client name in client cells** — `x-client-name-cell` component and `x-projects.client-badge` component now link to `clients.show`
+- **Clickable project column in task / meeting / payment / cost / document indexes** — `_row-project.blade.php` in all five modules now links directly to `projects.show` with the relevant tab pre-selected (`tab=tasks`, `tab=meetings`, etc.)
+
+### Fixed
+- **Task due date badge — overdue vs. today** — `due-date.blade.php` now checks `isToday()` before `isPast()`; tasks due today show "Da fare oggi" / "Due today" instead of "Overdue"
+- **Trix dark mode link dialog** — `.trix-dialog`, `.trix-dialog input`, and `.trix-dialog .trix-button` now have explicit dark-mode overrides in `app.css`; the dialog is no longer invisible on dark backgrounds
+
 ## [v1.0.10] - 2026-03-12
 
 ### Added
