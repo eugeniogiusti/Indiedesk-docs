@@ -5,6 +5,31 @@ description: Track all updates, new features and improvements in IndieDesk. Comp
 keywords: [IndieDesk changelog, version history, updates, new features, Laravel 12, release notes]
 ---
 
+## [v1.0.13] - 2026-03-15
+
+### Added
+- **Monthly detail tables on statistics page** — when a specific month is selected, two tables appear below the summary cards: costs (date, project/client, type, amount) and payments (date, project/client, amount); projects without a client show "Internal"; powered by new `MonthlyDetailQuery` sub-query
+- **Monthly detail in PDF export** — same two tables included in the PDF when exporting a single month, followed by the month profit line; all values come from the backend (`$stats['summary']`), no logic in the view
+- **Task types: `documentation`** — added to `Task::TYPES` and to all 13 `lang/*/tasks.php` files
+
+
+
+## [v1.0.12] - 2026-03-14   
+
+### Added
+- **Lead Follow-up module** — full CRUD for follow-up logs on lead clients; `client_followups` table with `type` (call, email, whatsapp, meeting, note), `note`, `contacted_at`; `ClientFollowup` model implements `CalendarEventable`
+- **Follow-up section on client show page** — amber-bordered section visible only when `$client->isLead()`; includes quick action buttons (call, WhatsApp, email) and a chronological follow-up log; disappears automatically once the client is converted to active
+- **`clientFollowupModal` Alpine.js component** — `resources/js/components/clientFollowupModal.js`; single modal handles create and edit; registered via `Alpine.data()` in `app.js`; uses `data-action`/`data-payload` pattern (no inline JS in Blade)
+- **`<x-followup-type-icon>` Blade component** — accepts `:type` prop (`call`, `email`, `whatsapp`, `meeting`, `note`); replaces `@switch/@case` blocks with a PHP array map; reused in follow-up list rows and quick-action buttons
+- **Google Calendar integration for follow-ups** — each follow-up row has an "Add to Calendar" link; pre-filled as an all-day event on `contacted_at` via `ClientFollowup::googleCalendarUrl()`
+- **`Client::isLead()` helper** — returns `true` if `status === 'lead'`; single source of truth for conditional UI in Blade
+- **Follow-up translations** — `followup` key group added to all 13 `lang/*/clients.php` files (type labels, action labels, modal titles, validation messages)
+
+### Improved
+- **`Client::whatsappUrl()` model method** — WhatsApp URL building logic (`phone_prefix` + `phone` → `wa.me/` URL) moved from Blade component to the model; single source of truth used by `<x-whatsapp-link>`, `_quick-actions.blade.php`, and any other consumer
+- **`<x-whatsapp-link>` refactored** — now accepts `href` (pre-built URL) and slot text instead of `phone`+`prefix` props; component is pure display with no URL logic
+- **`ClientStatsQuery` — leads excluded from total** — total client count now covers only `active` and `archived` statuses; leads are prospects, not yet clients; calculation moved entirely inside `ClientStatsQuery::handle()`, removed from the controller
+
 ## [v1.0.11] - 2026-03-13
 
 ### Added
@@ -183,7 +208,7 @@ keywords: [IndieDesk changelog, version history, updates, new features, Laravel 
 - thecodingmachine/safe (v3.3.0 → v3.4.0)
 - webmozart/assert (2.1.2 → 2.1.3)
 
-## [v1.0.0] - 2026-02-11 - Latest version of laravel 12.51
+## [v1.0.0] - 2026-02-11
 
 ### Added
 - Initial documentation structure

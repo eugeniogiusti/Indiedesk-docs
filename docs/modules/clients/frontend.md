@@ -7,8 +7,7 @@ keywords: [Alpine.js modals, Blade partials, client UI, orchestrator pattern, ta
 
 # Frontend
 
-The Clients module uses the **Partial Views** pattern to keep views modular,
-readable, and easily maintainable.
+The Clients module uses the **Partial Views** pattern to keep views modular, readable, and easily maintainable.
 
 The main views do not contain direct markup but orchestrate the inclusion of partials.
 
@@ -43,8 +42,13 @@ resources/views/clients/
 │   ├── _payments.blade.php
 │   ├── _costs.blade.php
 │   └── _documents.blade.php
+├── followups/
+│   ├── _section.blade.php       # Container — visible only if client is lead
+│   ├── _list.blade.php          # Chronological log of followups
+│   └── _quick-actions.blade.php # Quick action buttons (call, WhatsApp, email)
 └── modals/
-    └── _client-form.blade.php
+    ├── _client-form.blade.php
+    └── _followup-form.blade.php
 ```
 
 ---
@@ -53,82 +57,116 @@ resources/views/clients/
 
 ### Orchestrator Views
 
-The `index.blade.php` and `show.blade.php` views act as orchestrators:
-they include partials without containing direct markup.
+The `index.blade.php` and `show.blade.php` views act as orchestrators.
 
-```php
-<x-app-layout>
-    @include('clients.index._header')
-    @include('clients.index._stats-cards')
-    @include('clients.index._filters')
-    @include('clients.index._table')
-    @include('clients.modals._client-form')
-</x-app-layout>
+`show.blade.php` conditionally includes the followup section and modal only when the client is a lead:
+
+```blade
+@if($client->isLead())
+    @include('clients.followups._section')
+@endif
+
+@if($client->isLead())
+    @include('clients.modals._followup-form')
+@endif
 ```
 
 ---
 
-### Partial Views
+## Blade Components
 
-- Partials use the `_` prefix
-- Complex sections are organized in subfolders
-- Partials can include other partials (nested partials)
+### `<x-whatsapp-link>`
+
+Renders a WhatsApp link. Receives the pre-built URL from the model and the phone number as slot text. **No URL logic in the component.**
+
+```blade
+<x-whatsapp-link :href="$client->whatsappUrl()">
+    {{ $client->phone_prefix }} {{ $client->phone }}
+</x-whatsapp-link>
+```
+
+The URL is built by `Client::whatsappUrl()` on the model — single source of truth.
+
+### `<x-followup-type-icon>`
+
+Renders the icon for a followup type. Accepts a `type` prop (`call`, `email`, `whatsapp`, `meeting`, `note`).
+
+```blade
+<x-followup-type-icon :type="$followup->type" />
+<x-followup-type-icon type="call" />
+```
+
+Used both in `_list.blade.php` (per-row icon) and `_quick-actions.blade.php` (action buttons).
 
 ---
 
-## Modal (Alpine.js)
+## Follow-up Section (Leads Only)
 
-The create/edit form is managed by a dedicated Alpine.js component
-in `resources/js/components/clientModal.js`, registered globally in `resources/js/app.js`.
+Visible only when `$client->isLead()` returns `true`. Disappears automatically once the client is converted to active.
 
-The component handles:
-- create/edit state
-- modal open/close
-- tab navigation
-- form data
+**`_section.blade.php`** — amber-bordered container with:
+- Header with followup count badge and "Add follow-up" button
+- Quick action buttons (`_quick-actions.blade.php`)
+- Chronological followup list (`_list.blade.php`)
+
+**`_quick-actions.blade.php`** — call, WhatsApp, email buttons. Uses `<x-whatsapp-link>` and `<x-email-link>` components. No logic — only display.
+
+**`_list.blade.php`** — list of followups ordered by `contacted_at` desc. Each row shows:
+- Type icon via `<x-followup-type-icon>`
+- Type label + date
+- Note (if present)
+- Actions on hover: Google Calendar link, edit button, delete form
+
+---
+
+## Alpine.js Component — `clientFollowupModal`
+
+Located in `resources/js/components/clientFollowupModal.js`, registered in `app.js` as `Alpine.data('clientFollowupModal', ...)`.
+
+Handles create and edit in a single modal, same pattern as `meetingModal`.
+
+```js
+openCreate()           // resets form, opens modal
+openEdit(followupData) // pre-fills form with existing data, opens modal
+closeModal()           // closes and resets after animation
+```
+
+Default form values: `type = 'call'`, `contacted_at = today`.
 
 ### UI → Modal Communication
 
-Buttons use `data-action` and `data-payload` attributes instead of inline JS. A global listener in `app.js` intercepts clicks and dispatches events that the Alpine component listens to.
+Uses the centralized `data-action` + `data-payload` pattern — no inline JS in Blade.
 
-- **Create**: the button has `data-action="open-client-modal"`
-- **Edit**: the button has `data-action="edit-client"` with `data-payload` containing the record data (serialized by the model's `toFormPayload()` method)
+| Action | Trigger |
+|--------|---------|
+| Open create modal | `data-action="open-followup-modal"` |
+| Open edit modal | `data-action="edit-followup"` + `data-payload="{id, type, note, contacted_at}"` |
+| Delete with confirm | `data-confirm="..."` on the form |
 
-The component receives data directly in the event, without needing to search through arrays.
-
-### Delete with Confirmation
-
-Delete forms use `data-confirm` with the confirmation message. The global listener intercepts the submit and shows the native confirmation dialog.
-
-### Advantages
-
-- Only necessary fields are exposed in the DOM
-- No inline JS in Blade views
-- Centralized and easy-to-modify logic
+The modal listens on window events:
+```blade
+@open-followup-modal.window="openCreate()"
+@edit-followup.window="openEdit($event.detail)"
+```
 
 ---
 
 ## Show Page Layout
 
-The detail page uses a **sidebar + main content** layout.
-
-Responsive grid:
-- sidebar: `lg:col-span-1`
-- main content: `lg:col-span-3`
+Sidebar + main content layout (responsive grid):
+- Sidebar: `lg:col-span-1` — client info (contact, billing, web, notes)
+- Main content: `lg:col-span-3` — followup section (leads only), projects, tasks, meetings, payments, costs, documents
 
 ---
 
 ## Internationalization
 
-All strings use Laravel's i18n system.
+All strings use Laravel's i18n system. Translation files: `lang/{locale}/clients.php`.
 
-Translation files are separated by module:
-- `lang/it/clients.php`
-- `lang/en/clients.php`
+The `followup` key group contains all followup-related strings including type labels, validation messages, and action labels. Supported in all 13 project locales.
 
 ---
 
 ## Dark Mode
 
-The frontend supports dark mode via Tailwind classes (`dark:*`).
-Theme management is centralized at the layout level.
+Full dark mode support via Tailwind `dark:*` classes. Theme management is centralized at the layout level.

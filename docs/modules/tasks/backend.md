@@ -75,11 +75,15 @@ The `Task` model is located in `app/Models/Task.php`.
 | Type | Description |
 |------|-------------|
 | `feature` | Feature development |
+| `improvement` | Improvement to existing functionality |
 | `bug` | Bug fix |
 | `infra` | Infrastructure |
 | `refactor` | Refactoring |
 | `research` | Research/analysis |
 | `administrative` | Administrative task |
+| `marketing` | Marketing activity |
+| `hardware` | Hardware-related task |
+| `documentation` | Documentation writing/update |
 
 ### Priorities
 

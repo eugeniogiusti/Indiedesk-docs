@@ -81,7 +81,7 @@ The `Cost` model is located in `app/Models/Cost.php`.
 | `license` | Licenses |
 | `ads` | Advertising |
 | `service` | External services |
-| `travel` | Travel expenses |
+| `travel` | Transport/Travel (travel, commute, transit subscriptions) |
 
 ### Recurrence Periods
 

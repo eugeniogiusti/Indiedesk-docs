@@ -22,7 +22,8 @@ app/
 │       ├── FinancialStatsQuery.php
 │       ├── OperationalStatsQuery.php
 │       ├── ChartDataQuery.php
-│       └── MonthlyBreakdownQuery.php
+│       ├── MonthlyBreakdownQuery.php
+│       └── MonthlyDetailQuery.php
 └── Services/Statistics/
     └── StatisticsPdfExporter.php
 ```
@@ -51,6 +52,7 @@ app/
 - composes a single output:
   - `summary` (financial + operational)
   - `monthly` (month-by-month breakdown, annual view only)
+  - `detail` (per-row costs and payments, single month view only)
   - `chart` (monthly or daily chart dataset)
 
 ## SubQueries
@@ -92,6 +94,16 @@ Implementation notes:
 - SQL aggregations with `strftime` (SQLite-friendly)
 - filters paid payments + default currency from `BusinessSettings`
 
+### MonthlyDetailQuery
+
+Loads the per-row detail of costs and payments for a single month (active only in single month view). Filters by default currency from `BusinessSettings`. Eager loads `project.client`.
+
+Returns:
+- `costs` — `Collection` of `Cost` with `project.client`, ordered by `paid_at`
+- `payments` — `Collection` of `Payment` (paid only) with `project.client`, ordered by `paid_at`
+
+Projects without a client are shown as "Internal" in the view.
+
 ### MonthlyBreakdownQuery
 
 Builds the annual month-by-month table, filtering financial data by the default currency from `BusinessSettings`:
@@ -103,7 +115,8 @@ Returns a `Collection` with 12 normalized rows (months without data are included
 ## PDF Service
 
 `StatisticsPdfExporter` encapsulates the export:
-- uses `StatisticsQuery` for the same data as the web page
+- uses `StatisticsQuery` for the same data as the web page (includes `detail` when a month is selected)
+- in single month view, PDF includes two detail tables (costs + payments) followed by the month profit from `$stats['summary']['profit']`
 - resolves the currency symbol from `BusinessSettings::default_currency` (fallback `EUR`)
 - generates PDF via `barryvdh/laravel-dompdf`
 - dynamic filename based on period (`Title-YYYY.pdf` or `Title-YYYY-MM.pdf`)

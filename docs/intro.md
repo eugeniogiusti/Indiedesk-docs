@@ -79,6 +79,8 @@ IndieDesk is built using:
   <img src="/img/stack/laravel.png" alt="Laravel" height="60" />
   <img src="/img/stack/alpine.svg" alt="Alpine.js" height="40" />
   <img src="/img/stack/tailwind.png" alt="Tailwind CSS" height="60" />
+  <img src="/img/stack/SQLite.png" alt="SQLite" height="60" />
+  <img src="/img/stack/mysql.png" alt="Mysql" height="60" />
 </div>
 
 
