@@ -12,6 +12,10 @@ keywords: [IndieDesk changelog, version history, updates, new features, Laravel 
 - **Monthly detail in PDF export** — same two tables included in the PDF when exporting a single month, followed by the month profit line; all values come from the backend (`$stats['summary']`), no logic in the view
 - **Task types: `documentation`** — added to `Task::TYPES` and to all 13 `lang/*/tasks.php` files
 
+### Maintenance
+- **npm update** — 2 packages updated
+- **composer update** — `livewire/blaze` v1.0.7 → v1.0.8, `sebastian/environment` v8.0.3 → v8.0.4
+
 
 
 ## [v1.0.12] - 2026-03-14   
