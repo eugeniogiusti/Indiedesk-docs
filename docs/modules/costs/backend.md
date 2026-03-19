@@ -82,6 +82,8 @@ The `Cost` model is located in `app/Models/Cost.php`.
 | `ads` | Advertising |
 | `service` | External services |
 | `travel` | Transport/Travel (travel, commute, transit subscriptions) |
+| `hardware` | Hardware purchases (keyboard, mouse, monitor, cables, etc.) |
+| `meal` | Business meals (working lunch/dinner, client meals, travel meals) |
 
 ### Recurrence Periods
 

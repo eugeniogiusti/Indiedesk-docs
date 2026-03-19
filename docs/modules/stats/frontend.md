@@ -18,6 +18,8 @@ resources/views/statistics/
 ├── _summary.blade.php
 ├── _chart.blade.php
 ├── _monthly-table.blade.php
+├── _monthly-detail.blade.php
+├── _top-projects.blade.php
 └── pdf/
     ├── report.blade.php
     └── partials/
@@ -25,6 +27,8 @@ resources/views/statistics/
         ├── _header.blade.php
         ├── _summary.blade.php
         ├── _monthly-table.blade.php
+        ├── _monthly-detail.blade.php
+        ├── _top-projects.blade.php
         └── _footer.blade.php
 
 resources/js/components/
@@ -40,7 +44,9 @@ resources/js/components/
 - period filters
 - summary cards
 - chart
-- monthly table (only when present)
+- monthly breakdown table (annual view only, when `$stats['monthly']` is set)
+- top 10 most profitable projects table (annual view only, when `$stats['top_projects']` is set)
+- monthly detail tables (single month view only, when `$stats['detail']` is set)
 
 ### Main Partials
 
@@ -64,6 +70,18 @@ resources/js/components/
   - clickable month link to enter monthly detail
   - footer with totals
 
+- **_top-projects.blade.php**
+  - annual view only (when `$stats['top_projects']` is not empty)
+  - shows top 10 projects ranked by profit descending
+  - columns: rank, project name (link to `projects.show`), client, income, costs, profit
+  - profit colored green if positive, red if negative
+
+- **_monthly-detail.blade.php**
+  - single month view only (when `$stats['detail']` is set)
+  - two tables side by side: costs and payments for the selected month
+  - each row shows date, project/client, type (costs) or amount
+  - totals and month profit from `$stats['summary']` (no logic in the view)
+
 ## JS Chart Component
 
 `resources/js/components/annualTrendChart.js`:
@@ -79,8 +97,10 @@ Component registration in `resources/js/app.js`:
 
 Dedicated template in `resources/views/statistics/pdf/*`:
 - separate layout for print
-- includes header, summary, and monthly table
+- **annual view**: header → summary → monthly breakdown table → top 10 projects table
+- **monthly view**: header → summary → monthly detail tables (costs + payments) → month profit
 - used exclusively by `StatisticsPdfExporter`
+- no logic in views: all values come from `$stats` passed by the service
 
 ## Internationalization
 

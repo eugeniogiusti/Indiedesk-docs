@@ -121,31 +121,34 @@ Static informational card with:
 
 ### Tasks Due Soon (`_tasks-due-soon.blade.php`)
 - **Data**: `$lists['tasks_due_soon']` (max 5)
-- Shows: task title, project name, due date
+- Shows: task title, project name, due date, `<x-tasks.type-badge>`
 - Colored dot for status: red (overdue), blue (in progress), gray (todo)
+- Each row links to `projects.show?tab=tasks`
 - "View all" link → `route('tasks.index')`
 
 ### Upcoming Meetings (`_upcoming-meetings.blade.php`)
 - **Data**: `$lists['upcoming_meetings']` (max 5)
-- Shows: date (large day + small month), title, project, time (H:i)
+- Shows: date (large day + small month), title, project, time (H:i), `<x-meetings.status-badge>`
+- Each row links to `projects.show?tab=meetings`
 - "View all" link → `route('meetings.index')`
 
 ### Recent Payments (`_recent-payments.blade.php`)
 - **Data**: `$lists['recent_payments']` (max 5)
-- Shows: amount (green with +), project name, payment date
-- Green checkmark icon
+- Shows: amount (green with +), project name, `<x-payments.method-badge>`, payment date
+- Each row links to `projects.show?tab=payments`
 - "View all" link → `route('payments.index')`
 
 ### Recent Costs (`_recent-costs.blade.php`)
 - **Data**: `$lists['recent_costs']` (max 5)
-- Shows: amount (red with -), project name, cost type badge, date
-- Red wallet icon
+- Shows: amount (red with -), project name, `<x-costs.type-badge>`, date
+- Each row links to `projects.show?tab=costs`
 - "View all" link → `route('costs.index')`
 
 ### Overdue Payments (`_overdue-payments.blade.php`)
 - **Data**: `$lists['overdue_payments']` (max 5)
 - Full width row — shows: amount + currency, client/project
 - Red warning: days overdue or amber "due today"
+- Each row links to `projects.show?tab=payments`
 - "View all" link → `route('payments.index')`
 
 ### Empty State
@@ -160,5 +163,6 @@ The currency symbol (`$currencySymbol`) and code (`$currencyCode`) are globally 
 
 - No Livewire components: all server-side rendering with Blade + Alpine.js only for the chart.
 - Dark mode supported on all components via Tailwind `dark:` classes.
-- Lists link to the respective module index pages for further details.
+- All list rows are clickable links to the relevant project tab (`projects.show?tab=*`).
+- Existing badge components (`<x-tasks.type-badge>`, `<x-meetings.status-badge>`, `<x-payments.method-badge>`, `<x-costs.type-badge>`) are reused — no inline badge logic.
 - The chart is the only component that requires JavaScript (Chart.js + Alpine.js).

@@ -5,12 +5,35 @@ description: Track all updates, new features and improvements in IndieDesk. Comp
 keywords: [IndieDesk changelog, version history, updates, new features, Laravel 12, release notes]
 ---
 
+## [v1.0.15] - 2026-03-19
+
+### Added
+- **Task Documents sub-module** — file attachments for tasks; `task_documents` table with `task_id`, `name`, `file_path`, `uploaded_at`, `notes`; full upload/preview/download/delete lifecycle via `TaskDocumentController` and `TaskDocumentService` (both under `Tasks/` namespace); `StoreTaskDocumentRequest` validates file (30MB max, pdf/jpg/jpeg/png/webp/zip/7z/rar); `Task::taskDocuments()` hasMany relationship; `toFormPayload()` extended to include documents array; translations in all 13 languages (`lang/*/task_documents.php`)
+- **Document indicators on task table rows** — both project show and global task index now show: eye + download icons for single attachment, paperclip with numeric badge for multiple attachments; `TaskIndexQuery` and `ProjectShowQuery` eager-load `taskDocuments`
+- **Cost types: `hardware` and `meal`** — `hardware` for equipment purchases (keyboard, mouse, monitor, etc.), `meal` for business meals; `<x-costs.type-badge>` updated with slate badge (🖥️) and lime badge (🍽️); translations added to all 13 language files
+
+### Maintenance
+- **composer update** — bacon/bacon-qr-code v3.0.3→v3.0.4, barryvdh/laravel-dompdf v3.1.1→v3.1.2, laravel/boost v2.3.1→v2.3.4, laravel/framework v12.54.1→v12.55.1, laravel/mcp v0.6.2→v0.6.3, laravel/prompts v0.3.14→v0.3.15, laravel/sail v1.53.0→v1.54.0, league/uri 7.8.0→7.8.1, league/uri-interfaces 7.8.0→7.8.1, livewire/blaze v1.0.8→v1.0.10, phpdocumentor/reflection-docblock 6.0.2→6.0.3, pragmarx/google2fa-laravel v2.3.0→v2.3.1
+- **npm update** — 12 packages updated
+
+## [v1.0.14] - 2026-03-16
+
+### Added
+- **Top 10 most profitable projects on statistics page** — annual view only; table shows project, client, income, costs and profit ranked by profit descending; powered by new `TopProjectsQuery` sub-query; each project name links to `projects.show`; included in PDF export as well
+- **Dashboard list rows clickable** — all 5 quick lists (tasks due soon, upcoming meetings, recent payments, recent costs, overdue payments) are now fully clickable links to the relevant project tab (`projects.show?tab=*`)
+- **Dashboard list badges** — tasks show `<x-tasks.type-badge>`, meetings show `<x-meetings.status-badge>`, payments show `<x-payments.method-badge>`, costs show `<x-costs.type-badge>`; no inline badge logic in Blade
+- **Client show list rows clickable** — all 5 lists (tasks, meetings, payments, costs, documents) on the client show page now link to the relevant project tab
+
+### Fixed
+- **`payments.method_not_set` translation** — default label was "Da incassare" (wrong semantic); corrected to "Non specificato" / "Not specified" across all 13 languages
+
 ## [v1.0.13] - 2026-03-15
 
 ### Added
 - **Monthly detail tables on statistics page** — when a specific month is selected, two tables appear below the summary cards: costs (date, project/client, type, amount) and payments (date, project/client, amount); projects without a client show "Internal"; powered by new `MonthlyDetailQuery` sub-query
 - **Monthly detail in PDF export** — same two tables included in the PDF when exporting a single month, followed by the month profit line; all values come from the backend (`$stats['summary']`), no logic in the view
-- **Task types: `documentation`** — added to `Task::TYPES` and to all 13 `lang/*/tasks.php` files
+- **Task types: `hardware` and `documentation`** — added to `Task::TYPES` and to all 13 `lang/*/tasks.php` files
+- **Cost type `travel` relabeled** — now shown as "Trasporti/Viaggi" to cover travel, commute, and transit subscriptions
 
 ### Maintenance
 - **npm update** — 2 packages updated

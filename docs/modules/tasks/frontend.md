@@ -116,10 +116,21 @@ The `<x-tasks.due-date>` component applies colored badges based on the deadline:
 
 `isToday()` is checked **before** `isPast()` to prevent tasks due today from showing "Overdue".
 
+## Document Attachment Indicators
+
+Both the global task index (`tasks/index/task-table/_row-actions.blade.php`) and the project show task table (`tasks/partials/_table-row-actions.blade.php`) show document indicators on each row when `taskDocuments` is eager-loaded.
+
+| Documents count | Behavior |
+|-----------------|----------|
+| 0 | No indicator shown |
+| 1 | Eye icon (preview in new tab) + download icon |
+| 2+ | Paperclip icon with numeric badge; clicking opens the edit modal where all docs are listed |
+
 ## Internationalization
 
-Tasks frontend strings use the file:
+Tasks frontend strings use the files:
 - `lang/*/tasks.php`
+- `lang/*/task_documents.php`
 
 ## Dark Mode
 

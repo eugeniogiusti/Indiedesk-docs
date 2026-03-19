@@ -23,7 +23,8 @@ app/
 │       ├── OperationalStatsQuery.php
 │       ├── ChartDataQuery.php
 │       ├── MonthlyBreakdownQuery.php
-│       └── MonthlyDetailQuery.php
+│       ├── MonthlyDetailQuery.php
+│       └── TopProjectsQuery.php
 └── Services/Statistics/
     └── StatisticsPdfExporter.php
 ```
@@ -53,6 +54,7 @@ app/
   - `summary` (financial + operational)
   - `monthly` (month-by-month breakdown, annual view only)
   - `detail` (per-row costs and payments, single month view only)
+  - `top_projects` (top 10 most profitable projects, annual view only)
   - `chart` (monthly or daily chart dataset)
 
 ## SubQueries
@@ -103,6 +105,19 @@ Returns:
 - `payments` — `Collection` of `Payment` (paid only) with `project.client`, ordered by `paid_at`
 
 Projects without a client are shown as "Internal" in the view.
+
+### TopProjectsQuery
+
+Returns the top 10 most profitable projects for the selected year (annual view only). Filters by default currency from `BusinessSettings`.
+
+For each project aggregates:
+- `income` — sum of paid payments (`Payment::paid()`)
+- `costs` — sum of costs
+- `profit` — `income - costs`
+
+Returns a `Collection` of 10 arrays sorted by `profit` descending, each containing `project` (with eager-loaded `client`), `income`, `costs`, `profit`.
+
+Implementation: two separate `selectRaw` queries with `SUM(amount) GROUP BY project_id`, merged by project ID, then sorted and sliced in PHP to avoid a complex SQL join.
 
 ### MonthlyBreakdownQuery
 
