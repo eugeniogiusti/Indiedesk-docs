@@ -12,7 +12,7 @@ keywords: [IndieDesk changelog, version history, updates, new features, Laravel 
 - **Task row actions stacked vertically** — Google Calendar, edit, and delete icons in the task table are now in a vertical column instead of horizontal row for a more compact layout
 
 ### Maintenance
-- **composer update** — brianium/paratest v7.19.0→v7.19.2, laravel/boost v2.3.4→v2.4.1, laravel/framework v12.55.1→v12.56.0, laravel/mcp v0.6.3→v0.6.4, laravel/prompts v0.3.15→v0.3.16, laravel/sail v1.54.0→v1.55.0, league/commonmark 2.8.1→2.8.2, league/flysystem 3.32.0→3.33.0, livewire/blaze v1.0.10→v1.0.11, pestphp/pest v4.4.2→v4.4.3, phpunit/phpunit 12.5.12→12.5.14, psy/psysh v0.12.21→v0.12.22
+- **composer update** — brianium/paratest v7.19.0→v7.19.2, laravel/boost v2.3.4→v2.4.1, laravel/framework v12.55.1→v12.56.0, laravel/mcp v0.6.3→v0.6.4, laravel/prompts v0.3.15→v0.3.16, laravel/sail v1.54.0→v1.55.0, league/commonmark 2.8.1→2.8.2, league/flysystem 3.32.0→3.33.0, pestphp/pest v4.4.2→v4.4.3, phpunit/phpunit 12.5.12→12.5.14, psy/psysh v0.12.21→v0.12.22
 
 ## [v1.0.15] - 2026-03-19
 
