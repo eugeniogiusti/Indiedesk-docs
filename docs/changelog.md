@@ -5,12 +5,24 @@ description: Track all updates, new features and improvements in IndieDesk. Comp
 keywords: [IndieDesk changelog, version history, updates, new features, Laravel 12, release notes]
 ---
 
+## [v1.0.16] - 2026-03-29
+
+### Improved
+- **Client name links to client show page** — in `<x-client-summary>`, the client name is now a clickable link to `clients.show`; applies everywhere the component is used (project show page, etc.)
+- **Task row actions stacked vertically** — Google Calendar, edit, and delete icons in the task table are now in a vertical column instead of horizontal row for a more compact layout
+
+### Maintenance
+- **composer update** — brianium/paratest v7.19.0→v7.19.2, laravel/boost v2.3.4→v2.4.1, laravel/framework v12.55.1→v12.56.0, laravel/mcp v0.6.3→v0.6.4, laravel/prompts v0.3.15→v0.3.16, laravel/sail v1.54.0→v1.55.0, league/commonmark 2.8.1→2.8.2, league/flysystem 3.32.0→3.33.0, livewire/blaze v1.0.10→v1.0.11, pestphp/pest v4.4.2→v4.4.3, phpunit/phpunit 12.5.12→12.5.14, psy/psysh v0.12.21→v0.12.22
+
 ## [v1.0.15] - 2026-03-19
 
 ### Added
 - **Task Documents sub-module** — file attachments for tasks; `task_documents` table with `task_id`, `name`, `file_path`, `uploaded_at`, `notes`; full upload/preview/download/delete lifecycle via `TaskDocumentController` and `TaskDocumentService` (both under `Tasks/` namespace); `StoreTaskDocumentRequest` validates file (30MB max, pdf/jpg/jpeg/png/webp/zip/7z/rar); `Task::taskDocuments()` hasMany relationship; `toFormPayload()` extended to include documents array; translations in all 13 languages (`lang/*/task_documents.php`)
 - **Document indicators on task table rows** — both project show and global task index now show: eye + download icons for single attachment, paperclip with numeric badge for multiple attachments; `TaskIndexQuery` and `ProjectShowQuery` eager-load `taskDocuments`
 - **Cost types: `hardware` and `meal`** — `hardware` for equipment purchases (keyboard, mouse, monitor, etc.), `meal` for business meals; `<x-costs.type-badge>` updated with slate badge (🖥️) and lime badge (🍽️); translations added to all 13 language files
+- **Preview/download on client show cards** — payments, costs, tasks, and documents cards on the client show page now display inline preview and download buttons when an attachment is present (`hasInvoice()`, `hasReceipt()`, `taskDocuments`); `ClientShowQuery` eager-loads `taskDocuments` to prevent N+1; task rows follow the same single/multiple document pattern as the task index table
+- **Preview/download on dashboard list cards** — same inline preview/download buttons added to recent payments, recent costs, and tasks due soon cards; `DashboardListsQuery` eager-loads `taskDocuments` on `getTasksDueSoon()`
+- **Google Calendar embed URL via env** — `GOOGLE_CALENDAR_EMBED_URL` env variable replaces the hardcoded `src` in `calendar/index.blade.php`; added to `.env.example`; configuration docs updated
 
 ### Maintenance
 - **composer update** — bacon/bacon-qr-code v3.0.3→v3.0.4, barryvdh/laravel-dompdf v3.1.1→v3.1.2, laravel/boost v2.3.1→v2.3.4, laravel/framework v12.54.1→v12.55.1, laravel/mcp v0.6.2→v0.6.3, laravel/prompts v0.3.14→v0.3.15, laravel/sail v1.53.0→v1.54.0, league/uri 7.8.0→7.8.1, league/uri-interfaces 7.8.0→7.8.1, livewire/blaze v1.0.8→v1.0.10, phpdocumentor/reflection-docblock 6.0.2→6.0.3, pragmarx/google2fa-laravel v2.3.0→v2.3.1

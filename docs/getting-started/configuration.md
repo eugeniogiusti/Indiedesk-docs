@@ -220,21 +220,16 @@ The `/calendar` page shows an embedded Google Calendar iframe. To configure it w
 **3.** Click **"Integrate calendar"** → find the **"Embed code"** section.
 
 
-**4.** Copy the `src="..."` value from the iframe tag. It looks like:
+**4.** Copy the entire `src="..."` URL from the iframe tag. It looks like:
 
 ```
 https://calendar.google.com/calendar/embed?src=your%40gmail.com&ctz=Europe%2FRome
 ```
 
-**5.** Open `resources/views/calendar/index.blade.php` and replace the `src` attribute:
+**5.** Open your `.env` file and add the following variable with the full URL you just copied:
 
-```html
-<iframe
-    src="https://calendar.google.com/calendar/embed?src=your%40gmail.com&ctz=Europe%2FParis"
-    style="width: 100%; height: calc(100vh - 130px); border: none;"
-    frameborder="0"
-    scrolling="no"
-></iframe>
+```env
+GOOGLE_CALENDAR_EMBED_URL=https://calendar.google.com/calendar/embed?src=your%40gmail.com&ctz=Europe%2FRome
 ```
 
 Make sure you are logged into the browser with the same Google account to view the calendar.
