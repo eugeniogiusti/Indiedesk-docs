@@ -123,10 +123,6 @@ const config: Config = {
               label: 'Website',
               href: 'https://indiedesk.link', // 3. Link con HTTPS corretto
             },
-            {
-              label: 'Buy IndieDesk',
-              href: 'https://eugeniogiusti.gumroad.com/l/indiedesk',
-            },
           ],
         },
       ],

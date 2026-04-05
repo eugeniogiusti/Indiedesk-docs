@@ -107,7 +107,14 @@ Flow:
 
 ## Payment Table Actions (project show)
 
-In `payments/partials/payment-table/_row-invoice.blade.php` the following are available:
+Row actions in `payments/partials/payment-table/_row-actions.blade.php` are stacked vertically and include:
+
+- **Google Calendar** — visible when `paid_at` or `due_date` is present. Uses `paid_at` for collected payments, `due_date` for pending ones.
+- **Billing Tool** — visible only if `billing_tool_url` is set in Business Settings. Opens the configured billing tool in a new tab. The URL is injected via the global View Composer in `AppServiceProvider` as `$billingToolUrl`.
+- **Edit** — opens the payment edit modal
+- **Delete** — deletes the payment with confirmation
+
+Invoice actions in `payments/partials/payment-table/_row-invoice.blade.php`:
 - invoice preview
 - invoice download
 - invoice delete

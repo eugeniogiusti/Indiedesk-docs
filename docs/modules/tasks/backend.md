@@ -112,6 +112,7 @@ The `Task` model is located in `app/Models/Task.php`.
 | `marketing` | Marketing activity |
 | `hardware` | Hardware-related task |
 | `documentation` | Documentation writing/update |
+| `maintenance` | Package/software updates and maintenance |
 
 ### Priorities
 

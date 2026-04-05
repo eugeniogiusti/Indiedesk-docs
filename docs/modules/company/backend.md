@@ -82,6 +82,7 @@ The `BusinessSettings` model represents a singleton application configuration.
 - tax: `tax_id`, `vat_number`, `iban`, `default_currency`
 - contacts: `email`, `certified_email`, `phone_*`
 - business: `business_name`, `business_description`, `website`, `logo_path`
+- integrations: `github_pat`, `billing_tool_url`
 
 ## Form Request
 

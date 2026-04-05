@@ -70,7 +70,7 @@ The `Payment` model is located in `app/Models/Payment.php`.
 - **Status helpers** - `isPaid()`, `isPending()`, `isOverdue()`
 - **Amount helpers** - `getFormattedAmount()`, `getCompactAmount()`
 - **Invoice helpers** - `hasInvoice()`, download/preview URLs
-- **CalendarEventable** - calendar event support when `paid_at` is present
+- **CalendarEventable** - calendar event support when `paid_at` or `due_date` is present (uses `paid_at` if collected, falls back to `due_date` for pending payments)
 - **toFormPayload()** - safe edit payload (`id` + editable fields)
 - **Delete hook** - removes local invoice file when payment is deleted
 

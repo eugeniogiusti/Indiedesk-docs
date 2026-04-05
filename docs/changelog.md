@@ -5,6 +5,21 @@ description: Track all updates, new features and improvements in IndieDesk. Comp
 keywords: [IndieDesk changelog, version history, updates, new features, Laravel 12, release notes]
 ---
 
+## [v1.0.17] - 2026-03-31
+
+### Added
+- **Business Settings — Billing Tool URL** — new `billing_tool_url` field in the Integrations tab; stores the URL of the invoicing tool used to issue bills; migration adds nullable `billing_tool_url` column to `business_settings`; validated as `nullable|url|max:255`; translations added to all 13 language files
+- **Payments — Billing Tool button** — row action button in the project payments table; opens `billing_tool_url` in a new tab; visible only when the URL is configured; injected via View Composer in `AppServiceProvider` as `$billingToolUrl` (no extra DB query, reuses the existing `BusinessSettings::current()` singleton)
+- **Task type: `maintenance`** — new type for package/software updates and dependency maintenance; added to `Task::TYPES` and to all 13 `lang/*/tasks.php` files
+
+### Improved
+- **Payments — Google Calendar button for pending payments** — now visible on any payment with `paid_at` or `due_date`; uses `paid_at` if collected, falls back to `due_date` for pending
+- **Payments — row actions stacked vertically** — Google Calendar, Billing Tool, Edit, and Delete icons now in a vertical column for a more compact layout
+- **Payments — `reference` and `notes` placeholders** — updated in all 13 languages to reflect actual use (e.g. "Server consulting, Feature development..." / "Description of work performed..."); `notes` label updated to "Note / Descrizione" in Italian
+
+### Maintenance
+- **composer update** — barryvdh/laravel-debugbar v4.1.3→v4.2.1, brianium/paratest v7.19.2→v7.20.0, php-debugbar/php-debugbar v3.5.1→v3.6.1
+
 ## [v1.0.16] - 2026-03-29
 
 ### Improved
