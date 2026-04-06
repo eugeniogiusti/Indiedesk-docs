@@ -5,6 +5,14 @@ description: Track all updates, new features and improvements in IndieDesk. Comp
 keywords: [IndieDesk changelog, version history, updates, new features, Laravel 12, release notes]
 ---
 
+## [v1.0.18] - 2026-04-06
+
+### Improved
+- **AtecoCode — `StoreAtecoCodeRequest` Form Request** — inline validation moved from `AtecoCodeController::store()` to a dedicated `StoreAtecoCodeRequest`; controller now calls `$request->validated()`
+
+### Maintenance
+- **composer update** — bacon/bacon-qr-code v3.0.4→v3.1.1, barryvdh/laravel-debugbar v4.2.1→v4.2.4, laravel/mcp v0.6.4→v0.6.5, laravel/sail v1.55.0→v1.56.0, nunomaduro/collision v8.9.1→v8.9.2, pestphp/pest v4.4.3→v4.4.5, php-debugbar/php-debugbar v3.6.1→v3.7.0, phpunit/phpunit 12.5.14→12.5.16, symfony/clock v8.0.0→v8.0.8, symfony/console v7.4.7→v7.4.8, symfony/css-selector v8.0.6→v8.0.8, symfony/error-handler v7.4.4→v7.4.8, symfony/event-dispatcher v8.0.4→v8.0.8, symfony/finder v7.4.6→v7.4.8, symfony/http-foundation v7.4.7→v7.4.8, symfony/http-kernel v7.4.7→v7.4.8, symfony/mailer v7.4.6→v7.4.8, symfony/mime v7.4.7→v7.4.8, symfony/process v7.4.5→v7.4.8, symfony/routing v7.4.6→v7.4.8, symfony/string v8.0.6→v8.0.8, symfony/translation v8.0.6→v8.0.8, symfony/uid v7.4.4→v7.4.8, symfony/var-dumper v7.4.6→v7.4.8, symfony/yaml v8.0.6→v8.0.8
+
 ## [v1.0.17] - 2026-03-31
 
 ### Added
