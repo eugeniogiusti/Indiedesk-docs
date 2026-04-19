@@ -5,6 +5,37 @@ description: Track all updates, new features and improvements in IndieDesk. Comp
 keywords: [IndieDesk changelog, version history, updates, new features, Laravel 12, release notes]
 ---
 
+## [v1.0.19] - 2026-04-19
+### Maintenance
+- **composer update**
+
+  - Upgrading symfony/polyfill-mbstring (v1.33.0 => v1.36.0): Extracting archive
+  - Upgrading php-debugbar/php-debugbar (v3.7.0 => v3.7.4): Extracting archive
+  - Upgrading voku/portable-ascii (2.0.3 => 2.1.0): Extracting archive
+  - Upgrading symfony/polyfill-php80 (v1.33.0 => v1.36.0): Extracting archive
+  - Upgrading symfony/polyfill-ctype (v1.33.0 => v1.36.0): Extracting archive
+  - Upgrading symfony/polyfill-uuid (v1.33.0 => v1.36.0): Extracting archive
+  - Upgrading symfony/polyfill-php85 (v1.33.0 => v1.36.0): Extracting archive
+  - Upgrading symfony/polyfill-php84 (v1.33.0 => v1.36.0): Extracting archive
+  - Upgrading symfony/polyfill-php83 (v1.33.0 => v1.36.0): Extracting archive
+  - Upgrading symfony/polyfill-intl-normalizer (v1.33.0 => v1.36.0): Extracting archive
+  - Upgrading symfony/polyfill-intl-idn (v1.33.0 => v1.36.0): Extracting archive
+  - Upgrading symfony/polyfill-intl-grapheme (v1.33.0 => v1.36.0): Extracting archive
+  - Upgrading nesbot/carbon (3.11.3 => 3.11.4): Extracting archive
+  - Upgrading laravel/serializable-closure (v2.0.10 => v2.0.12): Extracting archive
+  - Upgrading barryvdh/laravel-debugbar (v4.2.4 => v4.2.6): Extracting archive
+  - Upgrading sebastian/environment (8.0.4 => 8.1.0): Extracting archive
+  - Upgrading sebastian/comparator (7.1.4 => 7.1.6): Extracting archive
+  - Upgrading phpunit/php-code-coverage (12.5.3 => 12.5.6): Extracting archive
+  - Upgrading phpunit/phpunit (12.5.16 => 12.5.23): Extracting archive
+  - Upgrading laravel/mcp (v0.6.5 => v0.6.7): Extracting archive
+  - Upgrading laravel/boost (v2.4.1 => v2.4.4): Extracting archive
+  - Upgrading laravel/sail (v1.56.0 => v1.57.0): Extracting archive
+  - Upgrading nunomaduro/collision (v8.9.2 => v8.9.3): Extracting archive
+  - Upgrading webmozart/assert (2.1.6 => 2.3.0): Extracting archive
+  - Upgrading pestphp/pest-plugin-arch (v4.0.0 => v4.0.2): Extracting archive
+  - Upgrading pestphp/pest (v4.4.5 => v4.6.3): Extracting archive
+
 ## [v1.0.18] - 2026-04-06
 
 ### Improved
