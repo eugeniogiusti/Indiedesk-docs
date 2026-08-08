@@ -96,7 +96,7 @@ Added via migration: `2026_03_12_114609_add_editor_notes_to_projects_table`.
 
 - **SoftDeletes** - deleted projects are recoverable
 - **Automatic slug** - unique slug generation in `creating`
-- **Relationships** - `client`, `tasks`, `meetings`, `payments`, `costs`, `documents`
+- **Relationships** - `client` (single, `belongsTo`), `clients` (multiple, `belongsToMany` — SaaS only), `tasks`, `meetings`, `payments`, `costs`, `documents`
 - **CalendarEventable** - calendar integration with Google Calendar link
 - **toFormPayload()** - safe edit payload (`id` + editable fields)
 
@@ -125,6 +125,18 @@ Added via migration: `2026_03_12_114609_add_editor_notes_to_projects_table`.
 | `product` | Internal product |
 | `content` | Content |
 | `asset` | Internal assets |
+| `saas` | SaaS product with multiple linked clients (see below) |
+
+### SaaS Projects — Multiple Clients
+
+A project with `type = 'saas'` can be linked to **multiple** clients instead of the single `client_id` used by other types.
+
+- **Pivot table** `client_project` (`project_id`, `client_id`, unique pair) — created via migration `2026_08_07_202948_create_client_project_table`
+- **`Project::clients()`** — `belongsToMany(Client::class, 'client_project')`
+- **`Client::saasProjects()`** — inverse `belongsToMany`, in `app/Models/Client.php`
+- On `store`/`update`, `ProjectController` extracts `client_ids` from the validated payload and calls `$project->clients()->sync($clientIds)` **only** when `type === 'saas'`; the pivot is cleared (`sync([])`) when a project's type changes away from `saas`, so it never carries stale links
+- **`Project::getClientLabel(): ?string`** — returns the single client's name for regular projects, or the comma-joined names of all linked clients for `saas` projects, or `null` for internal projects. Used everywhere a project's client needs to be displayed (dashboard lists, statistics tables) so those views don't need to special-case SaaS projects
+- `scopeForClient()` matches both the direct `client_id` and the `clients` pivot, so filtering/searching projects by client (`ProjectIndexQuery`) finds SaaS projects too
 
 ## Form Requests
 
@@ -137,12 +149,13 @@ Validation handled by:
 
 - `name` - project name
 - `status` - status (`draft`, `in_progress`, `completed`, `archived`)
-- `type` - type (`client_work`, `product`, `content`, `asset`)
+- `type` - type (`client_work`, `product`, `content`, `asset`, `saas`)
 
 ### Optional Fields
 
 - dates: `start_date`, `due_date` (`due_date >= start_date`)
-- client link: `client_id`
+- client link: `client_id` (single client, non-SaaS types)
+- multi-client link: `client_ids` (array, `exists:clients,id` each — only relevant for `type = 'saas'`, synced to the `client_project` pivot in the controller)
 - priority: `priority`
 - project URLs: `repo_url`, `staging_url`, `production_url`, `figma_url`, `docs_url`
 - text: `description`, `notes`
@@ -163,7 +176,8 @@ Manages the project list with:
 - pagination (15)
 - `status` filter
 - `priority` filter
-- search by project name or client data
+- `client_id` filter via `scopeForClient()` (matches direct client and SaaS pivot)
+- search by project name or client data — including SaaS-linked clients (`orWhereHas('clients', ...)`)
 - sorting with column/direction whitelist
 
 ### ProjectShowQuery

@@ -25,7 +25,8 @@ app/
 │   ├── DocumentIndexQuery.php
 │   └── DocumentStatsQuery.php
 └── Services/Documents/
-    └── DocumentService.php
+    ├── DocumentService.php
+    └── OfficeDocumentConverter.php
 ```
 
 ## Routes
@@ -60,9 +61,21 @@ The `DocumentController` orchestrates the flow and delegates storage logic to `D
 
 - **upload()** - generates a unique filename, saves file to `local/documents` disk, creates document record, and syncs labels
 - **update()** - updates only metadata (`name`, `notes`) and syncs labels
-- **delete()** - deletes physical file (if present) then the DB record
+- **delete()** - deletes physical file (if present), also purges any cached PDF preview via `OfficeDocumentConverter::forgetPreview()`, then the DB record
 - **download()** - verifies file existence and returns a download response with the document name
-- **preview()** - verifies file existence, determines mime-type, and returns an inline response with secure headers
+- **preview()** - verifies file existence, resolves the best previewable version via `OfficeDocumentConverter::resolvePreview()` (converts Word/Excel to PDF on the fly, cached — see below), and returns an inline response with secure headers
+
+## OfficeDocumentConverter
+
+Located in `app/Services/Documents/OfficeDocumentConverter.php`. Converts `.docx` and `.xlsx`/`.xls` uploads to PDF so they render inline in the browser the same way a native PDF does — previously these formats just fell back to a browser download since browsers can't render Office formats natively.
+
+- **Pure PHP, no external binary** — uses `phpoffice/phpword` (Word → PDF) and `phpoffice/phpspreadsheet` (Excel → PDF), both rendered through Dompdf (already a project dependency for invoice/tax PDF generation). Deliberately **not** a LibreOffice-headless shell-out: no server-side binary to install/maintain, at the cost of lower fidelity than LibreOffice for complex layouts
+- **`resolvePreview(string $absolutePath, string $extension): array`** — returns `{path, mimeType, extension}`. If the extension is convertible and conversion succeeds, returns the converted PDF; otherwise falls back to the original file (graceful degradation — a failed/unsupported conversion never breaks the preview, it just behaves like before)
+- **Cached** — converted PDFs are written once to `storage/app/previews/`, keyed by the original (already-unique) stored filename, so a document is only converted the first time it's previewed
+- **`forgetPreview()`** — called from `DocumentService::delete()` (and the equivalent in `TaskDocumentService`/`BusinessDocumentService`) so cached PDFs don't outlive the document they belong to
+- **Legacy `.doc`/`.xls` (binary formats)**: `.xls` converts fine (PhpSpreadsheet reads the legacy binary format); `.doc` does not — PHPWord has no reliable Word97 binary reader, so old `.doc` files are still accepted for upload/download but fall back to raw download for preview, same as before
+- **Not supported: PowerPoint** — `.ppt`/`.pptx` are not accepted for upload at all; the PHPOffice equivalent library for PDF export from presentations was evaluated and found unreliable, so it was deliberately left out rather than shipped half-working
+- Shared by three upload contexts with the same file lifecycle: **project Documents** (this module), **Task Documents**, and **Business Documents** (settings) — see their respective docs for the upload/preview wiring, the conversion logic itself lives only here
 
 ## Model
 
@@ -87,7 +100,7 @@ Validation handled by:
 ### Required Fields (store)
 
 - `name` - document name
-- `file` - required file (`mimes:pdf,jpg,jpeg,png`, max 10MB)
+- `file` - required file (`mimes:pdf,jpg,jpeg,png,webp,zip,7z,rar,doc,docx,xls,xlsx`, max 30MB). Word/Excel formats were added alongside `OfficeDocumentConverter` (see above) — before that they weren't accepted at all
 
 ### Required Fields (update)
 

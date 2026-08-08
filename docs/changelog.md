@@ -5,6 +5,30 @@ description: Track all updates, new features and improvements in IndieDesk. Comp
 keywords: [IndieDesk changelog, version history, updates, new features, Laravel 12, release notes]
 ---
 
+## [v1.1.0] - 2026-08-08
+
+### Added
+- **Project type: `saas` — multi-client projects** — a project can now be `type = 'saas'` and linked to **multiple** clients instead of the single legacy `client_id`; new `client_project` pivot table (`Project::clients()` / `Client::saasProjects()` `belongsToMany`), synced on `store`/`update` only when `type === 'saas'` (cleared via `sync([])` when a project's type changes away from `saas`, so no stale links survive a type switch); `Project::getClientLabel()` centralizes "which client(s) to show" (single client, comma-joined SaaS clients, or null for internal) and is used everywhere a project's client is displayed instead of reading `project->client` directly
+- **Payments — per-payment client attribution** — nullable `client_id` on `payments` (`Payment::client()`); on SaaS projects the payment form shows a dropdown restricted to that project's linked clients ("this payment belongs to..."); `Payment::getClientLabel()` prefers the payment's own client, falling back to the project's — used in dashboard lists and statistics tables so a SaaS payment attributed to a specific client shows that client, not a blank field
+- **Project modal — client picker switches with project type** — non-SaaS types keep the existing single-client typeahead (`clientSearch.js`); selecting `saas` swaps it for a new multi-client picker (`clientMultiSearch.js`) that accumulates selections as removable chips and submits `client_ids[]`, instead of replacing a single value
+- **Documents — Word/Excel inline preview** — `.docx`/`.xlsx`/`.xls` uploads (previously rejected outright by validation) are now accepted and, on preview, converted to PDF on the fly by the new `OfficeDocumentConverter` service (`phpoffice/phpword` + `phpoffice/phpspreadsheet`, rendered through the existing Dompdf dependency — no external binary, no LibreOffice to install/maintain) so they render inline like a native PDF instead of forcing a download; converted PDFs are cached in `storage/app/previews/` and purged when the source document is deleted. Shared by project Documents, Task Documents, and Business Documents. Legacy `.doc` is accepted but not convertible (no reliable PHP reader for the old binary format); PowerPoint was evaluated and deliberately left unsupported — no PHP library produces a reliable PDF export from `.pptx`
+- **Clients — Excel export** — "Export Excel" button on the clients index, honors whatever filters are currently applied (reuses `ClientIndexQuery::query()`, extracted from `handle()` for this purpose); built with the same `phpoffice/phpspreadsheet` dependency as the Word/Excel preview above; headers, sheet title, filename and cell values are all resolved via `__()` — follows the requesting user's locale, not hardcoded to Italian
+
+### Improved
+- **Project show page — vertical tab navigation** — the horizontal tab bar (top of the content area) is now a vertical nav in the sidebar (`_tabs-nav.blade.php`); `activeTab` moved to a shared `x-data` on the common parent grid so the sidebar nav and the tab content (now siblings, not nested) stay in sync without an event bus
+- **Project show page — Overview tab reorganized** — client info card now sits alone at the top (previously shared a 3-column row with Quick Info and Quick Links, which didn't scale); Quick Info and Quick Links moved below Description/Notes; the SaaS client card itself is a scrollable name-only list linking to each client's show page (tested with 200 linked clients) instead of the full `<x-client-summary>` contact card repeated per client
+- **Clients table — "Creato il" column merged under Nome** — same treatment applied consistently elsewhere this release (Tasks: Tipo under Titolo; Payments: Metodo under Importo) to reclaim horizontal space
+- **Project client filter/search now SaaS-aware** — `Project::scopeForClient()` and `ProjectIndexQuery`'s search now also match via the `clients` pivot, not just the direct `client_id`
+
+### Fixed
+- **Client show page missing SaaS-linked projects** — `ClientShowQuery` computed the client's project set from `$client->projects()` only (the direct `client_id` relation); a client linked to a project solely through the SaaS pivot showed zero projects, and by extension zero tasks/payments/costs/documents from that project. Now merges in `$client->saasProjects()->pluck('projects.id')`
+- **`/clients?client_id=...` filter was a no-op** — `Project::scopeForClient()` existed but `ProjectIndexQuery` never called it; the "view all projects" link from a client's show page silently ignored the filter. Now wired via `when(request('client_id'), ...)`
+
+### Maintenance
+- **composer require** — `phpoffice/phpspreadsheet` (^5.9), `phpoffice/phpword` (^1.4), plus transitive `composer/semver` 3.4.4, `maennchen/zipstream-php` 3.2.2, `markbaker/complex` 3.0.2, `markbaker/matrix` 3.0.1, `phpoffice/math` 0.3.0
+- **composer update** — barryvdh/laravel-debugbar v4.4.0→v4.4.1, guzzlehttp/guzzle 7.15.2→7.15.3, guzzlehttp/promises 2.5.1→2.5.2, laravel/boost v2.4.13→v2.5.3, laravel/framework v12.64.0→v12.65.0, laravel/mcp v0.9.1→v0.9.2, laravel/pint v1.30.3→v1.30.4, laravel/prompts v0.3.21→v0.3.22, laravel/roster v0.5.1→v1.0.0, laravel/sail v1.64.0→v1.65.0, league/commonmark 2.8.3→2.9.0, nesbot/carbon 3.13.1→3.13.2, pestphp/pest v4.7.7→v4.7.8, symfony/console v7.4.15→v7.4.16, symfony/http-foundation v7.4.15→v7.4.16, symfony/http-kernel v7.4.15→v7.4.16, symfony/mime v7.4.15→v7.4.16, symfony/translation v8.1.1→v8.1.4
+- **npm update** — vite 8.2.0→8.2.1, vue 3.5.40→3.5.41, rolldown 1.2.2→1.2.3, postcss 8.5.25→8.5.26, browserslist 4.28.7→4.28.8, dompurify 3.4.12→3.4.13, nanoid 3.3.17→3.3.18, and other transitive browser-compat/build tooling packages
+
 ## [v1.0.19] - 2026-04-19
 ### Maintenance
 - **composer update**

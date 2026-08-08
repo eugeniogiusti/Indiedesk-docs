@@ -45,7 +45,8 @@ resources/views/projects/
 │       └── _row-actions.blade.php
 └── show/
     ├── _header.blade.php
-    ├── _content-tabs.blade.php
+    ├── _tabs-nav.blade.php        # vertical tab navigation (sidebar)
+    ├── _content-tabs.blade.php    # tab panels only, no nav
     ├── _client-info.blade.php
     ├── _quick-info.blade.php
     ├── _quick-links.blade.php
@@ -62,7 +63,8 @@ resources/views/projects/
 
 resources/js/components/
 ├── projectModal.js
-├── clientSearch.js
+├── clientSearch.js         # single-client typeahead (non-SaaS projects)
+├── clientMultiSearch.js    # multi-client typeahead, chips (SaaS projects)
 └── projectSearch.js
 ```
 
@@ -107,31 +109,34 @@ Centered message with icon when there are no projects.
 `show.blade.php` is the main orchestrator of the project detail page. It composes the page by including:
 
 1. `projects.show._header` - sticky header
-2. Grid `grid-cols-1 lg:grid-cols-4`:
-   - **Sidebar** (1/4): `_client-info`, `_quick-info`, `_quick-links`
-   - **Main content** (3/4): `_content-tabs`
+2. Grid `grid-cols-1 lg:grid-cols-4`, with `x-data="{ activeTab: ... }"` and `x-cloak` on the **grid container itself** — this is the shared Alpine scope for both the sidebar nav and the tab content, since they're siblings, not nested:
+   - **Sidebar** (1/4): `_tabs-nav` — vertical tab navigation only
+   - **Main content** (3/4): `_content-tabs` — tab panels only, no navigation UI
 3. `projects.modals._project-form` - edit project modal (outside the grid)
 4. `ai._panel` - AI chatbot panel (conditional: only if AI is enabled in `AiSettings`)
+
+### Sidebar Redesign (vertical tab nav)
+
+The tab navigation used to be a horizontal bar at the top of `_content-tabs.blade.php`. It's now a vertical list in `_tabs-nav.blade.php`, placed in the sidebar column — same visual pattern as a typical dashboard nav. Consequences of the move:
+
+- `_client-info`, `_quick-info`, `_quick-links` no longer live in the sidebar — they moved **inside the Overview tab** (see below), since the sidebar is now dedicated to navigation only
+- Both `_tabs-nav` and `_content-tabs` read/write the same `activeTab` Alpine property, inherited from the shared `x-data` on their common parent (the grid `<div>` in `show.blade.php`) — Alpine resolves `formData`/`activeTab` lookups up the scope chain, so no event bus or store is needed between the two siblings
+- The active tab still syncs with `?tab=...` in the URL on initial load
 
 ### Sticky Header
 
 Back arrow, project name, type/status/priority badges, deadline. "Edit" button dispatches `edit-project`.
 
-### Sidebar
+### _tabs-nav.blade.php (vertical tab navigation)
 
-- **Client info** - `x-client-summary` component, or "Internal Project" badge if no client
-- **Project stats** - creation, update dates (`diffForHumans`), deadline with Google Calendar link
-- **Quick links** - `x-projects.links` component with clickable icons (repo, staging, prod, figma, docs)
+Renders the sidebar tab list — one button per tab, each with an SVG icon and i18n label, `@click="activeTab = '...'"`. The active tab gets an emerald background (`bg-emerald-50 text-emerald-700`), others are gray with hover. The Repository button is conditional, same rule as before (`$project->repo_url` contains `github.com`).
 
-### _content-tabs.blade.php (tab sub-orchestrator)
+### _content-tabs.blade.php (tab content sub-orchestrator)
 
-`_content-tabs.blade.php` manages tab navigation and content. It is a sub-orchestrator that:
+`_content-tabs.blade.php` now only renders tab **content**, no navigation UI:
 
-- Initializes Alpine.js with `activeTab` from query string (`?tab=costs`), default `overview`
-- Renders the **navigation bar** with tab buttons, each with SVG icon and i18n label
-- The navigation wrapper uses `overflow-x-auto` + `min-w-max` to prevent overflow at low zoom levels
-- The active tab shows an emerald border (`border-emerald-500`), others are gray with hover
-- In the content block, each tab is wrapped in `x-show="activeTab === '...'"` with `x-cloak`
+- `activeTab` itself is initialized once, on the shared parent `x-data` in `show.blade.php` (see above) — not here
+- Each tab is wrapped in `x-show="activeTab === '...'"` with `x-cloak`
 - The Editor tab uses `<template x-if>` instead of `x-show` to avoid initializing Trix before the tab is opened
 - Includes the corresponding `_tab-*.blade.php` partials
 
@@ -143,7 +148,20 @@ Each show tab includes **partials from other modules** to reuse existing tables 
 
 ### Tab Overview
 
-Project's own content: description + notes, no external partials.
+No external module partials, but now composes several sidebar-turned-content partials in order:
+
+1. `_client-info` — client card (see "Client Display" below for the SaaS case)
+2. Description + Notes (inline editable, see below)
+3. `_quick-info` + `_quick-links`, side by side in a 2-column grid at the bottom
+
+This ordering (client card prominent at the top, quick info/links demoted below) keeps the client card compact even for SaaS projects with many linked clients, since it's followed immediately by the rest of the tab content rather than competing for space with two other cards in a 3-column row.
+
+#### Client Display (Client Info Card)
+
+- **Regular project with a client** — `<x-client-summary>` (full contact card: VAT, email, WhatsApp)
+- **Internal project** (no client) — "Internal Project" badge
+- **SaaS project** — a compact `<ul>` of client names only, each linking to `clients.show`, in a `max-h-64 overflow-y-auto` scrollable container so the card stays a fixed size regardless of how many clients are linked (tested with 200). No `<x-client-summary>` per client here — full contact detail would make the card unusable at scale; the link is the entry point to that detail
+- **SaaS project with no clients linked yet** — neutral "No clients linked" badge (distinct from "Internal Project", since a SaaS project isn't internal, just not yet configured)
 
 Both fields support **inline editing** without opening the modal:
 - Clicking "Edit" enters edit mode (textarea via `inlineField` Alpine.js component)
@@ -257,10 +275,10 @@ State: `open`, `isEdit`, `projectId`, `activeTab`, `formData`.
 
 **Info:**
 - Name (required)
-- Type (dropdown: client_work, product, content, asset)
-- Client (optional, with "Internal project" checkbox)
-  - Asynchronous search via `clientSearch.js` on `/api/clients/search?q=`
-  - 300ms debounce, results dropdown, selected client badge
+- Type (dropdown: client_work, product, content, asset, saas)
+- Client — the picker switches based on the selected type (`x-show="formData.type !== 'saas'"` / `=== 'saas'` on two sibling blocks, both reading the same `formData.type` from the parent `projectModal()` scope):
+  - **Non-SaaS**: single client (optional, with "Internal project" checkbox) — async search via `clientSearch.js`, 300ms debounce, results dropdown, selected client badge
+  - **SaaS**: multiple clients — async search via `clientMultiSearch.js`, same debounce/dropdown, but each selected result is added as a removable chip instead of replacing the field; submits `client_ids[]` hidden inputs
 - Description, Status, Priority, Dates (start_date, due_date)
 
 **Links:**
@@ -275,7 +293,13 @@ Open: `open-project-modal` (create) and `edit-project` (edit with `toFormPayload
 
 Component: `clientSearch.js`
 
-Asynchronous client search with debounce. Methods: `searchClients()`, `selectClient()`, `clearClient()`, `syncFromProject()`.
+Asynchronous client search with debounce. Methods: `searchClients()`, `selectClient()`, `clearClient()`, `syncFromProject()`. Used for the single-client picker (non-SaaS project types).
+
+### Client Multi-Search
+
+Component: `clientMultiSearch.js`
+
+Sibling of `clientSearch.js`, same search/debounce logic against `/api/clients/search`, but tracks `selectedClients` (array) instead of a single `selectedClient`. Methods: `searchClients()`, `addClient()`, `removeClient()`, `syncFromProject(clients)`, `reset()`. Used for the SaaS multi-client picker — each selection is appended as a chip, already-selected clients are filtered out of subsequent search results.
 
 ### Project Search
 
@@ -288,6 +312,7 @@ Global project search for navbar on `/api/search/projects?q=`. Direct navigation
 Component registration in `resources/js/app.js`:
 - `Alpine.data('projectModal', projectModal)`
 - `Alpine.data('clientSearch', clientSearch)`
+- `Alpine.data('clientMultiSearch', clientMultiSearch)`
 - `Alpine.data('projectSearch', projectSearch)`
 - `Alpine.data('inlineField', inlineField)` — inline field editing for description/notes on the overview tab
 
@@ -310,19 +335,9 @@ Trix is imported globally in `app.js` (`import 'trix'`) and configured via two d
 
 ## Internationalization
 
-Strings in `lang/*/projects.php` (10 supported languages: en, it, fr, es, de, nl, pt, pl, uk, ro, da).
+Strings in `lang/*/projects.php` (13 supported languages: en, it, fr, es, de, nl, pt, pl, uk, ro, da, ru, zh).
 
-Main keys: page titles, form fields, type/status/priority options, placeholders, statistics, tab labels and links.
-
-Editor-specific keys: `editor_tab`, `editor_saved`, `editor_image_invalid_type`, `editor_image_upload_error`.
-
-Date labels use `Carbon::translatedFormat(...)`.
-
-## Internationalization
-
-Strings in `lang/*/projects.php` (10 supported languages: en, it, fr, es, de, nl, pt, pl, uk, ro, da).
-
-Main keys: page titles, form fields, type/status/priority options, placeholders, statistics, tab labels and links.
+Main keys: page titles, form fields, type/status/priority options (including `type_saas`), placeholders, statistics, tab labels and links.
 
 Editor-specific keys: `editor_tab`, `editor_saved`, `editor_image_invalid_type`, `editor_image_upload_error`.
 

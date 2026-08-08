@@ -95,7 +95,9 @@ Key behaviors:
 - multiple labels (`label_ids[]`)
 - notes (`notes`)
 
-`documents/partials/_file-upload.blade.php` handles file input and selected filename display.
+`documents/partials/_file-upload.blade.php` handles file input and selected filename display. The `documents.file_requirements` help text under the dropzone lists all accepted formats (PDF, JPG, JPEG, PNG, WEBP, ZIP, 7Z, RAR, DOC, DOCX, XLS, XLSX) and the real 30MB limit, in all 13 languages — it previously only mentioned PDF/JPG/JPEG/PNG and a stale 10MB figure.
+
+No `accept` attribute is set on the `<input type="file">` — format restriction happens entirely server-side via the request validation `mimes:` rule, the input itself accepts any file the OS picker offers.
 
 ## Table Actions
 

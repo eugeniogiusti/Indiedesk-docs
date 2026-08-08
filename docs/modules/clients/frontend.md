@@ -59,6 +59,8 @@ resources/views/clients/
 
 The `index.blade.php` and `show.blade.php` views act as orchestrators.
 
+`index/_header.blade.php` has two actions: an "Export Excel" link (`route('clients.export', request()->query())` — carries over whatever filters are currently applied) and the "New Client" button that dispatches `open-client-modal`.
+
 `show.blade.php` conditionally includes the followup section and modal only when the client is a lead:
 
 ```blade
@@ -156,6 +158,8 @@ The modal listens on window events:
 Sidebar + main content layout (responsive grid):
 - Sidebar: `lg:col-span-1` — client info (contact, billing, web, notes)
 - Main content: `lg:col-span-3` — followup section (leads only), projects, tasks, meetings, payments, costs, documents
+
+`_projects.blade.php` (recent projects card) shows a "SaaS" `<x-projects.type-badge>` next to status/priority when the listed project is `type = 'saas'` — since a client can now be linked to a project only through the SaaS `client_project` pivot (no direct `client_id`), the badge is the visual cue for why a project the client "isn't the owner of" still shows up in their list. The underlying project list itself already includes SaaS-linked projects, not just directly-owned ones — see `ClientShowQuery` in the backend docs.
 
 ---
 

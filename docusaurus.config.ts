@@ -123,6 +123,14 @@ const config: Config = {
               label: 'Website',
               href: 'https://indiedesk.link', // 3. Link con HTTPS corretto
             },
+            {
+              label: 'GitHub',
+              href: 'https://github.com/eugeniogiusti/IndieDesk',
+            },
+            {
+              label: '⭐ Star on GitHub',
+              href: 'https://github.com/eugeniogiusti/IndieDesk',
+            },
           ],
         },
       ],
