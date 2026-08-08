@@ -5,6 +5,19 @@ description: Track all updates, new features and improvements in IndieDesk. Comp
 keywords: [IndieDesk changelog, version history, updates, new features, Laravel 12, release notes]
 ---
 
+## [v1.2.0] - 2026-08-08
+
+### Added
+- **Stripe integration — automatic payment recording from your own SaaS products** — new module (`docs/modules/stripe`); `POST /stripe/webhook` receives `invoice.paid` events and creates `Payment` records automatically, no manual entry. Project routing is metadata-based: tag each Stripe Product with `indiedesk_project_id` (in the Stripe Dashboard, no local mapping table) — supports SaaS setups with one Product per pricing tier, all tagged with the same project id. Client matching, in order: `stripe_customer_id` (once known) → email (reliable at payment time — the SaaS tenant already exists) → name (fallback for prospects still on a placeholder email) → create new. Any match or creation sets the client's status to `active` regardless of prior status. Idempotent via `payments.reference` (the Stripe invoice id) — safe against Stripe's webhook retries. Built with `stripe/stripe-php`, verified with real Stripe CLI test-mode payments during development (not just synthetic fixtures)
+- **`clients.stripe_customer_id`** — nullable, unique column; new `Client::getStripeDashboardUrl()` (test/live aware) and `Client::totalProjectsCount()` (direct + SaaS-pivot projects)
+- **Client show page — "Connected to Stripe" badge** — shown in the header when `stripe_customer_id` is set, links directly to that customer's record in the Stripe Dashboard
+
+### Fixed
+- **Client show header project count wrong for SaaS-only clients** — read `$client->projects->count()` (direct relation only); a client linked to a project solely through the SaaS pivot showed 0. Now uses `Client::totalProjectsCount()`
+
+### Maintenance
+- **composer require** — `stripe/stripe-php` (^21.1)
+
 ## [v1.1.0] - 2026-08-08
 
 ### Added

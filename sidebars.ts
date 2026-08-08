@@ -205,7 +205,15 @@ const sidebars: SidebarsConfig = {
         'modules/github/frontend',
       ],
     },
-    
+
+    {
+      type: 'category',
+      label: 'Stripe',
+      items: [
+        'modules/stripe/backend',
+        'modules/stripe/frontend',
+      ],
+    },
 
   ],
 },
