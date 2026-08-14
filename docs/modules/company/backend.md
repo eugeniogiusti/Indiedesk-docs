@@ -83,6 +83,9 @@ The `BusinessSettings` model represents a singleton application configuration.
 - contacts: `email`, `certified_email`, `phone_*`
 - business: `business_name`, `business_description`, `website`, `logo_path`
 - integrations: `github_pat`, `billing_tool_url`
+- fiscal regime: `tax_regime`, `profitability_coefficient`, `substitute_tax_rate`, `annual_revenue_cap`, `business_start_date`, **`inps_rate`, `inps_ceiling`** (nullable — see below)
+
+`profitability_coefficient`, `inps_rate`, and `substitute_tax_rate` feed the tax estimation engine (`PaymentTaxCalculator`, see the [Taxes module](../taxes/backend.md#tax-calculation-engine)). All three are nullable with **no default value** — if any is left empty, no tax estimate is shown anywhere in the app rather than falling back to a guessed rate. `inps_ceiling` (annual INPS contribution cap) is optional; when set, it caps the cumulative INPS base for the year.
 
 ## Form Request
 

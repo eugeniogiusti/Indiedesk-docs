@@ -133,7 +133,7 @@ Implements `CalendarEventable` — each followup can be added to Google Calendar
 
 ### ClientShowQuery
 
-Loads related data (projects, tasks, meetings, payments, costs, documents) with eager loading and limit to avoid overfetching.
+Loads related data (projects, tasks, meetings, payments, costs, documents) with eager loading and limit to avoid overfetching. Also returns `payment_tax_estimates` — a `Collection<PaymentTaxEstimate>` keyed by payment id, from `PaymentTaxCalculator::calculateForPayments($payments)` (see [Taxes module](../taxes/backend.md#tax-calculation-engine)) — used by the "Recent Payments" card to show a "set aside" line per payment.
 
 The project ID set used to scope tasks/meetings/payments/costs/documents is **not** just `$client->projects()->pluck('id')` (the direct `client_id` relation) — it also merges in `$client->saasProjects()->pluck('projects.id')`, so a client linked to a SaaS project only through the `client_project` pivot still shows that project (and everything under it) on their show page.
 

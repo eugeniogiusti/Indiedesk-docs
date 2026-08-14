@@ -5,6 +5,21 @@ description: Track all updates, new features and improvements in IndieDesk. Comp
 keywords: [IndieDesk changelog, version history, updates, new features, Laravel 12, release notes]
 ---
 
+## [v1.3.0] - 2026-08-14
+
+### Added
+- **Tax estimation engine (regime forfettario)** — new `PaymentTaxCalculator` (`app/Services/Taxes`) estimates INPS (Gestione Separata) contributions and imposta sostitutiva on paid payments, progressively on the cumulative taxable income of the fiscal year rather than per payment in isolation, so the annual INPS ceiling and the tax base (net of INPS due so far) are handled correctly. Rates come from `BusinessSettings` (`profitability_coefficient`, new `inps_rate`, `substitute_tax_rate`, optional `inps_ceiling`) — no hardcoded fallback rate; if any is left unset, no estimate is shown anywhere rather than guessing. Specific to the Italian regime forfettario and documented as such — a different tax regime needs dedicated development, not a config change
+- **"Da accantonare" (set aside) shown wherever a payment amount is shown** — inline under the amount (not a separate table column — first design, changed after review) on the project show Payments tab, the global Payments index, the client show Recent Payments card, and the Dashboard Recent Payments list, all via one shared Blade partial
+- **Net profit (after estimated tax)** wherever profit is reported business-wide: Dashboard "Profit This Month" card, Statistics summary card, monthly breakdown table and PDF export — net of estimated tax when the fiscal rates are configured, gross otherwise, computed once per query (`display_profit`) instead of duplicated in every view. Deliberately left gross on the per-project Profit tab and the "Top 10 Most Profitable Projects" table, where a project's share of the cumulative/progressive tax isn't a well-defined number
+- **Tax Fund tracker** — new `TaxFundMovement` model/table + `TaxFundService`; a card on the Statistics page compares the balance of a dedicated tax savings account (manually logged deposits/withdrawals) against the current year's estimated liability, net of whatever's already been paid through the Taxes module (matched by `reference_year`, not payment date, so a late payment settling a *past* year's liability never distorts the current year's target). Marking a `Tax` record as paid auto-creates/updates/removes the matching withdrawal (`TaxFundService::syncFromTax()`) — no double data entry between the two modules; auto-generated movements can't be deleted directly, only by unmarking the source tax as unpaid
+
+### Fixed
+- **Two pre-existing migrations broke the SQLite test database** (unrelated to the tax feature, found while adding tests for it) — `costs.recurring` needed an explicit `dropIndex` before `dropColumn`, and a MySQL-only `ALTER TABLE ... ENUM(...)` on `clients.status` had no SQLite equivalent. Fixed by guarding the latter on `DB::getDriverName()`; the test suite now actually boots and runs on SQLite (it silently failed on every single test before this)
+
+### Maintenance
+- **composer update** — laravel/framework v12.65.0→v12.66.0, laravel/mcp v0.9.2→v0.9.3, laravel/pint v1.30.4→v1.30.5, laravel/sail v1.65.0→v1.66.0, league/commonmark 2.9.0→2.10.0, myclabs/deep-copy 1.13.4→1.14.0, stripe/stripe-php v21.1.1→v21.2.0
+- **npm update** — alpinejs 3.15.12→3.16.1, laravel-vite-plugin 3.1.3→3.2.0, rolldown 1.2.3→1.2.4 (+ all platform bindings), @oxc-project/types 0.143.0→0.144.0, ansi-regex 6.2.2→6.3.0, baseline-browser-mapping 2.11.12→2.11.14, electron-to-chromium 1.5.402→1.5.406, update-browserslist-db 1.3.0→1.3.1
+
 ## [v1.2.0] - 2026-08-08
 
 ### Added

@@ -1,8 +1,8 @@
 ---
 title: Dashboard Module Backend - IndieDesk
 sidebar_label: Backend
-description: Laravel dashboard with aggregated stats, charts and KPIs. Query orchestrator pattern for projects, tasks, payments and meetings overview.
-keywords: [Laravel dashboard, dashboard overview, Laravel statistics, dashboard charts, IndieDesk dashboard, KPI dashboard, analytics dashboard]
+description: Laravel dashboard with aggregated stats, net-of-tax profit, charts and KPIs. Query orchestrator pattern for projects, tasks, payments and meetings overview.
+keywords: [Laravel dashboard, dashboard overview, Laravel statistics, net profit, dashboard charts, IndieDesk dashboard, KPI dashboard, analytics dashboard]
 ---
 
 # Backend
@@ -53,7 +53,7 @@ Calculates KPIs for the stat cards. Returns an array with 5 keys:
 
 | Key | Type | Content |
 |-----|------|---------|
-| `profit_this_month` | `array` | `amount`, `payments`, `costs` of the current month |
+| `profit_this_month` | `array` | `amount` (net of estimated tax when configured), `gross_amount`, `payments`, `costs`, `estimated_tax` (null if fiscal rates aren't configured) — current month |
 | `pending_payments` | `array` | `count`, `total`, `overdue_count` of pending payments |
 | `active_projects` | `int` | Count of projects with `in_progress` status |
 | `open_tasks` | `array` | `total`, `todo`, `in_progress`, `blocked` |
@@ -61,7 +61,8 @@ Calculates KPIs for the stat cards. Returns an array with 5 keys:
 
 ### Private Methods
 
-- `getProfitThisMonth()` - Sums payments for the month (filtered by currency) minus the sum of costs for the month. Filters by `BusinessSettings::current()->default_currency`.
+- `getProfitThisMonth()` - Sums payments for the month (filtered by currency) minus the sum of costs for the month → `gross_amount`. Subtracts `getEstimatedTaxThisMonth()` from it when available to get `amount` (falls back to `gross_amount` when tax isn't configured — same "always render the ready-to-use key" approach as `FinancialStatsQuery::display_profit` in the [Statistics module](../stats/backend.md#financialstatsquery)). Filters by `BusinessSettings::current()->default_currency`.
+- `getEstimatedTaxThisMonth()` - INPS + imposta sostitutiva estimated on the current month's paid payments, via `PaymentTaxCalculator` (see [Taxes module](../taxes/backend.md#tax-calculation-engine)). Returns `null` if the fiscal rates aren't configured.
 - `getPendingPayments()` - Counts and sums pending payments, tracks overdue ones.
 - `getActiveProjectsCount()` - Counts projects with `in_progress` status.
 - `getOpenTasksCount()` - Counts open tasks (todo + in_progress), breakdown by status including blocked.
@@ -77,6 +78,7 @@ Retrieves sorted lists of recent/urgent items. Returns an array with 6 keys:
 | `upcoming_meetings` | Future scheduled meetings | 5 |
 | `overdue_payments` | Pending payments with `due_date < now()` | 5 |
 | `recent_payments` | Latest received payments (paid), sorted by `paid_at` desc | 5 |
+| `recent_payments_tax_estimates` | `Collection<PaymentTaxEstimate>` keyed by payment id, from `PaymentTaxCalculator::calculateForPayments($recentPayments)` — feeds the "set aside" line on each recent payment row | — |
 | `recent_costs` | Latest costs with `paid_at` not null, sorted by `paid_at` desc | 5 |
 | `projects_due_soon` | `in_progress` projects with `due_date >= now()`, sorted by deadline | 5 |
 

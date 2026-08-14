@@ -1,8 +1,8 @@
 ---
 title: Payments Module Backend - IndieDesk
 sidebar_label: Backend
-description: Payment tracking and invoice management in Laravel. CRUD operations, filters, statistics and project income integration patterns.
-keywords: [Laravel payments, payment tracking, invoice payments, Laravel billing, payment management, IndieDesk payments, income tracking]
+description: Payment tracking, invoice management and per-payment tax estimation in Laravel. CRUD operations, filters, statistics and project income integration patterns.
+keywords: [Laravel payments, payment tracking, invoice payments, tax estimation, Laravel billing, payment management, IndieDesk payments, income tracking]
 ---
 
 # Backend
@@ -53,7 +53,7 @@ The `PaymentController` uses the **Query Classes** pattern to separate query/fil
 
 ### Methods
 
-- **index()** - Uses `PaymentIndexQuery` for paginated list and `PaymentStatsQuery` for statistics cards
+- **index()** - Uses `PaymentIndexQuery` for paginated list and `PaymentStatsQuery` for statistics cards. Also computes `$paymentTaxEstimates = (new PaymentTaxCalculator())->calculateForPayments($payments->getCollection())` — a `Collection<PaymentTaxEstimate>` keyed by payment id, passed to the view for the "set aside" figure on each row (see [Taxes module](../taxes/backend.md#tax-calculation-engine))
 - **store()** - Validates with `StorePaymentRequest`, creates payment in the project and redirects to `projects.show?tab=payments`
 - **update()** - Validates with `UpdatePaymentRequest`, updates payment and redirects to the payments tab of the project show
 - **destroy()** - Deletes payment and returns to the payments tab of the project show
@@ -127,3 +127,6 @@ Calculates statistics for index cards using only collected payments (`paid_at` n
 - `total_all_time`
 - `total_this_month`
 - `total_this_year`
+- `estimated_tax_this_month` / `estimated_tax_this_year` — INPS + imposta sostitutiva estimated on the period's payments via `PaymentTaxCalculator`, null if the fiscal rates aren't configured
+
+**No estimated tax on `total_all_time`.** The calculation always uses *today's* configured rates — applying them retroactively across multiple fiscal years (which may well have had different rates) would misrepresent history, so the "Total All Time" card shows an explanatory note instead of a number. `estimated_tax_this_month`/`_this_year` don't have this problem since they're always within the current year.

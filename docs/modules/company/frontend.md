@@ -60,7 +60,7 @@ The content partials use Blade form components (`x-form-input`, `x-form-textarea
 
 - `_personal-info`: owner first/last name
 - `_legal-address`: complete legal address
-- `_tax-info`: tax/vat + default currency (select from `BusinessSettings::CURRENCIES`)
+- `_tax-info`: tax/VAT + default currency (select from `BusinessSettings::CURRENCIES`), plus a "Regime Fiscale" section (`tax_regime`, `profitability_coefficient`, `substitute_tax_rate`, `annual_revenue_cap`, `business_start_date`) and the two fields feeding the tax estimation engine: **Aliquota INPS** (`inps_rate`) and **Massimale Contributivo INPS** (`inps_ceiling`, optional). Both have a hint explaining that leaving `inps_rate` empty disables the tax estimate everywhere in the app — see the [Taxes backend docs](../taxes/backend.md#configuration-source)
 - `_contacts`: email, certified email, phone
 - `_business-info`: business name/description, website, IBAN, logo
 

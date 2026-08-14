@@ -1,8 +1,8 @@
 ---
 title: Payments Module Frontend - IndieDesk
 sidebar_label: Frontend
-description: Payment tracking UI with Alpine.js modals, invoice integration and Blade partials. Filters, stats cards and reusable table components.
-keywords: [Alpine.js payments, payment UI, invoice integration, Blade partials, modal forms, IndieDesk frontend, payment tracking UI, table filters]
+description: Payment tracking UI with Alpine.js modals, invoice integration, per-payment tax estimates and Blade partials. Filters, stats cards and reusable table components.
+keywords: [Alpine.js payments, payment UI, invoice integration, tax estimate, Blade partials, modal forms, IndieDesk frontend, payment tracking UI, table filters]
 ---
 
 # Frontend
@@ -50,6 +50,7 @@ resources/views/payments/
         ├── _header.blade.php
         ├── _row.blade.php
         ├── _row-amount.blade.php
+        ├── _row-tax-estimate.blade.php
         ├── _row-method.blade.php
         ├── _row-paid-at.blade.php
         ├── _row-reference.blade.php
@@ -76,6 +77,20 @@ The module separates the two UI contexts:
 - **Payments tab of the project show**: partials in `payments/partials/*`
 
 `payments/partials/_payment-table.blade.php` is the reusable table used in the project show.
+
+### Shared Tax Estimate Partial
+
+`payments/partials/payment-table/_row-tax-estimate.blade.php` is a single physical file `@include`d from **both** row trees (`index/payment-table/_row-amount.blade.php` and `partials/payment-table/_row-amount.blade.php`), plus from the client show and Statistics monthly-detail payment rows. It renders inline inside the Importo/Amount cell (not its own table column — that was the first design, changed after review), given `payment` and `taxEstimate` (a `?PaymentTaxEstimate`, see [Taxes module](../taxes/backend.md#paymenttaxestimate-dto)):
+
+- shows nothing when `$taxEstimate` is null (rates not configured, or the payment isn't paid yet)
+- otherwise: `{{ __('payments.set_aside') }}: {{ setAsideAmount }}`, formatted via `$payment->formatCurrency()` (not inline `number_format`)
+- accepts an optional `showBreakdown` param (default `true`): when `true`, adds a parenthetical `(INPS €x · Tasse €y)`. Set to `false` on the global payments index and the Statistics monthly-detail table — dense, many-row listings — to keep rows compact; left `true` (default) on the project show tab and client show, which show fewer rows
+
+Because the logic lives in one file, any future change to how the estimate is displayed only needs to happen once.
+
+### Stat Cards: Estimated Tax
+
+`index/stats-cards/_this-month.blade.php` and `_this-year.blade.php` each show a small "Tasse stimate" line below the total (from `PaymentStatsQuery`'s `estimated_tax_this_month`/`_this_year`, hidden if null). `_total-all-time.blade.php` instead shows an explanatory note (no figure) — see the backend docs for why an all-time estimate isn't computed.
 
 ## Modal (Alpine.js)
 

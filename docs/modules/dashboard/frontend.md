@@ -48,9 +48,9 @@ Uses `<x-app-layout>`. Grid structure:
 `_stats-cards.blade.php` includes 4 cards from the `stats-cards/` subfolder:
 
 ### Profit This Month (`_profit.blade.php`)
-- **Data**: `$stats['profit_this_month']['amount']`
+- **Data**: `$stats['profit_this_month']['amount']` — net of estimated tax when the fiscal rates are configured (see [Company module](../company/backend.md#main-fields)), gross otherwise
 - Dynamic color: green (emerald) if positive, red if negative
-- Breakdown: `+payments`, `-costs`
+- Breakdown: `+payments` (emerald), `-costs` (red), `-estimated_tax` (amber, only shown when `estimated_tax !== null`)
 
 ### Pending Payments (`_pending-payments.blade.php`)
 - **Data**: `$stats['pending_payments']['total']` (amount in currency)
@@ -134,7 +134,7 @@ Static informational card with:
 
 ### Recent Payments (`_recent-payments.blade.php`)
 - **Data**: `$lists['recent_payments']` (max 5)
-- Shows: amount (green with +), project name, `<x-payments.method-badge>`, payment date
+- Shows: amount (green with +), project name, `<x-payments.method-badge>`, payment date, and — when a `PaymentTaxEstimate` exists in `$lists['recent_payments_tax_estimates']` for that payment — a small amber "Da accantonare: €x" line (via `$payment->formatCurrency()`, no inline `number_format`)
 - Each row links to `projects.show?tab=payments`
 - "View all" link → `route('payments.index')`
 
