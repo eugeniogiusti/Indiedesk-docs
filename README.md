@@ -21,12 +21,6 @@ docs/
 
 Each module — Projects, Payments, Clients, Taxes, Statistics, Dashboard, and so on — has its own `backend.md` (models, queries, services, routes) and `frontend.md` (Blade views, Alpine.js components, UI patterns), kept in sync with the actual codebase as features ship.
 
-## Contributing
-
-Found something outdated, unclear, or missing? Open an issue or a PR — documentation fixes are always welcome.
-
-For the application itself, head to the [IndieDesk repository](https://github.com/eugeniogiusti/IndieDesk).
-
 ## License
 
 Documentation content © Eugenio Giusti. See the [IndieDesk](https://github.com/eugeniogiusti/IndieDesk) repository for the application's license.
