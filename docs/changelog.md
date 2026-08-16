@@ -5,6 +5,16 @@ description: Track all updates, new features and improvements in IndieDesk. Comp
 keywords: [IndieDesk changelog, version history, updates, new features, Laravel 12, release notes]
 ---
 
+## [v1.3.1] - 2026-08-16
+
+### Added
+- **Clients — Administration email (`email_fatturazione`)** — new nullable field for invoicing correspondence when it differs from the client's main email, distinct from the existing PEC; editable in the client form's Billing tab, shown as "Email Amministrazione" on the client show page, and included in the Excel export
+- **Documents — XML uploads** — `.xml` added to the accepted file types in `StoreDocumentRequest`, alongside PDF/JPG/PNG/WEBP/ZIP/7Z/RAR/DOC/DOCX/XLS/XLSX, still capped at 30MB
+
+### Improved
+- **Clients — email no longer required** — the `email` column is now nullable (previously `NOT NULL UNIQUE`) and the field is optional on both create and edit; a model mutator on `Client` stores blank input as `null` rather than an empty string so the unique constraint doesn't clash across multiple clients without an email
+- **Client show page — contact fields labeled** — Email, PEC, and Email Amministrazione each show a small label above the value (`<x-email-link>` gained an optional `label` prop) instead of unlabeled mailto links, so it's clear which address is which
+
 ## [v1.3.0] - 2026-08-14
 
 ### Added
