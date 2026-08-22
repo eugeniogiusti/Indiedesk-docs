@@ -32,13 +32,15 @@ app/
 | PUT | `/settings/business` | settings.business.update | Save updates |
 | DELETE | `/settings/business/logo` | settings.business.delete-logo | Delete logo |
 
+The Integrations tab also hosts the Google Calendar connection, whose routes live in the same `settings` prefix but belong to the [Calendar module](../calendar/backend.md#authentication) (`GoogleCalendarSettingsController`).
+
 ## Controller
 
 `BusinessSettingsController` orchestrates the module and delegates application logic to the service.
 
 ### Methods
 
-- **edit()** - loads settings with `BusinessSettings::current()` and renders `settings.business`
+- **edit()** - loads settings with `BusinessSettings::current()` plus `GoogleCalendarSettings::current()` (passed to the view as `$googleCalendar` so the Integrations tab can show the connected/disconnected state) and renders `settings.business`
 - **update()** - validates with `UpdateBusinessSettingsRequest`, delegates update to the service, and maintains the active tab with `_active_tab`
 - **deleteLogo()** - delegates logo deletion to the service and redirects to the `business` tab
 
@@ -82,7 +84,7 @@ The `BusinessSettings` model represents a singleton application configuration.
 - tax: `tax_id`, `vat_number`, `iban`, `default_currency`
 - contacts: `email`, `certified_email`, `phone_*`
 - business: `business_name`, `business_description`, `website`, `logo_path`
-- integrations: `github_pat`, `billing_tool_url`
+- integrations: `github_pat`, `billing_tool_url` (Google Calendar tokens live in their own `google_calendar_settings` singleton, not here — they're rotated by the refresh flow and shouldn't ride along with a user-submitted settings form)
 - fiscal regime: `tax_regime`, `profitability_coefficient`, `substitute_tax_rate`, `annual_revenue_cap`, `business_start_date`, **`inps_rate`, `inps_ceiling`** (nullable — see below)
 
 `profitability_coefficient`, `inps_rate`, and `substitute_tax_rate` feed the tax estimation engine (`PaymentTaxCalculator`, see the [Taxes module](../taxes/backend.md#tax-calculation-engine)). All three are nullable with **no default value** — if any is left empty, no tax estimate is shown anywhere in the app rather than falling back to a guessed rate. `inps_ceiling` (annual INPS contribution cap) is optional; when set, it caps the cumulative INPS base for the year.

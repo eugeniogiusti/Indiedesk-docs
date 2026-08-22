@@ -32,11 +32,10 @@ resources/views/tasks/
 │   │   └── _bugs-open.blade.php
 │   └── task-table/
 │       ├── _header.blade.php
+│       ├── _card.blade.php          # mobile card layout
 │       ├── _row.blade.php
 │       ├── _row-project.blade.php
-│       ├── _row-title.blade.php
-│       ├── _row-type.blade.php
-│       ├── _row-status.blade.php
+│       ├── _row-title.blade.php     # title + description + status & type badges
 │       ├── _row-priority.blade.php
 │       ├── _row-due-date.blade.php
 │       └── _row-actions.blade.php
@@ -67,6 +66,17 @@ The module separates the two UI contexts:
 - **Tasks tab of the project show**: partials in `tasks/partials/*`
 
 `tasks/partials/_task-table.blade.php` is the reusable table used in the project show.
+
+### Merged Columns
+
+Both tables stack badges under an existing column instead of giving each its own, to reclaim horizontal space — the same treatment applied to Clients and Payments in v1.1.0:
+
+| Table | Column | Contains |
+|-------|--------|----------|
+| Global index | **Title/Status** | title, description, then status + type badges |
+| Project show | **Status/Priority** | status badge (Alpine-reactive to the done toggle), then priority badge |
+
+In the project show table the status cell stays reactive: the three `x-show` badge variants (original status / toggled to done / toggled back to todo) are wrapped together with the priority badge in a `space-y-1` container, so toggling a task updates the badge without a page reload.
 
 ## Modal (Alpine.js)
 

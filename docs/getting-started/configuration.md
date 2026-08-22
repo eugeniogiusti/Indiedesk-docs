@@ -233,3 +233,38 @@ GOOGLE_CALENDAR_EMBED_URL=https://calendar.google.com/calendar/embed?src=your%40
 ```
 
 Make sure you are logged into the browser with the same Google account to view the calendar.
+
+### Google Calendar — automatic sync (optional)
+
+Separate from the embed above: this makes IndieDesk **write** events to your calendar automatically (follow-ups, project deadlines, tasks, meetings, payments, tax deadlines) instead of you clicking "Add to Google Calendar" every time.
+
+**1.** In the [Google Cloud Console](https://console.cloud.google.com), create (or pick) a project and enable the **Google Calendar API** under *APIs & Services → Library*.
+
+**2.** Under *APIs & Services → Credentials*, create an **OAuth client ID** of type **Web application**, and register this authorized redirect URI:
+
+```
+https://your-domain.tld/settings/google-calendar/callback
+```
+
+**3.** Copy the client id and secret into `.env`, then clear the config cache:
+
+```env
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+```
+
+```bash
+php artisan config:clear
+```
+
+**4.** Go to *Settings → Integrations* in the app and click **Connect**, then approve the calendar permission.
+
+:::warning Publish the OAuth app, or the sync breaks weekly
+While the OAuth consent screen is in **Testing**, Google expires refresh tokens after **7 days** and you'd have to reconnect every week. Set the publishing status to **In production** (*APIs & Services → OAuth consent screen*).
+
+For an external app, publishing requires an app name, support email, homepage URL and privacy policy URL to be present. They only need to be filled in and well-formed at this stage — Google does not crawl them unless you submit the app for full verification, so the pages may sit behind your usual access restrictions. Publishing **without** verification is fine for personal use: you'll just see an "unverified app" screen on first consent (*Advanced → Go to ...*). Don't upload an app logo, as that alone forces the full verification process.
+
+`Internal` (which skips all this) is only selectable when the Cloud project belongs to a Google Workspace organization — it isn't available on a personal Gmail account.
+:::
+
+Sync is one-way (IndieDesk → Google Calendar) and only touches events it created. If the integration isn't connected, every sync call is a silent no-op and the app works exactly as before.

@@ -7,16 +7,38 @@ keywords: [Google Calendar UI, calendar iframe, Blade partials, calendar links, 
 
 # Frontend
 
-The Calendar module has two frontend components: the "Add to Google Calendar" links scattered across module views and a dedicated page with an embedded iframe.
+The Calendar module has three frontend touchpoints: the connection panel in Business Settings, the "Add to Google Calendar" links scattered across module views, and a dedicated page with an embedded iframe.
 
 ## File Structure
 
 ```
-resources/views/calendar/
-└── index.blade.php
+resources/views/
+├── calendar/
+│   └── index.blade.php
+└── settings/business/
+    └── _integrations.blade.php   # Google Calendar connect/disconnect panel
 ```
 
 Google Calendar links do not have their own views: they are integrated into the views of modules that implement `CalendarEventable`.
+
+## Connection Panel (Settings → Integrations)
+
+The Google Calendar section of `_integrations.blade.php` has two states, driven by `$googleCalendar->isConnected()` (the `GoogleCalendarSettings` singleton, passed in by `BusinessSettingsController::edit()`):
+
+- **Disconnected** — explanatory text + a "Connect" link to `settings.google-calendar.connect`
+- **Connected** — the linked Google account's email + a "Disconnect" button
+
+:::warning Nested forms
+The whole Integrations tab renders **inside** the main Business Settings `<form>`. A `<form>` cannot be nested in another one: the browser hoists it out of the DOM and the outer form loses its `@method('PUT')` spoofing, which makes saving settings fail with a `405 Method Not Allowed`.
+
+The "Disconnect" control is therefore a plain `<button type="button">` that submits a hidden form declared **outside** the main form in `settings/business.blade.php`, the same pattern already used by "delete logo":
+
+```blade
+<button type="button" onclick="document.getElementById('google-calendar-disconnect-form').submit()">
+```
+:::
+
+Once connected, sync is fully automatic — there is no per-record "sync now" control anywhere in the UI. The manual links below still work and are unaffected.
 
 ## Calendar Page (`/calendar`)
 
@@ -44,6 +66,7 @@ Each model that implements `CalendarEventable` exposes buttons/links in its own 
 | **Tasks** | `tasks/partials/_table-row-actions.blade.php` | `$task->googleCalendarUrl()` (task deadline) |
 | **Payments** | `payments/partials/payment-table/_row-actions.blade.php` | `$payment->googleCalendarUrl()` (payment date) |
 | **Meetings** | `meetings/partials/_meeting-table.blade.php` | `$meeting->googleCalendarUrl()` (meeting date) |
+| **Client follow-ups** | `clients/followups/_list.blade.php` | `$followup->googleCalendarUrl()` (contact date) |
 
 ### UI Pattern
 

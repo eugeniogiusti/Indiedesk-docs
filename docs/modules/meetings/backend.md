@@ -60,8 +60,15 @@ The `Meeting` model is located in `app/Models/Meeting.php`.
 - **Domain constants** - `STATUSES` used in validation and UI
 - **Scopes** - `status()`, `scheduled()`, `upcoming()`, `today()`, `thisWeek()`, `past()`, `forProject()`
 - **Status helpers** - `isUpcoming()`, `isPast()`, `isCompleted()`, `isCancelled()`
-- **CalendarEventable** - calendar event support with start/end and Google Calendar link
+- **CalendarEventable** - calendar event support with start/end and Google Calendar link. Meetings are the **only timed** calendar entity (every other model produces all-day events), so their synced event carries `dateTime` + `timeZone` with a real start and end
+- **Casts** - `scheduled_at` → `datetime`, `duration_minutes` → `integer`
 - **toFormPayload()** - safe edit payload (`id` + editable fields)
+
+Meetings also sync automatically to Google Calendar on create, update, delete, "mark completed" and "mark cancelled" — see the [Calendar module](../calendar/backend.md#automatic-sync).
+
+:::warning `duration_minutes` must be cast to `integer`
+`getEndTime()` feeds it to `Carbon::addMinutes()`, which is strictly typed in current Carbon versions and rejects a string (`Argument #3 ($value) must be of type int|float, string given`). Without the cast the value arrives from the DB/form as a string and every meeting update 500s as soon as the calendar sync builds the event. The cast fixes it for all callers, not just the calendar path.
+:::
 
 ### Meeting Statuses
 

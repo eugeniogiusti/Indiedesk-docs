@@ -148,8 +148,15 @@ The `Tax` model is located in `app/Models/Tax.php` and implements `CalendarEvent
 `Tax` implements the `CalendarEventable` contract:
 
 - `hasCalendarDate()` — returns `true` if `due_date` is set
-- `toCalendarEvent()` — returns a `CalendarEvent` DTO (all-day event on due date, title includes date/description/year, body includes all tax details and notes)
+- `toCalendarEvent()` — returns a `CalendarEvent` DTO (all-day event on due date, title includes date/description/year, body includes all tax details and notes). Once `paid_at` is set the title gains a `✅` prefix and the body a `Paid at` line, so a settled deadline reads as done straight from the calendar
+- `calendarTitleBody()` — the title without the paid marker, used by the sync to recognise an event it already created
 - `googleCalendarUrl()` — builds the Google Calendar link via `GoogleCalendarLinkBuilder::fromModel($this)->build()`
+
+Tax deadlines also **sync automatically** to Google Calendar when the integration is connected: `TaxController` injects `GoogleCalendarSync` and syncs on create/update (including when the record is marked paid, which just goes through the normal update form) and removes the event on delete. The link between record and event is the nullable `google_event_id` column. See the [Calendar module](../calendar/backend.md#automatic-sync).
+
+:::warning
+`Tax` is one of the six models bound by `CalendarEventable`. When the contract gains a method, this model must be updated with the others — a missing method makes the class unloadable and 500s `/taxes` **and** `/statistics`, which both reference it.
+:::
 
 ## Tax Calculation Engine
 

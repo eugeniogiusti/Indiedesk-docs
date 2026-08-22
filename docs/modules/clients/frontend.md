@@ -25,13 +25,25 @@ resources/views/clients/
 │   ├── _filters.blade.php
 │   ├── _table.blade.php
 │   ├── _empty-state.blade.php
+│   ├── _followup-stats-cards.blade.php
 │   ├── filters/
 │   │   ├── _search.blade.php
 │   │   ├── _status.blade.php
+│   │   ├── _followup-status.blade.php
+│   │   ├── _contacted-today.blade.php
+│   │   ├── _followup-date.blade.php
+│   │   ├── _acquisition-source.blade.php
 │   │   └── _actions.blade.php
+│   ├── stats-cards/
+│   │   ├── _followup-never.blade.php
+│   │   ├── _followup-first-contact.blade.php
+│   │   ├── _followup-second-contact.blade.php
+│   │   ├── _followup-exhausted.blade.php
+│   │   └── _followup-today.blade.php
 │   └── client-table/
 │       ├── _header.blade.php
 │       ├── _row.blade.php
+│       ├── _row-followups-count.blade.php
 │       └── _row-actions.blade.php
 ├── show/
 │   ├── _header.blade.php
@@ -91,7 +103,9 @@ The URL is built by `Client::whatsappUrl()` on the model — single source of tr
 
 ### `<x-followup-type-icon>`
 
-Renders the icon for a followup type. Accepts a `type` prop (`call`, `email`, `whatsapp`, `meeting`, `note`).
+Renders the icon for a followup type. Accepts a `type` prop (`call`, `email`, `whatsapp`, `linkedin`).
+
+WhatsApp and LinkedIn are rendered as filled brand logos (`fill="currentColor"`, brand blue for LinkedIn); call and email come from a small stroked-icon map with `call` as the fallback for an unknown type.
 
 ```blade
 <x-followup-type-icon :type="$followup->type" />
@@ -115,9 +129,22 @@ Visible only when `$client->isLead()` returns `true`. Disappears automatically o
 
 **`_list.blade.php`** — list of followups ordered by `contacted_at` desc. Each row shows:
 - Type icon via `<x-followup-type-icon>`
-- Type label + date
+- Type label + date + a green "Done" / amber "To do" status badge
 - Note (if present)
+- A **permanently visible** check-circle button that toggles done/to-do in one click (`PATCH .../toggle-complete`)
 - Actions on hover: Google Calendar link, edit button, delete form
+
+The toggle sits outside the `opacity-0 group-hover:opacity-100` wrapper on purpose: it's the action you reach for when a calendar reminder fires, so it must not require hovering to be discoverable (and hover doesn't exist on touch devices).
+
+---
+
+## Follow-up Stat Cards & Filters (Index)
+
+`_followup-stats-cards.blade.php` renders a second card row under the status cards, fed by `ClientFollowupStatsQuery`: never contacted, 1st contact made, 2nd contact made, exhausted (3+), contacted today.
+
+The four funnel cards reuse the **existing filter labels** (`clients.followup.filter.*`) instead of introducing parallel wording, so a card and the dropdown option that reproduces it always read the same. All bucketing is computed in the query class — the Blade files only print a number, no logic in the views.
+
+Matching filters on the same page: `_followup-status` (the funnel buckets), `_contacted-today`, and `_followup-date` (a single date input — pick a day, get the clients contacted that day).
 
 ---
 
@@ -133,7 +160,9 @@ openEdit(followupData) // pre-fills form with existing data, opens modal
 closeModal()           // closes and resets after animation
 ```
 
-Default form values: `type = 'call'`, `contacted_at = today`.
+Default form values: `type = 'call'`, `contacted_at = today`, `completed = true`.
+
+A `$watch` on `formData.contacted_at` auto-unchecks `completed` when a **future** date is picked while creating (a contact you're scheduling hasn't happened yet), and leaves it alone in edit mode so it never overrides a deliberate choice. The checkbox is paired with a hidden input so an unchecked box still submits `0` rather than omitting the field.
 
 ### UI → Modal Communication
 
@@ -142,7 +171,8 @@ Uses the centralized `data-action` + `data-payload` pattern — no inline JS in 
 | Action | Trigger |
 |--------|---------|
 | Open create modal | `data-action="open-followup-modal"` |
-| Open edit modal | `data-action="edit-followup"` + `data-payload="{id, type, note, contacted_at}"` |
+| Open edit modal | `data-action="edit-followup"` + `data-payload="{id, type, note, contacted_at, completed}"` |
+| Toggle done/to-do | plain `PATCH` form, no JS |
 | Delete with confirm | `data-confirm="..."` on the form |
 
 The modal listens on window events:

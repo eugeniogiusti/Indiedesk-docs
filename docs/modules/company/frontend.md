@@ -23,6 +23,7 @@ resources/views/settings/
     ├── _tax-info.blade.php
     ├── _contacts.blade.php
     ├── _business-info.blade.php
+    ├── _integrations.blade.php
     └── _actions.blade.php
 ```
 
@@ -34,7 +35,11 @@ resources/views/settings/
 - includes header
 - contains the main form `PUT settings.business.update`
 - includes `_tabs-container` with all sections
-- contains a separate hidden form for `DELETE settings.business.delete-logo`
+- contains separate hidden forms, **outside** the main form, for `DELETE settings.business.delete-logo` and `DELETE settings.google-calendar.disconnect`
+
+:::warning No nested forms
+Any action inside a tab that needs its own HTTP verb must follow the hidden-form pattern above: a `<form>` nested inside the main settings form is invalid HTML, the browser hoists it out, and the outer form loses its `@method('PUT')` spoofing — saving settings then fails with `405 Method Not Allowed`. Trigger these with `<button type="button" onclick="document.getElementById('...').submit()">`.
+:::
 
 ### Alpine Inline Tabs
 
@@ -53,6 +58,8 @@ Available tabs:
 - `tax`
 - `contacts`
 - `business`
+- `documents`
+- `integrations` — GitHub PAT, Google Calendar connection, billing tool URL
 
 ## Form Sections
 

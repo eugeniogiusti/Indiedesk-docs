@@ -5,6 +5,34 @@ description: Track all updates, new features and improvements in IndieDesk. Comp
 keywords: [IndieDesk changelog, version history, updates, new features, Laravel 12, release notes]
 ---
 
+## [v1.4.0] - 2026-08-22
+
+### Added
+- **Google Calendar — automatic event sync** — new module-wide integration replacing the "click the button every time" workflow: events are now created, updated and deleted on the user's primary Google Calendar automatically as records change. Connect once from Settings → Integrations ("Connect" button, OAuth consent), tokens are stored encrypted in the new `google_calendar_settings` table and the access token is refreshed transparently from the refresh token. Built with `laravel/socialite` for the OAuth handshake plus a thin in-house REST client (`GoogleCalendarClient`, `Http` facade) rather than `google/apiclient` or `spatie/laravel-google-calendar` — the former is heavy, the latter authenticates from a locally generated `token.json` file, which doesn't fit a "Connect" button on a remote web app. All API traffic is outbound only, so it works behind an IP-restricted proxy. When Google Calendar isn't connected, every sync call is a silent no-op — the app behaves exactly as before
+- **Six entities sync to Google Calendar** — client follow-ups, project deadlines, tasks, meetings, payments (payment date or due date) and tax deadlines. Each gained a nullable `google_event_id` column linking the record to its calendar event, so later edits update that same event instead of creating a second one. Sync is triggered on create/update/delete and on the state toggles (follow-up marked done, task done/undone, meeting completed/cancelled); archiving a project removes its event and restoring it recreates it
+- **Duplicate protection for pre-existing manual events** — before creating an event, the sync searches that day for one whose title matches the record's stable title and adopts it (storing its id) instead of adding a second copy — so follow-ups that were added to Calendar by hand before this release don't end up duplicated the first time they're touched. The sequence number and the done/pending marker are deliberately kept **out** of that matching key (`calendarTitleBody()`, new method on the `CalendarEventable` contract), otherwise every renumbering would break the match
+- **Follow-ups — `linkedin` contact type** — LinkedIn messages are a real first-contact channel for leads; added to the enum, the type filter, the form and the icon set (brand logo). `meeting` and `note` were removed from the enum in the same pass — neither describes a *contact attempt*, which is what the follow-up log tracks
+- **Follow-ups — "done / to do" state (`completed`)** — a follow-up can now be logged as *not yet done*, which turns it into a future reminder: schedule the next contact, let the Google Calendar alert fire, then mark it done. The create form auto-unchecks it when a future date is picked. One-click toggle directly in the follow-up list (no modal), plus a green/amber status badge per row. All follow-up counters and filters count **completed** follow-ups only, so a scheduled-but-not-yet-done reminder never inflates the "contact attempts" number
+- **Follow-ups — contact sequence number on the calendar event** — the event title carries `#N` (`📞 #2 Follow-up: Client — Call`) and the description a `Contact no.` line, where N is the chronological position among that client's follow-ups. Adding, deleting or re-dating a follow-up shifts the others' position, so the whole client's set is re-synced on those actions rather than just the edited record
+- **Clients index — five follow-up stat cards** — never contacted / 1st contact made / 2nd contact made / exhausted (3+) / contacted today, computed by the new `ClientFollowupStatsQuery` over lead and prospect clients only (active and archived clients aren't part of the pipeline). The buckets mirror the existing `followup_status` filter exactly, so a card's number and the filtered list always agree
+- **Clients index — "contacted today" and "follow-up date" filters** — the first narrows to clients contacted today, the second to clients with a completed follow-up on a specific calendar day
+
+### Improved
+- **Tasks index — Status column merged under Title** ("Title/Status") and **project show Tasks tab — Priority merged under Status** ("Status/Priority"), same horizontal-space treatment already applied to other tables in v1.1.0
+- **Meetings table — row actions stacked vertically** instead of side by side, so the calendar/edit/delete controls stop competing for width with the rest of the row
+- **"Total Clients" stat card no longer counts archived clients** — it summed `active + archived`; an archived client isn't a client any more, so the card now counts `active` only
+
+### Fixed
+- **App timezone was hardcoded to UTC** — `config/app.php` shipped `'timezone' => 'UTC'` and silently ignored `APP_TIMEZONE` in `.env`. Every `today()`/`now()` comparison in the app ran on UTC, so between midnight and 01:00/02:00 Italian time "today" still meant yesterday. Now reads `env('APP_TIMEZONE', 'UTC')`. Found while building the "contacted today" counter, but the bug affected date logic app-wide
+- **Dates in edit modals came back one day earlier than saved** — `toFormPayload()` handed the raw `Carbon` date to `json_encode`, which serializes as UTC; with a non-UTC app timezone (see above) local midnight becomes 22:00 of the previous day, and the modal's date input then showed the wrong day. `Project`, `Payment`, `Tax` and `Cost` now format their date fields as `Y-m-d` strings before serializing (`Task` and follow-ups already did)
+- **Fatal error on `/taxes` and `/statistics`** — `Tax` implements `CalendarEventable` and was not updated when the contract gained `calendarTitleBody()`, so the class could not be loaded at all and every page referencing it 500'd
+- **405 on saving Business Settings** — the Google Calendar "Disconnect" control was a `<form>` nested inside the main settings `<form>` (invalid HTML); browsers hoist it out and the outer form loses its `PUT` method spoofing. Moved out of the form and submitted by id, the same pattern already used by "delete logo"
+- **500 when updating a meeting** — `duration_minutes` had no cast and reached `Carbon::addMinutes()` as a string, which recent Carbon versions reject (`must be of type int|float, string given`); the failure surfaced through `Meeting::getEndTime()` during the calendar sync. Cast to `integer` on the model, fixing it for every caller and not just the calendar path
+- **Meetings synced as all-day events** — the payload builder ignored the DTO's `isAllDay` flag and always sent a `date` range, dropping the meeting's actual time. Timed events now send `dateTime` + `timeZone` with the real start/end, and `location` is forwarded when present
+
+### Maintenance
+- **composer require** — `laravel/socialite` (^5.30)
+
 ## [v1.3.1] - 2026-08-16
 
 ### Added

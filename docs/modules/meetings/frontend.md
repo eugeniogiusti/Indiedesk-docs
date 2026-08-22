@@ -86,6 +86,8 @@ In the `meetings/partials/_meeting-table.blade.php` table the following are avai
 - edit meeting (dispatches event with payload)
 - delete meeting with confirmation
 
+The three controls are stacked **vertically** (`flex flex-col items-end`) rather than side by side: the row already carries title, date, duration, location and status, and a horizontal action group left too little width for the rest of the content.
+
 ## Global JS Wiring
 
 Component registration in `resources/js/app.js`:

@@ -97,7 +97,7 @@ Added via migration: `2026_03_12_114609_add_editor_notes_to_projects_table`.
 - **SoftDeletes** - deleted projects are recoverable
 - **Automatic slug** - unique slug generation in `creating`
 - **Relationships** - `client` (single, `belongsTo`), `clients` (multiple, `belongsToMany` — SaaS only), `tasks`, `meetings`, `payments`, `costs`, `documents`
-- **CalendarEventable** - calendar integration with Google Calendar link
+- **CalendarEventable** - calendar integration with Google Calendar link, plus [automatic sync](../calendar/backend.md#automatic-sync) of the project deadline (`due_date`) when the integration is connected. `ProjectController` syncs on create and update, **removes** the event on soft delete, and **recreates** it on restore — an archived project shouldn't leave a deadline sitting on the calendar
 - **toFormPayload()** - safe edit payload (`id` + editable fields)
 
 ### Project Statuses
